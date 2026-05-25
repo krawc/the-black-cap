@@ -1,0 +1,1 @@
+*{box-sizing:border-box}html,body,#root{width:100%;min-height:100%;margin:0}body{background:#000;min-height:100vh}.stage{background:#000;place-items:center;width:100%;min-height:100vh;display:grid;overflow:hidden}.flame{width:min(78vmin,760px);height:auto;display:block}
