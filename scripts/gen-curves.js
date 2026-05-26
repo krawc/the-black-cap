@@ -224,25 +224,31 @@ function detectSelfIntersection(curve) {
  * Control points are shifted by the same boost as their associated anchor
  * to preserve local curve shape.
  */
-function applyMidBoost(curve, maxBoost = 40) {
+function applyMidBoost(curve, maxBoost = 40, minY = 10) {
   const c = clone(curve);
   const [lo, hi] = middleRange(c);
   const span = hi - lo;
 
-  const boosts = c.map((_, i) => {
+  // Compute intended boost per node
+  const intended = c.map((_, i) => {
     if (i < lo || i > hi) return 0;
     return maxBoost * Math.sin(Math.PI * (i - lo) / span);
   });
 
-  for (let i = lo; i <= hi; i++) {
-    c[i].a = [c[i].a[0], Math.max(5, c[i].a[1] - boosts[i])];
-  }
+  // Apply to anchors, recording actual shift (may be reduced by minY clamp)
+  const actual = intended.map((b, i) => {
+    if (i < lo || i > hi) return 0;
+    const newY = Math.max(minY, c[i].a[1] - b);
+    const shift = c[i].a[1] - newY;
+    c[i].a = [c[i].a[0], newY];
+    return shift;
+  });
 
+  // Apply the same actual shift to control points, clamped to minY
   for (let i = lo + 1; i <= hi; i++) {
     if (c[i].cmd !== 'C') continue;
-    // c1 departs from node i-1, c2 arrives at node i
-    if (c[i].c1) c[i].c1 = [c[i].c1[0], c[i].c1[1] - boosts[i - 1]];
-    if (c[i].c2) c[i].c2 = [c[i].c2[0], c[i].c2[1] - boosts[i]];
+    if (c[i].c1) c[i].c1 = [c[i].c1[0], Math.max(minY, c[i].c1[1] - actual[i - 1])];
+    if (c[i].c2) c[i].c2 = [c[i].c2[0], Math.max(minY, c[i].c2[1] - actual[i])];
   }
 
   return c;
