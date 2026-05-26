@@ -20,10 +20,11 @@
 const fs   = require('fs');
 const path = require('path');
 
-const DIR  = path.join(__dirname, '../public/flame-curves');
-const load = f => JSON.parse(fs.readFileSync(path.join(DIR, f), 'utf8'));
+const RAW_DIR = path.join(__dirname, 'raw');
+const OUT_DIR = path.join(__dirname, '../public/flame-curves');
+const load = f => JSON.parse(fs.readFileSync(path.join(RAW_DIR, f), 'utf8'));
 const save = (f, d) => {
-  fs.writeFileSync(path.join(DIR, f), JSON.stringify(d, null, 2) + '\n');
+  fs.writeFileSync(path.join(OUT_DIR, f), JSON.stringify(d, null, 2) + '\n');
   console.log('wrote', f);
 };
 const clone = x => JSON.parse(JSON.stringify(x));
@@ -215,11 +216,46 @@ function detectSelfIntersection(curve) {
   return null;
 }
 
+/* ── mid-boost: raise middle nodes with a sine-arch envelope ── */
+
+/**
+ * Shift anchor y values upward (lower y = higher on screen) in the middle
+ * range using a sine arch that peaks at the center node.
+ * Control points are shifted by the same boost as their associated anchor
+ * to preserve local curve shape.
+ */
+function applyMidBoost(curve, maxBoost = 40) {
+  const c = clone(curve);
+  const [lo, hi] = middleRange(c);
+  const span = hi - lo;
+
+  const boosts = c.map((_, i) => {
+    if (i < lo || i > hi) return 0;
+    return maxBoost * Math.sin(Math.PI * (i - lo) / span);
+  });
+
+  for (let i = lo; i <= hi; i++) {
+    c[i].a = [c[i].a[0], Math.max(5, c[i].a[1] - boosts[i])];
+  }
+
+  for (let i = lo + 1; i <= hi; i++) {
+    if (c[i].cmd !== 'C') continue;
+    // c1 departs from node i-1, c2 arrives at node i
+    if (c[i].c1) c[i].c1 = [c[i].c1[0], c[i].c1[1] - boosts[i - 1]];
+    if (c[i].c2) c[i].c2 = [c[i].c2[0], c[i].c2[1] - boosts[i]];
+  }
+
+  return c;
+}
+
 /* ── enforce both rules, then save ─────────────────────────── */
 
 function saveValidated(filename, curve) {
+  // Mid-boost: raise middle section proportionally toward center
+  let out = applyMidBoost(curve);
+
   // Rule 1a – fix any anchor that steps backward in x
-  let out = fixAnchorXMonotonic(curve);
+  out = fixAnchorXMonotonic(out);
 
   // Rule 1b – clamp bezier handles to their segment's x-range
   out = fixHandleXMonotonic(out);
@@ -329,7 +365,7 @@ function shiftPeak(curve, ti, targetPeakOffset) {
   return c;
 }
 
-/* ── generate curves 3-5 ─────────────────────────────────── */
+/* ── generate all 5 curves from raw masters ──────────────────── */
 
 // Base peak offsets (0-based within ti-group):
 //   ti=17 : offset 1 (middle of 3-node group)
@@ -337,6 +373,11 @@ function shiftPeak(curve, ti, targetPeakOffset) {
 //   ti=25 : offset 1 (middle of 3-node group)
 //   ti=27 : offset 0 (first  of 2-node group)
 
+// Curves 1 and 2: raw masters with mid-boost and validation applied
+saveValidated('curve-001.json', load('curve-001.json'));
+saveValidated('curve-002.json', load('curve-002.json'));
+
+// Curves 3–5: peak-shifted variants of the raw masters
 let c3 = load('curve-001.json');
 c3 = shiftPeak(c3, 21, 1);   // ti=21 spike → middle node
 c3 = shiftPeak(c3, 25, 2);   // ti=25 spike → last node

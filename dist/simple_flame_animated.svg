@@ -375,7 +375,7 @@ a[1] += rise * riseAmp * 0.12;
 
   function tick() {
 
-    t += 0.032;
+    t += 0.020;
 
     var nodes = buildNodes(t);
 
