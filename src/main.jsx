@@ -230,6 +230,19 @@ function App() {
         <img src="/frames.svg" className="framesSvg" alt="Room frames" />
         <a href="#book" className="neonButton">See Availability</a>
       </section>
+
+      <footer className="siteFooter">
+        <nav className="footerLinks" aria-label="Legal">
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/cookies">Cookie Policy</a>
+          <a href="/terms">Terms &amp; Conditions</a>
+          <a href="/accessibility">Accessibility</a>
+        </nav>
+        <p className="footerCopy">
+          &copy; {new Date().getFullYear()} The Black Cap, 171 Camden High Street, London NW1 7JY.
+          Registered in England &amp; Wales.
+        </p>
+      </footer>
     </main>
   );
 }

@@ -686,6 +686,41 @@ h2 {
   outline: none;
 }
 
+.siteFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding: clamp(1.8rem, 4vw, 2.8rem) clamp(1.15rem, 4vw, 4rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.4rem;
+}
+
+.footerLinks a {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.78rem;
+  transition: color 120ms ease;
+}
+
+.footerLinks a:hover,
+.footerLinks a:focus-visible {
+  color: rgba(255, 255, 255, 0.88);
+  outline: none;
+}
+
+.footerCopy {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 0.75rem;
+}
+
 @media (max-width: 700px) {
   .framesSvg {
     width: 90vw;
