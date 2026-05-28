@@ -55,20 +55,29 @@ const navItems = [
   },
 ];
 
-// Instagram post shortcodes from @theblackcapcamden
-// Each shortcode is the path segment after /p/ in the post URL
-// e.g. https://www.instagram.com/p/CsAbcDefghi/ → 'CsAbcDefghi'
-// Full API alternative: GET graph.facebook.com/v21.0/{ig-user-id}/media
-// via a backend proxy (requires Facebook App + business account OAuth)
 const instagramPosts = [
-  // 'CsAbcDefghi',
+  'DX_5LwekcVa',
+  'DYzKkfHMC7z',
+  'DYxiCs7x4rm',
+  'DYxhePkxa1n',
+  'DYxgzTsRa8A',
+  'DYxgfJNR2pn',
+  'DYfNVZ_De71',
+  'DYfNPIKFP5e',
 ];
 
 // TikTok video IDs from @theblackcapuk — populate via TikTok Display API
 // GET https://open.tiktokapis.com/v2/video/list/ (requires OAuth app at developers.tiktok.com)
 // Each entry is the numeric video ID from the video URL
 const highlights = [
-  // '7412345678901234567',
+  '7644927884900961558',
+  '7642689026490912003',
+  '7640829274840190240',
+  '7640504644887776544',
+  '7640442725908712737',
+  '7640087100393606433',
+  '7639762417546824992',
+  '7639360399963360545',
 ];
 
 const menuItems = [
@@ -243,14 +252,15 @@ function App() {
         <div className="highlightSlider">
           <div className="highlightTrack">
             {highlights.length > 0 ? highlights.map((videoId) => (
-              <iframe
-                key={videoId}
-                className="tiktokEmbed"
-                src={`https://www.tiktok.com/embed/v2/${videoId}`}
-                allowFullScreen
-                allow="encrypted-media"
-                title="The Black Cap on TikTok"
-              />
+              <div key={videoId} className="tiktokSlide">
+                <iframe
+                  className="tiktokEmbed"
+                  src={`https://www.tiktok.com/embed/v2/${videoId}?theme=dark`}
+                  allowFullScreen
+                  allow="encrypted-media"
+                  title="The Black Cap on TikTok"
+                />
+              </div>
             )) : Array.from({ length: 5 }, (_, i) => (
               <div key={i} className="highlightCard" />
             ))}

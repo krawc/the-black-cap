@@ -498,16 +498,16 @@ h2 {
 
 .instaWrapper {
   flex: 0 0 auto;
-  width: clamp(20rem, 30vw, 26rem);
+  width: clamp(20rem, 28vw, 26rem);
   height: 34rem;
   scroll-snap-align: start;
   border-radius: 0.75rem;
   overflow: hidden;
   /* invert(1) turns the white embed dark; hue-rotate(180deg) corrects photo colours */
-  filter: invert(1) hue-rotate(180deg);
 }
 
 .instaEmbed {
+  margin-top: 4em;
   width: 100%;
   height: 100%;
   border: none;
@@ -680,8 +680,7 @@ h2 {
   padding-right: clamp(1.15rem, 4vw, 4rem);
 }
 
-.highlightCard,
-.tiktokEmbed {
+.highlightCard {
   flex: 0 0 auto;
   width: clamp(10rem, 38vmin, 20rem);
   aspect-ratio: 9/16;
@@ -691,7 +690,24 @@ h2 {
   background: rgba(255, 255, 255, 0.04);
 }
 
+.tiktokSlide {
+  flex: 0 0 auto;
+  /* 9/19 matches TikTok embed proportions including its UI chrome */
+  width: clamp(20rem, 46vmin, 28rem);
+  aspect-ratio: 9/19;
+  scroll-snap-align: start;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  position: relative;
+  background: #000;
+}
+
 .tiktokEmbed {
+  margin-top: 4em;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   border: none;
 }
 
