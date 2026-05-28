@@ -373,6 +373,12 @@ h2 {
     0 0 2.8rem rgba(100, 244, 255, 0.08);
 }
 
+@media (min-width: 860px) {
+  .flame {
+    margin: 4em 0 2em;
+  }
+}
+
 @media (max-width: 860px) {
   .hero {
     min-height: 96vh;
