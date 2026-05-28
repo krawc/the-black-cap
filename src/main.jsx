@@ -50,18 +50,10 @@ const navItems = [
   },
 ];
 
-const drinks = [
-  { name: 'Draught beer', detail: 'Fresh pints, Camden-ready pricing', price: 'TBC' },
-  { name: 'House wine', detail: 'Red, white, rose, sparkling', price: 'TBC' },
-  { name: 'Signature spritz', detail: 'Bright, sharp, built for the terrace', price: 'TBC' },
-  { name: 'Classic cocktails', detail: 'The usual favourites, properly poured', price: 'TBC' },
-  { name: 'No and low', detail: 'Alcohol-free beers, spritzes, softs', price: 'TBC' },
-];
-
-const openingTimes = [
-  { space: "Shufflewick's", times: 'Sun-Thu 12pm-12am, Fri-Sat 12pm-2am' },
-  { space: "Lily's Bar", times: 'Show nights and late evenings' },
-  { space: 'Regina Fong Terrace', times: 'Open weather permitting' },
+const photos = [
+  { id: 1, width: 'clamp(12rem,26vw,26rem)', aspectRatio: '3/4',  duration: '10s', delay: '0s',  driftX: '0.4rem',  driftY: '-1.5rem' },
+  { id: 2, width: 'clamp(16rem,34vw,34rem)', aspectRatio: '4/3',  duration: '13s', delay: '-5s', driftX: '-0.4rem', driftY: '-2rem'   },
+  { id: 3, width: 'clamp(11rem,22vw,22rem)', aspectRatio: '2/3',  duration: '11s', delay: '-3s', driftX: '0.3rem',  driftY: '-1rem'   },
 ];
 
 function App() {
@@ -132,52 +124,36 @@ function App() {
         </div>
       </section>
 
-      <section className="content" aria-labelledby="section-title">
-        <div className="sectionHeader">
-          <p className="eyebrow">First baseline focus</p>
-          <h2 id="section-title">{activeLabel}</h2>
-        </div>
-
-        <div className="featureGrid">
-          <section className="menuPanel" aria-labelledby="menu-title">
-            <div className="panelTop">
-              <p className="eyebrow">Drinks menu</p>
-              <h3 id="menu-title">Prices people can check before the weekend.</h3>
-            </div>
-
-            <div className="drinkList">
-              {drinks.map((drink) => (
-                <article className="drinkItem" key={drink.name}>
-                  <div>
-                    <h4>{drink.name}</h4>
-                    <p>{drink.detail}</p>
-                  </div>
-                  <strong>{drink.price}</strong>
-                </article>
+      <section className="content">
+        <div className="legendaryScene">
+          <div className="reginaBlock">
+            <img src="/regina.svg" className="reginaSvg" alt="Regina Fong" />
+          </div>
+          <div className="legendaryRight">
+            <h2 className="legendaryTitle">Legendary</h2>
+            <p className="legendaryCopy">
+              The Black Cap has been Camden&rsquo;s queer heartbeat since 1967. Two bars,
+              a legendary terrace, and a performance room that&rsquo;s seen more feather boas
+              than the law should allow. Shufflewick&rsquo;s is where the pints happen.
+              The stage is where the magic does.
+            </p>
+            <div className="photoRow">
+              {photos.map(({ id, width, aspectRatio, duration, delay, driftX, driftY }) => (
+                <div
+                  key={id}
+                  className="photoPlaceholder"
+                  style={{
+                    width,
+                    aspectRatio,
+                    animationDuration: duration,
+                    animationDelay: delay,
+                    '--drift-x': driftX,
+                    '--drift-y': driftY,
+                  }}
+                />
               ))}
             </div>
-          </section>
-
-          <aside className="sideStack" aria-label="Venue snapshot">
-            <section className="miniPanel">
-              <p className="eyebrow">Opening times</p>
-              {openingTimes.map((item) => (
-                <div className="timesRow" key={item.space}>
-                  <strong>{item.space}</strong>
-                  <span>{item.times}</span>
-                </div>
-              ))}
-            </section>
-
-            <section className="miniPanel rainbowEdge">
-              <p className="eyebrow">Coming next</p>
-              <h3>Shows, rooms, table bookings, and the short story of why The Cap matters.</h3>
-              <p>
-                Built to receive posters, room photography, booking links, and short
-                history clips as soon as management signs them off.
-              </p>
-            </section>
-          </aside>
+          </div>
         </div>
       </section>
     </main>

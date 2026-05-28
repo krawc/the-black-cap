@@ -153,21 +153,7 @@
   to   { opacity: 1; }
 }
 
-.always {
-  opacity: 1!important;
-}
 
-.head {
-  animation: fade-in 600ms linear both;
-}
-
-path:not(.head):not(.camden) {
-  animation: fade-in 600ms ease-out 600ms both;
-}
-
-.camden {
-  animation: fade-in 600ms ease-out 1200ms both;
-}
 ]]>
 </style>
 <clipPath id="clip0_13_97">

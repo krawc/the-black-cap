@@ -71,6 +71,11 @@ p {
   margin-top: 0;
 }
 
+h1,
+h2 {
+  font-family: 'Train One', sans-serif;
+}
+
 h1 {
   margin-bottom: 0;
   font-size: clamp(2rem, 7vw, 5.8rem);
@@ -234,10 +239,77 @@ h1 {
 }
 
 .content {
-  padding: clamp(1.15rem, 4vw, 4rem);
-  background:
-    linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.05) 14rem),
-    #000;
+  position: relative;
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+}
+
+.legendaryScene {
+  display: flex;
+  align-items: flex-start;
+  gap: 0 clamp(2rem, 4vw, 3.5rem);
+}
+
+.reginaBlock {
+  flex-shrink: 0;
+  width: clamp(10.5rem, 22.5vw, 21rem);
+  margin-left: calc(-1 * clamp(1.15rem, 4vw, 4rem));
+}
+
+.reginaSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.legendaryRight {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: clamp(5rem, 18vw, 14rem);
+  flex: 1;
+}
+
+.legendaryTitle {
+  margin-bottom: 0;
+  font-family: 'Train One', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 0.85;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.legendaryCopy {
+  max-width: 38rem;
+  margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  line-height: 1.75;
+}
+
+.photoRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 2vw, 2rem);
+  padding-top: clamp(1.5rem, 3vw, 3rem);
+}
+
+@keyframes photoDrift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(var(--drift-x, 0rem), var(--drift-y, -1.5rem)); }
+}
+
+.photoPlaceholder {
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  animation-name: photoDrift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
 }
 
 .sectionHeader {
@@ -442,11 +514,23 @@ h2 {
     text-align: center;
   }
 
-  .drinkItem {
-    grid-template-columns: 1fr;
+  .legendaryScene {
+    flex-direction: column;
   }
 
-  .drinkItem strong {
-    width: 100%;
+  .reginaBlock {
+    width: clamp(9rem, 48vw, 14rem);
+  }
+
+  .legendaryRight {
+    padding-top: 1.5rem;
+  }
+
+  .photoRow {
+    flex-direction: column;
+  }
+
+  .photoPlaceholder {
+    width: 100% !important;
   }
 }
