@@ -224,6 +224,12 @@ function App() {
           </div>
         </div>
       </section>
+
+      <section className="roomsSection">
+        <h2 className="roomsHeadline">Our Rooms</h2>
+        <img src="/frames.svg" className="framesSvg" alt="Room frames" />
+        <a href="#book" className="neonButton">See Availability</a>
+      </section>
     </main>
   );
 }

@@ -622,7 +622,75 @@ h2 {
   }
 }
 
+.roomsSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2rem, 4vw, 3rem);
+  padding: clamp(3rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+  text-align: center;
+}
+
+.roomsHeadline {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.framesSvg {
+  display: block;
+  width: clamp(16rem, 90vw, 90rem);
+  height: auto;
+  opacity: 0.3;
+}
+
+.neonButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.2rem;
+  padding: 0.85rem 2.2rem;
+  border: 1px solid rgba(100, 244, 255, 0.7);
+  border-radius: 999px;
+  color: #64f4ff;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow:
+    0 0 1.2rem rgba(100, 244, 255, 0.25),
+    inset 0 0 1.2rem rgba(100, 244, 255, 0.08);
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.neonButton:hover,
+.neonButton:focus-visible {
+  color: #000;
+  background: #64f4ff;
+  border-color: #64f4ff;
+  box-shadow:
+    0 0 2rem rgba(100, 244, 255, 0.55),
+    inset 0 0 1rem rgba(255, 255, 255, 0.3);
+  outline: none;
+}
+
 @media (max-width: 700px) {
+  .framesSvg {
+    width: 90vw;
+  }
+
   .menuScene {
     flex-direction: column;
   }
