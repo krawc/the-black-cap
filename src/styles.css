@@ -622,6 +622,22 @@ h2 {
   }
 }
 
+@media (max-width: 700px) {
+  .menuScene {
+    flex-direction: column;
+  }
+
+  .menuSvgBlock {
+    width: clamp(7rem, 36vw, 12rem);
+  }
+
+  .menuRight {
+    width: 100%;
+    padding-top: 0;
+    margin-top: -2rem;
+  }
+}
+
 @media (max-width: 560px) {
   .hero {
     grid-template-rows: auto auto auto;
