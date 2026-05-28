@@ -55,7 +55,21 @@ const navItems = [
   },
 ];
 
-const posters = Array.from({ length: 7 }, (_, i) => ({ id: i + 1 }));
+// Instagram post shortcodes from @theblackcapcamden
+// Each shortcode is the path segment after /p/ in the post URL
+// e.g. https://www.instagram.com/p/CsAbcDefghi/ → 'CsAbcDefghi'
+// Full API alternative: GET graph.facebook.com/v21.0/{ig-user-id}/media
+// via a backend proxy (requires Facebook App + business account OAuth)
+const instagramPosts = [
+  // 'CsAbcDefghi',
+];
+
+// TikTok video IDs from @theblackcapuk — populate via TikTok Display API
+// GET https://open.tiktokapis.com/v2/video/list/ (requires OAuth app at developers.tiktok.com)
+// Each entry is the numeric video ID from the video URL
+const highlights = [
+  // '7412345678901234567',
+];
 
 const menuItems = [
   { category: 'Draught', items: [
@@ -164,6 +178,31 @@ function App() {
         </div>
       </section>
 
+      <section className="whatsOn" id="whats-on">
+        <div className="whatsOnInner">
+          <h2 className="whatsOnTitle">What&rsquo;s On</h2>
+        </div>
+        <div className="posterSlider">
+          <div className="posterTrack">
+            {instagramPosts.length > 0
+              ? instagramPosts.map((shortcode) => (
+                  <div key={shortcode} className="instaWrapper">
+                    <iframe
+                      className="instaEmbed"
+                      src={`https://www.instagram.com/p/${shortcode}/embed/captioned/?utm_source=ig_embed`}
+                      scrolling="no"
+                      allowTransparency="true"
+                      title="Instagram post"
+                    />
+                  </div>
+                ))
+              : Array.from({ length: 5 }, (_, i) => (
+                  <div key={i} className="posterCard" />
+                ))}
+          </div>
+        </div>
+      </section>
+
       <section className="content" id="story">
         <div className="legendaryScene">
           <div className="reginaBlock">
@@ -197,14 +236,23 @@ function App() {
         </div>
       </section>
 
-      <section className="whatsOn" id="whats-on">
-        <div className="whatsOnInner">
-          <h2 className="whatsOnTitle">What&rsquo;s On</h2>
+      <section className="highlights" id="highlights">
+        <div className="highlightsInner">
+          <h2 className="highlightsTitle">The Highlights</h2>
         </div>
-        <div className="posterSlider">
-          <div className="posterTrack">
-            {posters.map(({ id }) => (
-              <div key={id} className="posterCard" />
+        <div className="highlightSlider">
+          <div className="highlightTrack">
+            {highlights.length > 0 ? highlights.map((videoId) => (
+              <iframe
+                key={videoId}
+                className="tiktokEmbed"
+                src={`https://www.tiktok.com/embed/v2/${videoId}`}
+                allowFullScreen
+                allow="encrypted-media"
+                title="The Black Cap on TikTok"
+              />
+            )) : Array.from({ length: 5 }, (_, i) => (
+              <div key={i} className="highlightCard" />
             ))}
           </div>
         </div>

@@ -496,6 +496,23 @@ h2 {
   background: rgba(255, 255, 255, 0.04);
 }
 
+.instaWrapper {
+  flex: 0 0 auto;
+  width: clamp(20rem, 30vw, 26rem);
+  height: 34rem;
+  scroll-snap-align: start;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  /* invert(1) turns the white embed dark; hue-rotate(180deg) corrects photo colours */
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.instaEmbed {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
 .menuSection {
   padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
   padding-bottom: clamp(4rem, 8vw, 8rem);
@@ -621,6 +638,61 @@ h2 {
   .featureGrid {
     grid-template-columns: 1fr;
   }
+}
+
+.highlights {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  background: #000;
+}
+
+.highlightsInner {
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.highlightsTitle {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.highlightSlider {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+}
+
+.highlightSlider::-webkit-scrollbar {
+  display: none;
+}
+
+.highlightTrack {
+  display: flex;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  padding-right: clamp(1.15rem, 4vw, 4rem);
+}
+
+.highlightCard,
+.tiktokEmbed {
+  flex: 0 0 auto;
+  width: clamp(10rem, 38vmin, 20rem);
+  aspect-ratio: 9/16;
+  scroll-snap-align: start;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tiktokEmbed {
+  border: none;
 }
 
 .roomsSection {
