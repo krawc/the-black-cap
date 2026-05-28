@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
@@ -110,14 +110,36 @@ const menuItems = [
 ];
 
 const photos = [
-  { id: 1, width: 'clamp(12rem,26vw,26rem)', aspectRatio: '3/4',  duration: '10s', delay: '0s',  driftX: '0.4rem',  driftY: '-1.5rem' },
-  { id: 2, width: 'clamp(16rem,34vw,34rem)', aspectRatio: '4/3',  duration: '13s', delay: '-5s', driftX: '-0.4rem', driftY: '-2rem'   },
-  { id: 3, width: 'clamp(11rem,22vw,22rem)', aspectRatio: '2/3',  duration: '11s', delay: '-3s', driftX: '0.3rem',  driftY: '-1rem'   },
+  { id: 1, src: '/story/1.webp', scale: 1.3,  driftX:  1.2, driftY: -12.5 },
+  { id: 3, src: '/story/3.webp', scale: 2.2,  driftX:  11.0, driftY: 3.0 },
+    { id: 4, src: '/story/4.webp', scale: 2.45, driftX: -5.4, driftY: -9.0 },
+  { id: 2, src: '/story/2.webp', scale: 1.1,  driftX: -11.6, driftY: 14.5 },
 ];
 
 function App() {
   const [navOpen, setNavOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
+  const photoRowRef = useRef(null);
+
+  useEffect(() => {
+    const update = () => {
+      const row = photoRowRef.current;
+      if (!row) return;
+      const rect = row.getBoundingClientRect();
+      const progress = (window.innerHeight / 2 - (rect.top + rect.height / 2)) / window.innerHeight;
+      const mobile = window.innerWidth <= 700;
+      Array.from(row.children).forEach((el, i) => {
+        const photo = photos[i];
+        if (!photo) return;
+        el.style.transform = mobile
+          ? `translateX(${photo.driftX * progress * 0.12}rem)`
+          : `translate(${photo.driftX * progress}rem, ${photo.driftY * progress}rem)`;
+      });
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+    return () => window.removeEventListener('scroll', update);
+  }, []);
 
   const activeLabel =
     navItems.find((item) => item.id === activeSection)?.label || 'Menu';
@@ -225,20 +247,11 @@ function App() {
               than the law should allow. Shufflewick&rsquo;s is where the pints happen.
               The stage is where the magic does.
             </p>
-            <div className="photoRow">
-              {photos.map(({ id, width, aspectRatio, duration, delay, driftX, driftY }) => (
-                <div
-                  key={id}
-                  className="photoPlaceholder"
-                  style={{
-                    width,
-                    aspectRatio,
-                    animationDuration: duration,
-                    animationDelay: delay,
-                    '--drift-x': driftX,
-                    '--drift-y': driftY,
-                  }}
-                />
+            <div className="photoRow" ref={photoRowRef}>
+              {photos.map(({ id, src, scale }) => (
+                <div key={id} className="photoPlaceholder" style={{ '--h-scale': scale }}>
+                  <img src={src} alt="" className="photoImg" />
+                </div>
               ))}
             </div>
           </div>

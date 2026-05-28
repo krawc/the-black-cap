@@ -293,24 +293,25 @@ h1 {
 .photoRow {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(1rem, 2vw, 2rem);
+  gap: clamp(1.5rem, 3vw, 3rem);
   padding-top: clamp(1.5rem, 3vw, 3rem);
 }
 
-@keyframes photoDrift {
-  from { transform: translate(0, 0); }
-  to   { transform: translate(var(--drift-x, 0rem), var(--drift-y, -1.5rem)); }
-}
-
 .photoPlaceholder {
+  --photo-h: clamp(16rem, 38vh, 26rem);
   flex: 0 0 auto;
+  height: calc(var(--photo-h) * var(--h-scale, 1));
+  overflow: hidden;
+  border-radius: 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.04);
-  animation-name: photoDrift;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  pointer-events: none;
+  will-change: transform;
+}
+
+.photoImg {
+  display: block;
+  height: 100%;
+  width: auto;
 }
 
 .sectionHeader {
@@ -875,5 +876,11 @@ h2 {
 
   .photoPlaceholder {
     width: 100% !important;
+    height: auto !important;
+  }
+
+  .photoImg {
+    width: 100%;
+    height: auto;
   }
 }
