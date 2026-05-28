@@ -52,6 +52,35 @@ const navItems = [
 
 const posters = Array.from({ length: 7 }, (_, i) => ({ id: i + 1 }));
 
+const menuItems = [
+  { category: 'Draught', items: [
+    { name: 'Guinness',               price: '£6.50' },
+    { name: 'Camden Hells Lager',     price: '£6.00' },
+    { name: 'Camden Pale Ale',        price: '£6.20' },
+    { name: 'Meantime London Lager',  price: '£6.20' },
+  ]},
+  { category: 'Wine', items: [
+    { name: 'House glass',            price: '£7.00' },
+    { name: 'House carafe',           price: '£22.00' },
+    { name: 'Prosecco',               price: '£9.00' },
+  ]},
+  { category: 'Cocktails', items: [
+    { name: 'Negroni',                price: '£12.00' },
+    { name: 'Aperol Spritz',          price: '£11.00' },
+    { name: 'Espresso Martini',       price: '£12.00' },
+    { name: 'Pornstar Martini',       price: '£12.00' },
+  ]},
+  { category: 'Spirits & Mixers', items: [
+    { name: 'Single & mixer',         price: 'from £8' },
+    { name: 'Double & mixer',         price: 'from £11' },
+    { name: 'Shot',                   price: 'from £4' },
+  ]},
+  { category: 'Soft Drinks & Low/No', items: [
+    { name: 'Soft drinks',            price: 'from £3.50' },
+    { name: 'Low & no-alcohol',       price: 'from £4.50' },
+  ]},
+];
+
 const photos = [
   { id: 1, width: 'clamp(12rem,26vw,26rem)', aspectRatio: '3/4',  duration: '10s', delay: '0s',  driftX: '0.4rem',  driftY: '-1.5rem' },
   { id: 2, width: 'clamp(16rem,34vw,34rem)', aspectRatio: '4/3',  duration: '13s', delay: '-5s', driftX: '-0.4rem', driftY: '-2rem'   },
@@ -168,6 +197,30 @@ function App() {
             {posters.map(({ id }) => (
               <div key={id} className="posterCard" />
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="menuSection">
+        <div className="menuScene">
+          <div className="menuSvgBlock">
+            <img src="/neon-menu.svg" className="menuSvg" alt="" />
+          </div>
+          <div className="menuRight">
+            <h2 className="menuHeadline">The Menu</h2>
+            <div className="menuList">
+              {menuItems.map(({ category, items }) => (
+                <div key={category} className="menuCategory">
+                  <p className="menuCategoryName">{category}</p>
+                  {items.map(({ name, price }) => (
+                    <div key={name} className="menuItem">
+                      <span className="menuItemName">{name}</span>
+                      <span className="menuItemPrice">{price}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

@@ -495,6 +495,91 @@ h2 {
   background: rgba(255, 255, 255, 0.04);
 }
 
+.menuSection {
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+}
+
+.menuScene {
+  display: flex;
+  align-items: flex-start;
+  gap: 0 clamp(2rem, 4vw, 3.5rem);
+}
+
+.menuSvgBlock {
+  flex-shrink: 0;
+  width: clamp(10.5rem, 22.5vw, 21rem);
+  margin-left: calc(-1 * clamp(1.15rem, 4vw, 4rem));
+}
+
+.menuSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.menuRight {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: clamp(3rem, 10vw, 8rem);
+  flex: 1;
+  max-width: 42rem;
+}
+
+.menuHeadline {
+  margin: 0;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 0.85;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.menuList {
+  display: grid;
+  gap: 2rem;
+}
+
+.menuCategory {
+  display: grid;
+}
+
+.menuCategoryName {
+  margin: 0 0 0.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.menuItemName {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.95rem;
+}
+
+.menuItemPrice {
+  flex-shrink: 0;
+  color: #64f4ff;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
 @media (min-width: 860px) {
   .flame {
     margin: 4em 0 2em;
