@@ -445,6 +445,56 @@ h2 {
     0 0 2.8rem rgba(100, 244, 255, 0.08);
 }
 
+.whatsOn {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  background: #000;
+}
+
+.whatsOnInner {
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.whatsOnTitle {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.posterSlider {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+}
+
+.posterSlider::-webkit-scrollbar {
+  display: none;
+}
+
+.posterTrack {
+  display: flex;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  padding-right: clamp(1.15rem, 4vw, 4rem);
+}
+
+.posterCard {
+  flex: 0 0 auto;
+  width: clamp(11rem, 23vw, 19rem);
+  aspect-ratio: 2/3;
+  scroll-snap-align: start;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
 @media (min-width: 860px) {
   .flame {
     margin: 4em 0 2em;

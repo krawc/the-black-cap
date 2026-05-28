@@ -50,6 +50,8 @@ const navItems = [
   },
 ];
 
+const posters = Array.from({ length: 7 }, (_, i) => ({ id: i + 1 }));
+
 const photos = [
   { id: 1, width: 'clamp(12rem,26vw,26rem)', aspectRatio: '3/4',  duration: '10s', delay: '0s',  driftX: '0.4rem',  driftY: '-1.5rem' },
   { id: 2, width: 'clamp(16rem,34vw,34rem)', aspectRatio: '4/3',  duration: '13s', delay: '-5s', driftX: '-0.4rem', driftY: '-2rem'   },
@@ -153,6 +155,19 @@ function App() {
                 />
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="whatsOn">
+        <div className="whatsOnInner">
+          <h2 className="whatsOnTitle">What&rsquo;s On</h2>
+        </div>
+        <div className="posterSlider">
+          <div className="posterTrack">
+            {posters.map(({ id }) => (
+              <div key={id} className="posterCard" />
+            ))}
           </div>
         </div>
       </section>
