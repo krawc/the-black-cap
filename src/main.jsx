@@ -11,6 +11,7 @@ const navItems = [
     y: '-10.4rem',
     mobileX: '-7.2rem',
     mobileY: '-6.2rem',
+    sectionId: 'story',
   },
   {
     id: 'whats-on',
@@ -20,6 +21,7 @@ const navItems = [
     y: '-14.6rem',
     mobileX: '-4.1rem',
     mobileY: '-9.7rem',
+    sectionId: 'whats-on',
   },
   {
     id: 'menu',
@@ -29,6 +31,7 @@ const navItems = [
     y: '-16.8rem',
     mobileX: '0rem',
     mobileY: '-13.2rem',
+    sectionId: 'menu',
   },
   {
     id: 'rooms',
@@ -38,6 +41,7 @@ const navItems = [
     y: '-14.6rem',
     mobileX: '4.1rem',
     mobileY: '-9.7rem',
+    sectionId: 'our-rooms',
   },
   {
     id: 'tables',
@@ -47,6 +51,7 @@ const navItems = [
     y: '-10.4rem',
     mobileX: '7.2rem',
     mobileY: '-6.2rem',
+    href: '#',
   },
 ];
 
@@ -94,9 +99,13 @@ function App() {
   const activeLabel =
     navItems.find((item) => item.id === activeSection)?.label || 'Menu';
 
-  function chooseSection(id) {
-    setActiveSection(id);
-    setNavOpen(true);
+  function chooseSection(item) {
+    setNavOpen(false);
+    if (item.href) {
+      window.open(item.href, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    document.getElementById(item.sectionId)?.scrollIntoView({ behavior: 'smooth' });
   }
 
   return (
@@ -136,7 +145,7 @@ function App() {
                   '--mobile-item-y': item.mobileY,
                 }}
                 type="button"
-                onClick={() => chooseSection(item.id)}
+                onClick={() => chooseSection(item)}
               >
                 {item.label}
               </button>
@@ -155,7 +164,7 @@ function App() {
         </div>
       </section>
 
-      <section className="content">
+      <section className="content" id="story">
         <div className="legendaryScene">
           <div className="reginaBlock">
             <img src="/regina.svg" className="reginaSvg" alt="Regina Fong" />
@@ -188,7 +197,7 @@ function App() {
         </div>
       </section>
 
-      <section className="whatsOn">
+      <section className="whatsOn" id="whats-on">
         <div className="whatsOnInner">
           <h2 className="whatsOnTitle">What&rsquo;s On</h2>
         </div>
@@ -201,7 +210,7 @@ function App() {
         </div>
       </section>
 
-      <section className="menuSection">
+      <section className="menuSection" id="menu">
         <div className="menuScene">
           <div className="menuSvgBlock">
             <img src="/neon-menu.svg" className="menuSvg" alt="" />
@@ -225,7 +234,7 @@ function App() {
         </div>
       </section>
 
-      <section className="roomsSection">
+      <section className="roomsSection" id="our-rooms">
         <h2 className="roomsHeadline">Our Rooms</h2>
         <img src="/frames.svg" className="framesSvg" alt="Room frames" />
         <a href="#book" className="neonButton">See Availability</a>
