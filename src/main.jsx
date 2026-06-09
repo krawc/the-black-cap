@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
+import FrameGallery from './FrameGallery';
 
 const navItems = [
   {
@@ -307,7 +308,16 @@ function App() {
 
       <section className="roomsSection" id="our-rooms">
         <h2 className="roomsHeadline">Our Rooms</h2>
-        <img src="/frames.svg" className="framesSvg" alt="Room frames" />
+        <div className="framesGrid">
+          <FrameGallery svg="/frames/Frame 1.svg" photos={['/story/1.webp']} />
+          <FrameGallery svg="/frames/Frame 2.svg" photos={['/story/2.webp']} />
+          <FrameGallery svg="/frames/Frame 3.svg" photos={['/story/3.webp']} />
+          <FrameGallery svg="/frames/Frame 4.svg" photos={['/story/4.webp']} />
+          <FrameGallery svg="/frames/Frame 5.svg" photos={['/story/1.webp']} />
+          <FrameGallery svg="/frames/Frame 6.svg" photos={['/story/2.webp', '/story/3.webp', '/story/4.webp']} className="frameWide" />
+          <FrameGallery svg="/frames/Frame 7.svg" photos={['/story/2.webp']} />
+          <FrameGallery svg="/frames/Frame 8.svg" photos={['/story/1.webp', '/story/3.webp', '/story/4.webp']} className="frameWide" />
+        </div>
         <a href="#book" className="neonButton">See Availability</a>
       </section>
 

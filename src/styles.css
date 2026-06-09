@@ -734,12 +734,6 @@ h2 {
     0 0 2.2rem rgba(100, 244, 255, 0.28);
 }
 
-.framesSvg {
-  display: block;
-  width: clamp(16rem, 90vw, 90rem);
-  height: auto;
-  opacity: 0.3;
-}
 
 .neonButton {
   display: inline-flex;
@@ -812,10 +806,6 @@ h2 {
 }
 
 @media (max-width: 700px) {
-  .framesSvg {
-    width: 90vw;
-  }
-
   .menuScene {
     flex-direction: column;
   }
@@ -882,5 +872,75 @@ h2 {
   .photoImg {
     width: 100%;
     height: auto;
+  }
+}
+
+/* Lightbox */
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  cursor: zoom-out;
+}
+
+.lightboxImg {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  cursor: default;
+  display: block;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 0.25rem 0.5rem;
+}
+
+.lightboxClose:hover {
+  opacity: 1;
+}
+
+/* FrameGallery */
+.framesGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: clamp(16rem, 90vw, 90rem);
+}
+
+.frameGallery.frameWide {
+  grid-column: span 2;
+}
+
+.frameGallery svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 680px) {
+  .framesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 380px) {
+  .framesGrid {
+    grid-template-columns: 1fr;
+  }
+  .frameGallery.frameWide {
+    grid-column: span 1;
   }
 }
