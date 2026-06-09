@@ -1,0 +1,12 @@
+{
+  "name": "the-black-cap",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "lint:js": "wp-scripts lint-js"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^29.0.0"
+  }
+}

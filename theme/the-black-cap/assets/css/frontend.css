@@ -1,0 +1,794 @@
+:root {
+  color: #fff;
+  background: #000;
+  font-family:
+    Montserrat, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #000;
+  scroll-behavior: smooth;
+}
+
+body,
+#root,
+.page {
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.page {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #000;
+}
+
+/* ── Hero ───────────────────────────────────────────────────────── */
+.hero {
+  display: grid;
+  min-height: 100vh;
+  grid-template-rows: auto 1fr auto;
+  place-items: center;
+  padding: clamp(1.1rem, 3vw, 2.8rem);
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin-top: 0;
+}
+
+h1,
+h2 {
+  font-family: 'Train One', sans-serif;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: clamp(2rem, 7vw, 5.8rem);
+  line-height: 0.9;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.logoOrbit {
+  position: relative;
+  display: grid;
+  width: min(86vmin, 46rem);
+  aspect-ratio: 1;
+  place-items: center;
+}
+
+.logoButton {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(72vmin, 38rem);
+  aspect-ratio: 1;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  color: #fff;
+  background: transparent;
+  cursor: pointer;
+  transform-origin: 50% 100%;
+  transition: transform 460ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logoButton::before {
+  position: absolute;
+  width: 68%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 0 4rem rgba(100, 244, 255, 0.12),
+    0 0 6rem rgba(255, 49, 49, 0.1);
+  content: "";
+}
+
+.logoButton:focus-visible {
+  outline: 0.18rem solid #fff;
+  outline-offset: 0.45rem;
+}
+
+.flame {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.rainbowMenu {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.rainbowItem {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(7.5rem, 21vmin, 11rem);
+  min-height: 3.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform:
+    translate(-50%, -50%)
+    translate(0, 0)
+    scale(0.72);
+  border: 1px solid color-mix(in srgb, var(--item-color), #fff 22%);
+  border-radius: 999px;
+  color: #fff;
+  background-color: rgba(4, 4, 4, 0.88);
+  box-shadow:
+    0 0 1rem color-mix(in srgb, var(--item-color), transparent 42%),
+    inset 0 0 1.2rem color-mix(in srgb, var(--item-color), transparent 72%);
+  opacity: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 400;
+  text-align: center;
+  transition:
+    transform 480ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 240ms ease,
+    background-color 120ms ease,
+    color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.logoOrbit.isOpen .logoButton {
+  transform: scale(0.88);
+}
+
+.logoOrbit.isOpen .rainbowItem {
+  transform:
+    translate(-50%, -50%)
+    translate(var(--item-x), var(--item-y))
+    scale(1);
+  opacity: 1;
+  transition-delay: calc(var(--item-index) * 58ms), calc(var(--item-index) * 58ms), 0ms, 0ms, 0ms;
+}
+
+.rainbowItem:hover,
+.rainbowItem:focus-visible {
+  color: #000;
+  background-color: var(--item-color);
+  box-shadow:
+    0 0 1.6rem color-mix(in srgb, var(--item-color), transparent 25%),
+    inset 0 0 1.1rem rgba(255, 255, 255, 0.42);
+  outline: none;
+  transition-delay: 0ms;
+}
+
+.venueInfo {
+  display: flex;
+  width: min(100%, 70rem);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.venueInfo a {
+  min-height: 2.55rem;
+  padding: 0.72rem 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.92rem;
+}
+
+.venueInfo a:hover,
+.venueInfo a:focus-visible {
+  border-color: rgba(255, 255, 255, 0.7);
+  outline: none;
+}
+
+/* ── Story / Legendary ──────────────────────────────────────────── */
+.content {
+  position: relative;
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+}
+
+.legendaryScene {
+  display: flex;
+  align-items: flex-start;
+  gap: 0 clamp(2rem, 4vw, 3.5rem);
+}
+
+.reginaBlock {
+  flex-shrink: 0;
+  width: clamp(10.5rem, 22.5vw, 21rem);
+  margin-left: calc(-1 * clamp(1.15rem, 4vw, 4rem));
+}
+
+.reginaSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.legendaryRight {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: clamp(5rem, 18vw, 14rem);
+  flex: 1;
+}
+
+.legendaryTitle {
+  margin-bottom: 0;
+  font-family: 'Train One', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 0.85;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.legendaryCopy {
+  max-width: 38rem;
+  margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  line-height: 1.75;
+}
+
+.photoRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding-top: clamp(1.5rem, 3vw, 3rem);
+}
+
+.photoPlaceholder {
+  --photo-h: clamp(16rem, 38vh, 26rem);
+  flex: 0 0 auto;
+  height: calc(var(--photo-h) * var(--h-scale, 1));
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 2.5rem rgba(0, 0, 0, 0.6), 0 0.1rem 0.6rem rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.04);
+  will-change: transform;
+}
+
+.photoImg {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: clamp(2rem, 6vw, 4.6rem);
+  line-height: 0.94;
+  letter-spacing: 0;
+}
+
+/* ── What's On ──────────────────────────────────────────────────── */
+.whatsOn {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  background: #000;
+}
+
+.whatsOnInner {
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.whatsOnTitle {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.posterSlider {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+}
+
+.posterSlider::-webkit-scrollbar {
+  display: none;
+}
+
+.posterTrack {
+  display: flex;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  padding-right: clamp(1.15rem, 4vw, 4rem);
+}
+
+.posterCard {
+  flex: 0 0 auto;
+  width: clamp(11rem, 23vw, 19rem);
+  aspect-ratio: 2/3;
+  scroll-snap-align: start;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.instaWrapper {
+  flex: 0 0 auto;
+  width: clamp(20rem, 28vw, 26rem);
+  height: 34rem;
+  scroll-snap-align: start;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.instaEmbed {
+  margin-top: 4em;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ── Highlights / TikTok ────────────────────────────────────────── */
+.highlights {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  background: #000;
+}
+
+.highlightsInner {
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.highlightsTitle {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.highlightSlider {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+}
+
+.highlightSlider::-webkit-scrollbar {
+  display: none;
+}
+
+.highlightTrack {
+  display: flex;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  padding-right: clamp(1.15rem, 4vw, 4rem);
+}
+
+.highlightCard {
+  flex: 0 0 auto;
+  width: clamp(10rem, 38vmin, 20rem);
+  aspect-ratio: 9/16;
+  scroll-snap-align: start;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tiktokSlide {
+  flex: 0 0 auto;
+  width: clamp(20rem, 46vmin, 28rem);
+  aspect-ratio: 9/19;
+  scroll-snap-align: start;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  position: relative;
+  background: #000;
+}
+
+.tiktokEmbed {
+  margin-top: 4em;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ── Menu ───────────────────────────────────────────────────────── */
+.menuSection {
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+}
+
+.menuScene {
+  display: flex;
+  align-items: flex-start;
+  gap: 0 clamp(2rem, 4vw, 3.5rem);
+}
+
+.menuSvgBlock {
+  flex-shrink: 0;
+  width: clamp(10.5rem, 22.5vw, 21rem);
+  margin-left: calc(-1 * clamp(1.15rem, 4vw, 4rem));
+}
+
+.menuSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.menuRight {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: clamp(3rem, 10vw, 8rem);
+  flex: 1;
+  max-width: 42rem;
+}
+
+.menuHeadline {
+  margin: 0;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 0.85;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.menuList {
+  display: grid;
+  gap: 2rem;
+}
+
+.menuCategory {
+  display: grid;
+}
+
+.menuCategoryName {
+  margin: 0 0 0.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.menuItemName {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.95rem;
+}
+
+.menuItemPrice {
+  flex-shrink: 0;
+  color: #64f4ff;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* ── Our Rooms ──────────────────────────────────────────────────── */
+.roomsSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2rem, 4vw, 3rem);
+  padding: clamp(3rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+  text-align: center;
+}
+
+.roomsHeadline {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.neonButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.2rem;
+  padding: 0.85rem 2.2rem;
+  border: 1px solid rgba(100, 244, 255, 0.7);
+  border-radius: 999px;
+  color: #64f4ff;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow:
+    0 0 1.2rem rgba(100, 244, 255, 0.25),
+    inset 0 0 1.2rem rgba(100, 244, 255, 0.08);
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.neonButton:hover,
+.neonButton:focus-visible {
+  color: #000;
+  background: #64f4ff;
+  border-color: #64f4ff;
+  box-shadow:
+    0 0 2rem rgba(100, 244, 255, 0.55),
+    inset 0 0 1rem rgba(255, 255, 255, 0.3);
+  outline: none;
+}
+
+/* ── FrameGallery ───────────────────────────────────────────────── */
+.framesGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: clamp(16rem, 90vw, 90rem);
+}
+
+.frameGallery.frameWide {
+  grid-column: span 2;
+}
+
+.frameGallery svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ── Lightbox ───────────────────────────────────────────────────── */
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  cursor: zoom-out;
+}
+
+.lightboxImg {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  cursor: default;
+  display: block;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 0.25rem 0.5rem;
+}
+
+.lightboxClose:hover {
+  opacity: 1;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+.siteFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding: clamp(1.8rem, 4vw, 2.8rem) clamp(1.15rem, 4vw, 4rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.4rem;
+}
+
+.footerLinks a {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.78rem;
+  transition: color 120ms ease;
+}
+
+.footerLinks a:hover,
+.footerLinks a:focus-visible {
+  color: rgba(255, 255, 255, 0.88);
+  outline: none;
+}
+
+.footerCopy {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 0.75rem;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (min-width: 860px) {
+  .flame {
+    margin: 4em 0 2em;
+  }
+}
+
+@media (max-width: 860px) {
+  .hero {
+    min-height: 96vh;
+  }
+
+  .logoOrbit {
+    width: min(92vmin, 33rem);
+  }
+
+  .logoButton {
+    width: min(82vmin, 29rem);
+  }
+
+  .logoOrbit.isOpen .logoButton {
+    transform: scale(0.76);
+  }
+
+  .logoOrbit.isOpen .rainbowItem {
+    transform:
+      translate(-50%, -50%)
+      translate(var(--mobile-item-x), var(--mobile-item-y))
+      scale(1);
+  }
+
+  .rainbowItem {
+    width: clamp(6.3rem, 28vmin, 8.6rem);
+    min-height: 2.9rem;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.74rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .menuScene {
+    flex-direction: column;
+  }
+
+  .menuSvgBlock {
+    width: clamp(7rem, 36vw, 12rem);
+  }
+
+  .menuRight {
+    width: 100%;
+    padding-top: 0;
+    margin-top: -2rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .framesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .hero {
+    grid-template-rows: auto auto auto;
+    align-content: center;
+  }
+
+  .logoOrbit {
+    margin-block: 0.25rem;
+  }
+
+  .venueInfo {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .venueInfo a {
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+
+  .legendaryScene {
+    flex-direction: column;
+  }
+
+  .reginaBlock {
+    width: clamp(9rem, 48vw, 14rem);
+  }
+
+  .legendaryRight {
+    padding-top: 1.5rem;
+  }
+
+  .photoRow {
+    flex-direction: column;
+  }
+
+  .photoPlaceholder {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .photoImg {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .framesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .frameGallery.frameWide {
+    grid-column: span 1;
+  }
+}
+
+/* ── WordPress admin bar offset ─────────────────────────────────── */
+.admin-bar .hero {
+  padding-top: calc(clamp(1.1rem, 3vw, 2.8rem) + 32px);
+}
