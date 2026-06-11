@@ -7,6 +7,7 @@ defined( 'ABSPATH' ) || exit;
  * @param string|null $theme_uri  Override the theme URI (used by the setup CLI script).
  * @return string  Serialised block HTML ready for post_content.
  */
+if ( ! function_exists( 'tbc_front_page_pattern_content' ) ) :
 function tbc_front_page_pattern_content( $theme_uri = null ) {
 	if ( ! $theme_uri ) {
 		$theme_uri = get_template_directory_uri();
@@ -101,6 +102,7 @@ function tbc_front_page_pattern_content( $theme_uri = null ) {
 
 	return implode( "\n\n", $blocks );
 }
+endif;
 
 /* ── Block pattern registration ───────────────────────────────── */
 add_action( 'init', function () {
