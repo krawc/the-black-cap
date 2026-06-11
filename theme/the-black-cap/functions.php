@@ -2,6 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/inc/settings-page.php';
+require_once __DIR__ . '/inc/block-patterns.php';
 
 /* ── Theme setup ──────────────────────────────────────────────── */
 add_action( 'after_setup_theme', function () {

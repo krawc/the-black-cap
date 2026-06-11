@@ -24,7 +24,11 @@ theme/the-black-cap/
 │       ├── regina.svg                  Decorative left-side image in Story section
 │       └── frames/Frame {1-8}.svg      SVG photo-frame shapes used by Our Rooms
 ├── inc/
-│   └── settings-page.php      WP admin settings page for API keys + cache clearing
+│   ├── settings-page.php      WP admin settings page for API keys + cache clearing
+│   └── block-patterns.php     Registers the front-page block pattern; exports tbc_front_page_pattern_content()
+├── setup/
+│   ├── setup.php              WP-CLI eval-file script — creates the page, menus, and sets front page
+│   └── run.sh                 Convenience wrapper: runs setup.php inside wp-env
 └── src/blocks/                Block source (compiled to build/blocks/ by wp-scripts)
     ├── hero-nav/
     ├── whats-on/
@@ -52,6 +56,32 @@ Each block lives in `src/blocks/{name}/` with:
 - `render.php`  — server-side PHP render (the actual frontend HTML)
 
 `wp-scripts build` compiles and copies everything to `build/blocks/`. `functions.php` auto-registers all blocks found in `build/blocks/*/block.json`.
+
+## Automated setup (recommended)
+
+After `wp-env start`, a single script creates the front page, populates all six blocks with the full site content, and sets up both nav menus:
+
+```bash
+bash theme/the-black-cap/setup/run.sh
+```
+
+The script (`setup/setup.php`) uses WP-CLI inside the container to:
+1. Create (or update) a **Home** page whose `post_content` is pre-filled with all six blocks and their data from the original React app.
+2. Set it as the static front page (`show_on_front = page`).
+3. Create a **Primary Navigation** menu (5 items with in-page anchor URLs) and assign it to the `primary` location.
+4. Create a **Footer Links** menu (Privacy Policy, Cookie Policy, Terms, Accessibility) and assign it to the `footer` location.
+5. Activate the theme if not already active.
+
+Re-running the script is safe — it updates the existing page instead of creating a duplicate, and skips menus that already exist.
+
+### Manual alternative — block pattern
+
+If you prefer to build the page manually in the editor, the same content is also registered as a block pattern:
+
+1. Create a new page.
+2. Open the block inserter → **Patterns** tab → **The Black Cap** category.
+3. Insert **Black Cap – Full Front Page**.
+4. Publish, then set the page as the static front page in Settings → Reading.
 
 ## Installation
 
