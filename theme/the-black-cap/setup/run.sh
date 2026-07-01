@@ -50,8 +50,22 @@ fi
 # ── Run setup inside wp-env ────────────────────────────────────────
 cd "$REPO_ROOT"
 echo "→ Running setup inside wp-env…"
-wp-env run cli wp eval-file \
-  /var/www/html/wp-content/themes/the-black-cap/setup/setup.php
+
+# Recent wp-env versions use `docker compose exec` for `wp-env run cli`,
+# which fails because the cli service is ephemeral (never persistently running).
+# Work around it by calling `docker compose run` directly on the compose file
+# wp-env generated for this project.
+WP_ENV_COMPOSE=$(grep -rl "the-black-cap" "$HOME/.wp-env" \
+  --include="docker-compose.yml" 2>/dev/null | head -1)
+
+if [[ -n "$WP_ENV_COMPOSE" ]]; then
+  docker compose -f "$WP_ENV_COMPOSE" run --rm cli wp eval-file \
+    /var/www/html/wp-content/themes/the-black-cap/setup/setup.php
+else
+  # Fallback for older wp-env that supports run correctly
+  wp-env run cli wp eval-file \
+    /var/www/html/wp-content/themes/the-black-cap/setup/setup.php
+fi
 
 echo ""
 echo "→ Done."

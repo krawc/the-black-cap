@@ -34,8 +34,8 @@ function tbc_front_page_pattern_content( $theme_uri = null ) {
 		] ),
 
 		$b( 'whats-on', [
-			'shortcodes' => 'DX_5LwekcVa,DYzKkfHMC7z,DYxiCs7x4rm,DYxhePkxa1n,DYxgzTsRa8A,DYxgfJNR2pn,DYfNVZ_De71,DYfNPIKFP5e',
-			'limit'      => 8,
+			'eventIds' => '',
+			'limit'    => 8,
 		] ),
 
 		$b( 'story', [

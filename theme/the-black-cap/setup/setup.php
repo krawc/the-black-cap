@@ -244,8 +244,8 @@ if ( $front_page && 'page' === $front_page->post_type ) {
 		] ),
 
 		$b( 'whats-on', [
-			'shortcodes' => 'DX_5LwekcVa,DYzKkfHMC7z,DYxiCs7x4rm,DYxhePkxa1n,DYxgzTsRa8A,DYxgfJNR2pn,DYfNVZ_De71,DYfNPIKFP5e',
-			'limit'      => 8,
+			'eventIds' => '',
+			'limit'    => 8,
 		] ),
 
 		$b( 'story', [
@@ -365,7 +365,20 @@ $setup_menu( 'Footer Links', 'footer', [
 ] );
 
 /* ══════════════════════════════════════════════════════════════════
-   §6  ACTIVATE THEME
+   §6  API DEFAULTS
+   ══════════════════════════════════════════════════════════════════ */
+
+// Pre-seed the Eventbrite org ID so the What's On block works as soon
+// as an API token is added in Settings → Black Cap.
+if ( ! get_option( 'tbc_eventbrite_org_id' ) ) {
+	update_option( 'tbc_eventbrite_org_id', '3005226258349' );
+	WP_CLI::success( "Set Eventbrite org ID → 3005226258349. Add your API token in Settings → Black Cap." );
+} else {
+	WP_CLI::log( '  Eventbrite org ID already set — skipping.' );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   §7  ACTIVATE THEME
    ══════════════════════════════════════════════════════════════════ */
 
 if ( 'the-black-cap' !== get_option( 'stylesheet' ) ) {

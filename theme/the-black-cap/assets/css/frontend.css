@@ -347,20 +347,296 @@ h2 {
   background: rgba(255, 255, 255, 0.04);
 }
 
-.instaWrapper {
+.eventCard {
   flex: 0 0 auto;
-  width: clamp(20rem, 28vw, 26rem);
-  height: 34rem;
+  width: clamp(13rem, 20vw, 18rem);
   scroll-snap-align: start;
   border-radius: 0.75rem;
   overflow: hidden;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  outline: none;
 }
 
-.instaEmbed {
-  margin-top: 4em;
+.eventCard:hover,
+.eventCard:focus-visible {
+  border-color: rgba(214, 92, 255, 0.7);
+  box-shadow: 0 0 1.4rem rgba(214, 92, 255, 0.22);
+}
+
+.eventCard__img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+
+.eventCard__img--empty {
+  background: linear-gradient(145deg, rgba(214, 92, 255, 0.06), rgba(63, 124, 255, 0.06));
+}
+
+.eventCard__img img {
   width: 100%;
   height: 100%;
-  border: none;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.eventCard:hover .eventCard__img img {
+  transform: scale(1.05);
+}
+
+.eventCard__body {
+  padding: 0.9rem 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.eventCard__date {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64F4FF;
+}
+
+.eventCard__title {
+  margin: 0;
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+  line-height: 1.2;
+  color: #fff;
+  font-family: 'Train One', cursive;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.eventCard__excerpt {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: 'Montserrat', sans-serif;
+  flex: 1;
+}
+
+.eventCard__tickets {
+  margin-top: 0.65rem;
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.42rem 1.1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #FFF84A;
+  border: 1.5px solid #FFF84A;
+  border-radius: 2rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.eventCard__tickets:hover {
+  background: #FFF84A;
+  color: #000;
+}
+
+/* ── Event detail modal ──────────────────────────────────────────── */
+.eventModal {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.75rem, 3vw, 2rem);
+}
+
+.eventModal[hidden] {
+  display: none;
+}
+
+.eventModal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.eventModal__panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  background: #0d0d0d;
+  border: 1px solid rgba(214, 92, 255, 0.3);
+  border-radius: 1rem;
+  box-shadow: 0 0 4rem rgba(214, 92, 255, 0.15), 0 2rem 4rem rgba(0, 0, 0, 0.6);
+  max-width: 58rem;
+  width: 100%;
+  max-height: 88vh;
+  overflow: hidden;
+}
+
+.eventModal__close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 50%;
+  width: 2.1rem;
+  height: 2.1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  line-height: 1;
+}
+
+.eventModal__close:hover {
+  background: rgba(214, 92, 255, 0.35);
+}
+
+.eventModal__img {
+  flex: 0 0 38%;
+  overflow: hidden;
+}
+
+.eventModal__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.eventModal__body {
+  flex: 1;
+  padding: 2.25rem 3.5rem 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+.eventModal__date {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #64F4FF;
+}
+
+.eventModal__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  line-height: 1.08;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow:
+    0 0 1.5rem rgba(214, 92, 255, 0.45),
+    0 0 3rem rgba(100, 244, 255, 0.18);
+}
+
+.eventModal__desc {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: 'Montserrat', sans-serif;
+  flex: 1;
+}
+
+.eventModal__tickets {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.65rem 2rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #FFF84A;
+  border: 2px solid #FFF84A;
+  border-radius: 2rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.eventModal__tickets:hover {
+  background: #FFF84A;
+  color: #000;
+}
+
+.eventModal__share {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.shareBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  border-radius: 2rem;
+  border: 1.5px solid;
+  transition: opacity 0.2s;
+}
+
+.shareBtn:hover {
+  opacity: 0.7;
+}
+
+.shareBtn--whatsapp {
+  color: #25D366;
+  border-color: #25D366;
+}
+
+.shareBtn--messenger {
+  color: #0099FF;
+  border-color: #0099FF;
+}
+
+.shareBtn--email {
+  color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+@media (max-width: 680px) {
+  .eventModal__panel {
+    flex-direction: column;
+    max-height: 90vh;
+  }
+
+  .eventModal__img {
+    flex: 0 0 auto;
+    max-width: 100%;
+    height: 42vw;
+  }
+
+  .eventModal__body {
+    padding: 1.4rem 1.25rem;
+    overflow-y: auto;
+  }
 }
 
 /* ── Highlights / TikTok ────────────────────────────────────────── */

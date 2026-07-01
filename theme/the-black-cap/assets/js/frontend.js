@@ -164,3 +164,110 @@
 
   document.querySelectorAll('.frameGallery[data-svg]').forEach(initFrame);
 })();
+
+/* ── Event card modal ───────────────────────────────────────────── */
+(function () {
+  'use strict';
+
+  var modal = null;
+
+  var MODAL_HTML = [
+    '<div class="eventModal" id="tbc-event-modal" role="dialog" aria-modal="true" aria-label="Event details" hidden>',
+    '  <div class="eventModal__backdrop"></div>',
+    '  <div class="eventModal__panel">',
+    '    <button class="eventModal__close" aria-label="Close">&#x2715;</button>',
+    '    <div class="eventModal__img"><img src="" alt="" loading="eager"></div>',
+    '    <div class="eventModal__body">',
+    '      <time class="eventModal__date"></time>',
+    '      <h2 class="eventModal__title"></h2>',
+    '      <p class="eventModal__desc"></p>',
+    '      <a class="eventModal__tickets" href="#" target="_blank" rel="noopener noreferrer">Get Tickets</a>',
+    '      <div class="eventModal__share">',
+    '        <a class="shareBtn shareBtn--whatsapp" href="#" target="_blank" rel="noopener noreferrer">WhatsApp</a>',
+    '        <a class="shareBtn shareBtn--messenger" href="#" target="_blank" rel="noopener noreferrer">Messenger</a>',
+    '        <a class="shareBtn shareBtn--email" href="#">Email</a>',
+    '      </div>',
+    '    </div>',
+    '  </div>',
+    '</div>',
+  ].join('\n');
+
+  function ensureModal() {
+    if (modal) return;
+    document.body.insertAdjacentHTML('beforeend', MODAL_HTML);
+    modal = document.getElementById('tbc-event-modal');
+    modal.querySelector('.eventModal__backdrop').addEventListener('click', closeModal);
+    modal.querySelector('.eventModal__close').addEventListener('click', closeModal);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal && !modal.hidden) closeModal();
+    });
+  }
+
+  function openModal(card) {
+    ensureModal();
+
+    var title = card.dataset.title || '';
+    var desc  = card.dataset.desc  || '';
+    var url   = card.dataset.url   || '#';
+    var img   = card.dataset.img   || '';
+    var date  = card.dataset.date  || '';
+
+    modal.querySelector('.eventModal__title').textContent = title;
+    modal.querySelector('.eventModal__desc').textContent  = desc;
+
+    var dateEl = modal.querySelector('.eventModal__date');
+    dateEl.textContent = date;
+    dateEl.hidden = !date;
+
+    var imgWrap = modal.querySelector('.eventModal__img');
+    var imgEl   = imgWrap.querySelector('img');
+    if (img) {
+      imgEl.src = img;
+      imgEl.alt = title;
+      imgWrap.hidden = false;
+    } else {
+      imgWrap.hidden = true;
+    }
+
+    modal.querySelector('.eventModal__tickets').href = url;
+
+    var enc = encodeURIComponent;
+    modal.querySelector('.shareBtn--whatsapp').href  =
+      'https://wa.me/?text=' + enc(title + '\n' + url);
+    modal.querySelector('.shareBtn--messenger').href =
+      'fb-messenger://share/?link=' + enc(url);
+    modal.querySelector('.shareBtn--email').href     =
+      'mailto:?subject=' + enc(title) + '&body=' + enc(desc.slice(0, 300) + '\n\n' + url);
+
+    modal.hidden = false;
+    document.documentElement.style.overflow = 'hidden';
+    modal.querySelector('.eventModal__close').focus();
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.hidden = true;
+    document.documentElement.style.overflow = '';
+  }
+
+  function initCards() {
+    document.querySelectorAll('.eventCard').forEach(function (card) {
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('.eventCard__tickets')) return;
+        openModal(card);
+      });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(card);
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCards);
+  } else {
+    initCards();
+  }
+})();

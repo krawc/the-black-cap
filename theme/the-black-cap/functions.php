@@ -51,7 +51,7 @@ add_action( 'enqueue_block_editor_assets', function () {
 /* ── Cache-busting AJAX for settings page ─────────────────────── */
 add_action( 'wp_ajax_tbc_clear_cache', function () {
 	check_ajax_referer( 'tbc_clear_cache' );
-	delete_transient( 'tbc_instagram_posts' );
+	delete_transient( 'tbc_eventbrite_events' );
 	delete_transient( 'tbc_tiktok_videos' );
 	wp_send_json_success( __( 'Cache cleared.', 'the-black-cap' ) );
 } );

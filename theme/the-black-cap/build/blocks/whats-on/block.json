@@ -2,18 +2,18 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
   "name": "the-black-cap/whats-on",
-  "title": "What's On (Instagram)",
-  "description": "Horizontal scroll slider of Instagram post embeds. Auto-fetches via Meta Graph API when credentials are set in Settings → Black Cap; falls back to manual shortcodes.",
+  "title": "What's On (Eventbrite)",
+  "description": "Horizontal scroll slider of upcoming events fetched from Eventbrite. Credentials are configured in Settings → Black Cap.",
   "category": "theme",
-  "icon": "instagram",
+  "icon": "calendar",
   "supports": {
     "html": false
   },
   "attributes": {
-    "shortcodes": {
+    "eventIds": {
       "type": "string",
       "default": "",
-      "description": "Comma-separated Instagram post shortcodes used as fallback when no API token is configured."
+      "description": "Comma-separated Eventbrite event IDs used as fallback when no API token is configured."
     },
     "limit": {
       "type": "integer",
