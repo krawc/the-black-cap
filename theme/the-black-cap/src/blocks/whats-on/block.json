@@ -13,7 +13,7 @@
       "default": "",
       "description": "Comma-separated Eventbrite event IDs used as fallback when no API token is configured."
     },
-    "limit": { "type": "integer", "default": 8 }
+    "limit": { "type": "integer", "default": 10 }
   },
   "editorScript": "file:./index.js",
   "render": "file:./render.php"

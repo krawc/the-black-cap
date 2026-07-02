@@ -449,6 +449,20 @@ h2 {
   color: #000;
 }
 
+.eventCard__tickets--past {
+  color: rgba(255, 255, 255, 0.45);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.eventCard__tickets--past:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.eventCard--past .eventCard__img img {
+  filter: saturate(0.55) brightness(0.85);
+}
+
 /* ── Event detail modal ──────────────────────────────────────────── */
 .eventModal {
   position: fixed;

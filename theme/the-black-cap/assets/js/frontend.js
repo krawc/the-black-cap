@@ -229,15 +229,24 @@
       imgWrap.hidden = true;
     }
 
-    modal.querySelector('.eventModal__tickets').href = url;
+    var isPast = card.dataset.past === '1';
 
-    var enc = encodeURIComponent;
-    modal.querySelector('.shareBtn--whatsapp').href  =
-      'https://wa.me/?text=' + enc(title + '\n' + url);
-    modal.querySelector('.shareBtn--messenger').href =
-      'fb-messenger://share/?link=' + enc(url);
-    modal.querySelector('.shareBtn--email').href     =
-      'mailto:?subject=' + enc(title) + '&body=' + enc(desc.slice(0, 300) + '\n\n' + url);
+    var ticketsEl = modal.querySelector('.eventModal__tickets');
+    ticketsEl.href        = url;
+    ticketsEl.textContent = isPast ? 'View Event' : 'Get Tickets';
+
+    var shareEl = modal.querySelector('.eventModal__share');
+    shareEl.hidden = isPast;
+
+    if (!isPast) {
+      var enc = encodeURIComponent;
+      modal.querySelector('.shareBtn--whatsapp').href  =
+        'https://wa.me/?text=' + enc(title + '\n' + url);
+      modal.querySelector('.shareBtn--messenger').href =
+        'fb-messenger://share/?link=' + enc(url);
+      modal.querySelector('.shareBtn--email').href     =
+        'mailto:?subject=' + enc(title) + '&body=' + enc(desc.slice(0, 300) + '\n\n' + url);
+    }
 
     modal.hidden = false;
     document.documentElement.style.overflow = 'hidden';

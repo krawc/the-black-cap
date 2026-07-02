@@ -11,7 +11,7 @@ if ( ! function_exists( 'tbc_format_event_date' ) ) {
 	}
 }
 
-$limit  = max( 1, (int) ( $attributes['limit'] ?? 8 ) );
+$limit  = max( 1, (int) ( $attributes['limit'] ?? 10 ) );
 $events = [];
 
 $token  = get_option( 'tbc_eventbrite_token' );
@@ -21,10 +21,12 @@ if ( $token && $org_id ) {
 	$cached = get_transient( 'tbc_eventbrite_events' );
 
 	if ( false === $cached ) {
+		// Fetch all events (no time_filter), most recent first.
+		// Request double the limit so deduplication never undershoots.
 		$url = add_query_arg( [
-			'expand'      => 'logo',
-			'order_by'    => 'start_asc',
-			'time_filter' => 'current_future',
+			'expand'    => 'logo',
+			'order_by'  => 'start_desc',
+			'page_size' => 50,
 		], "https://www.eventbriteapi.com/v3/organizations/{$org_id}/events/" );
 
 		$response = wp_remote_get( $url, [
@@ -41,18 +43,27 @@ if ( $token && $org_id ) {
 		}
 	}
 
-	$events = $cached ?: [];
+	// Deduplicate by event ID (guards against the API returning repeats).
+	$seen = [];
+	foreach ( $cached ?: [] as $ev ) {
+		$id = $ev['id'] ?? '';
+		if ( $id === '' || isset( $seen[ $id ] ) ) continue;
+		$seen[ $id ] = true;
+		$events[]    = $ev;
+	}
 }
 
 // Fallback to manually entered Eventbrite event IDs.
 if ( empty( $events ) && ! empty( $attributes['eventIds'] ) ) {
 	foreach ( array_filter( array_map( 'trim', explode( ',', $attributes['eventIds'] ) ) ) as $eid ) {
 		$events[] = [
+			'id'          => $eid,
 			'name'        => [ 'text' => 'Event #' . $eid ],
 			'description' => [ 'text' => '' ],
 			'summary'     => '',
 			'url'         => 'https://www.eventbrite.co.uk/e/' . $eid,
-			'start'       => [ 'local' => '' ],
+			'start'       => [ 'local' => '', 'utc' => '' ],
+			'end'         => [ 'utc' => '' ],
 			'logo'        => null,
 		];
 	}
@@ -75,13 +86,22 @@ $events = array_slice( $events, 0, $limit );
 					$img        = $ev['logo']['original']['url'] ?? $ev['logo']['url'] ?? '';
 					$date       = tbc_format_event_date( $ev['start']['local'] ?? '' );
 					$short_desc = substr( $full_desc, 0, 600 );
+
+					// A past event = end time has already passed (UTC comparison).
+					$end_utc = $ev['end']['utc'] ?? '';
+					$is_past = $end_utc && ( strtotime( $end_utc ) < time() );
+
+					$btn_label = $is_past
+						? esc_html__( 'View Event', 'the-black-cap' )
+						: esc_html__( 'Get Tickets', 'the-black-cap' );
 			?>
-			<article class="eventCard"
+			<article class="eventCard<?php echo $is_past ? ' eventCard--past' : ''; ?>"
 				data-title="<?php echo esc_attr( $title ); ?>"
 				data-desc="<?php echo esc_attr( $short_desc ); ?>"
 				data-url="<?php echo esc_attr( $url ); ?>"
 				data-img="<?php echo esc_attr( $img ); ?>"
 				data-date="<?php echo esc_attr( $date ); ?>"
+				data-past="<?php echo $is_past ? '1' : ''; ?>"
 				tabindex="0"
 				role="button"
 				aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'the-black-cap' ), $title ) ); ?>"
@@ -99,12 +119,12 @@ $events = array_slice( $events, 0, $limit );
 					<?php if ( $excerpt ) : ?>
 					<p class="eventCard__excerpt"><?php echo esc_html( $excerpt ); ?></p>
 					<?php endif; ?>
-					<a class="eventCard__tickets"
+					<a class="eventCard__tickets<?php echo $is_past ? ' eventCard__tickets--past' : ''; ?>"
 						href="<?php echo esc_url( $url ); ?>"
 						target="_blank"
 						rel="noopener noreferrer"
 						onclick="event.stopPropagation()"
-					><?php esc_html_e( 'Get Tickets', 'the-black-cap' ); ?></a>
+					><?php echo $btn_label; ?></a>
 				</div>
 			</article>
 			<?php endforeach;
