@@ -34,7 +34,20 @@ add_action( 'wp_enqueue_scripts', function () {
 		null
 	);
 	wp_enqueue_style( 'tbc-frontend', get_template_directory_uri() . '/assets/css/frontend.css', [], '1.0.0' );
-	wp_enqueue_script( 'tbc-frontend', get_template_directory_uri() . '/assets/js/frontend.js', [], '1.0.0', true );
+	wp_enqueue_script(
+		'tbc-icons',
+		get_template_directory_uri() . '/assets/js/icons.js',
+		[],
+		filemtime( get_template_directory() . '/assets/js/icons.js' ),
+		true
+	);
+	wp_enqueue_script(
+		'tbc-frontend',
+		get_template_directory_uri() . '/assets/js/frontend.js',
+		[ 'tbc-icons' ],
+		'1.0.0',
+		true
+	);
 } );
 
 /* ── Editor assets ────────────────────────────────────────────── */

@@ -171,6 +171,8 @@
 
   var modal = null;
 
+  var ICONS = window.TBC_ICONS || {};
+
   var MODAL_HTML = [
     '<div class="eventModal" id="tbc-event-modal" role="dialog" aria-modal="true" aria-label="Event details" hidden>',
     '  <div class="eventModal__backdrop"></div>',
@@ -179,13 +181,13 @@
     '    <div class="eventModal__img"><img src="" alt="" loading="eager"></div>',
     '    <div class="eventModal__body">',
     '      <time class="eventModal__date"></time>',
-    '      <h2 class="eventModal__title"></h2>',
+    '      <h3 class="eventModal__title"></h3>',
     '      <p class="eventModal__desc"></p>',
-    '      <a class="eventModal__tickets" href="#" target="_blank" rel="noopener noreferrer">Get Tickets</a>',
-    '      <div class="eventModal__share">',
-    '        <a class="shareBtn shareBtn--whatsapp" href="#" target="_blank" rel="noopener noreferrer">WhatsApp</a>',
-    '        <a class="shareBtn shareBtn--messenger" href="#" target="_blank" rel="noopener noreferrer">Messenger</a>',
-    '        <a class="shareBtn shareBtn--email" href="#">Email</a>',
+    '      <div class="eventModal__actions">',
+    '        <a class="eventModal__tickets" href="#" target="_blank" rel="noopener noreferrer">Get Tickets</a>',
+    '        <a class="shareBtn shareBtn--whatsapp" href="#" target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp"></a>',
+    '        <a class="shareBtn shareBtn--messenger" href="#" target="_blank" rel="noopener noreferrer" aria-label="Share on Messenger"></a>',
+    '        <a class="shareBtn shareBtn--email" href="#" aria-label="Share via Email"></a>',
     '      </div>',
     '    </div>',
     '  </div>',
@@ -196,6 +198,12 @@
     if (modal) return;
     document.body.insertAdjacentHTML('beforeend', MODAL_HTML);
     modal = document.getElementById('tbc-event-modal');
+
+    // Inject SVG icons once
+    modal.querySelector('.shareBtn--whatsapp').innerHTML = ICONS.whatsapp;
+    modal.querySelector('.shareBtn--messenger').innerHTML = ICONS.messenger;
+    modal.querySelector('.shareBtn--email').innerHTML    = ICONS.email;
+
     modal.querySelector('.eventModal__backdrop').addEventListener('click', closeModal);
     modal.querySelector('.eventModal__close').addEventListener('click', closeModal);
     document.addEventListener('keydown', function (e) {
@@ -211,6 +219,7 @@
     var url   = card.dataset.url   || '#';
     var img   = card.dataset.img   || '';
     var date  = card.dataset.date  || '';
+    var isPast = card.dataset.past === '1';
 
     modal.querySelector('.eventModal__title').textContent = title;
     modal.querySelector('.eventModal__desc').textContent  = desc;
@@ -219,32 +228,50 @@
     dateEl.textContent = date;
     dateEl.hidden = !date;
 
+    // Image with preloader — hide first, fade in once loaded
     var imgWrap = modal.querySelector('.eventModal__img');
     var imgEl   = imgWrap.querySelector('img');
+
+    imgEl.style.opacity = '0';
+    imgEl.src = '';                                // clear previous immediately
+    imgWrap.classList.remove('eventModal__img--loading');
+
     if (img) {
-      imgEl.src = img;
-      imgEl.alt = title;
       imgWrap.hidden = false;
+      imgWrap.classList.add('eventModal__img--loading');
+
+      imgEl.onload = function () {
+        imgWrap.classList.remove('eventModal__img--loading');
+        imgEl.style.opacity = '1';
+      };
+      imgEl.onerror = function () {
+        imgWrap.classList.remove('eventModal__img--loading');
+        imgWrap.hidden = true;
+      };
+
+      imgEl.alt = title;
+      imgEl.src = img;
     } else {
       imgWrap.hidden = true;
     }
 
-    var isPast = card.dataset.past === '1';
-
+    // Tickets button
     var ticketsEl = modal.querySelector('.eventModal__tickets');
     ticketsEl.href        = url;
     ticketsEl.textContent = isPast ? 'View Event' : 'Get Tickets';
 
-    var shareEl = modal.querySelector('.eventModal__share');
-    shareEl.hidden = isPast;
+    // Share buttons — hidden for past events
+    modal.querySelectorAll('.shareBtn').forEach(function (el) {
+      el.hidden = isPast;
+    });
 
     if (!isPast) {
       var enc = encodeURIComponent;
-      modal.querySelector('.shareBtn--whatsapp').href  =
+      modal.querySelector('.shareBtn--whatsapp').href =
         'https://wa.me/?text=' + enc(title + '\n' + url);
       modal.querySelector('.shareBtn--messenger').href =
         'fb-messenger://share/?link=' + enc(url);
-      modal.querySelector('.shareBtn--email').href     =
+      modal.querySelector('.shareBtn--email').href =
         'mailto:?subject=' + enc(title) + '&body=' + enc(desc.slice(0, 300) + '\n\n' + url);
     }
 
@@ -257,6 +284,9 @@
     if (!modal) return;
     modal.hidden = true;
     document.documentElement.style.overflow = '';
+    // Clear image so there's no flash on next open
+    var imgEl = modal.querySelector('.eventModal__img img');
+    if (imgEl) { imgEl.src = ''; imgEl.style.opacity = '0'; }
   }
 
   function initCards() {

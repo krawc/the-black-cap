@@ -2,11 +2,14 @@
   "name": "the-black-cap",
   "version": "1.0.0",
   "scripts": {
-    "build": "wp-scripts build",
+    "build": "wp-scripts build && node scripts/extract-icons.cjs",
+    "build:icons": "node scripts/extract-icons.cjs",
     "start": "wp-scripts start",
     "lint:js": "wp-scripts lint-js"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^26.0.0"
+    "@wordpress/scripts": "^26.0.0",
+    "lucide-static": "^1.23.0",
+    "simple-icons": "^16.24.1"
   }
 }
