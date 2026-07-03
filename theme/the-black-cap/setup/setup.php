@@ -130,9 +130,8 @@ function tbc_upload_timeline_image( string $src, int $slot ): int {
 	return $id;
 }
 
-// Pass --skip-rooms after the script path to skip the room image import entirely:
-//   wp eval-file setup.php -- --skip-rooms
-$skip_rooms = in_array( '--skip-rooms', $GLOBALS['argv'] ?? [], true );
+// Set by run.sh via docker -e TBC_SKIP_ROOMS=1 to skip the room image import.
+$skip_rooms = ! empty( getenv( 'TBC_SKIP_ROOMS' ) );
 
 // Collect staged images (alphabetical → deterministic slot order)
 $import_dir = __DIR__ . '/import-images';
@@ -244,57 +243,57 @@ $paras = static function ( string ...$ps ): string {
 };
 
 $timeline_attrs = [
-	‘introText’  => ‘’,
-	‘timestamps’ => [
+	'introText'  => '',
+	'timestamps' => [
 		[
-			‘id’          => ‘ts-1’,
-			‘years’       => ‘1751–1960’,
-			‘title’       => ‘WITCHES & THE START OF SOMETHING SPECIAL’,
-			‘description’ => $paras(
-				“The Black Cap’s story begins way back in 1751, when it first opened as the Mother Black Cap. Local Camden folklore says it was named after a witch – \u{201C}Mother Damnable\u{201D} – who was said to curse anyone who crossed her. By 1781, the pub had moved to its current spot on Camden High Street, and in 1889 it was rebuilt into the Victorian building you see today. If you look up, you’ll spot her: a stone bust of Mother Black Cap, still watching over the door like she has for over a century.”
+			'id'          => 'ts-1',
+			'years'       => '1751–1960',
+			'title'       => 'WITCHES & THE START OF SOMETHING SPECIAL',
+			'description' => $paras(
+				"The Black Cap's story begins way back in 1751, when it first opened as the Mother Black Cap. Local Camden folklore says it was named after a witch – “Mother Damnable” – who was said to curse anyone who crossed her. By 1781, the pub had moved to its current spot on Camden High Street, and in 1889 it was rebuilt into the Victorian building you see today. If you look up, you'll spot her: a stone bust of Mother Black Cap, still watching over the door like she has for over a century."
 			),
-			‘imageIds’    => array_values( array_filter( [ $tl_id(1) ] ) ),
+			'imageIds'    => array_values( array_filter( [ $tl_id(1) ] ) ),
 		],
 		[
-			‘id’          => ‘ts-2’,
-			‘years’       => ‘1960s’,
-			‘title’       => ‘FROM LOCAL TO QUEER HEAVEN’,
-			‘description’ => $paras(
-				“In the 1960s, long before it was legal to be openly gay in this country, the Black Cap became something more than a pub. It became a safe meeting place. By the mid-60s it had already built a reputation as one of London’s very first \u{201C}gay pubs\u{201D} and by the 70s it had a new title too: the Palladium of Drag.”,
-				“Legends of British drag like Danny La Rue, Hinge & Bracket, and above all Mrs Shufflewick made this their stage. Shufflewick’s Sunday shows were infamous \u{2013} packed with everyone from local regulars to big names like Barry Humphries.”
+			'id'          => 'ts-2',
+			'years'       => '1960s',
+			'title'       => 'FROM LOCAL TO QUEER HEAVEN',
+			'description' => $paras(
+				"In the 1960s, long before it was legal to be openly gay in this country, the Black Cap became something more than a pub. It became a safe meeting place. By the mid-60s it had already built a reputation as one of London's very first “gay pubs” and by the 70s it had a new title too: the Palladium of Drag.",
+				"Legends of British drag like Danny La Rue, Hinge & Bracket, and above all Mrs Shufflewick made this their stage. Shufflewick's Sunday shows were infamous – packed with everyone from local regulars to big names like Barry Humphries."
 			),
-			‘imageIds’    => array_values( array_filter( [ $tl_id(2) ] ) ),
+			'imageIds'    => array_values( array_filter( [ $tl_id(2) ] ) ),
 		],
 		[
-			‘id’          => ‘ts-3’,
-			‘years’       => ‘1970s–1980s’,
-			‘title’       => ‘THE GOLDEN YEARS’,
-			‘description’ => $paras(
-				“Through the 70s and 80s the Cap wasn’t just a pub \u{2013} it was a lifeline. You came here to laugh with a drag queen tearing the house down, to flirt, to dance, to cry on someone’s shoulder. For many, it was the first place they truly felt at home.”,
-				“Acts like Regina Fong brought the house down night after night, with a fanbase who called themselves the \u{201C}Fongettes.\u{201D} The Cap also gave space to community groups: from trans support meetups to London Gay Symphonic Winds rehearsals. It wasn’t just entertainment, it was solidarity.”,
-				“By the 2000s, the Cap was still buzzing, with nights like The Meth Lab mixing drag, cabaret and surreal performance. Stars of RuPaul’s Drag Race \u{2013} Bianca Del Rio, Trixie Mattel, Raja, Adore Delano \u{2013} all performed on the stage.”
+			'id'          => 'ts-3',
+			'years'       => '1970s–1980s',
+			'title'       => 'THE GOLDEN YEARS',
+			'description' => $paras(
+				"Through the 70s and 80s the Cap wasn't just a pub – it was a lifeline. You came here to laugh with a drag queen tearing the house down, to flirt, to dance, to cry on someone's shoulder. For many, it was the first place they truly felt at home.",
+				"Acts like Regina Fong brought the house down night after night, with a fanbase who called themselves the “Fongettes.” The Cap also gave space to community groups: from trans support meetups to London Gay Symphonic Winds rehearsals. It wasn't just entertainment, it was solidarity.",
+				"By the 2000s, the Cap was still buzzing, with nights like The Meth Lab mixing drag, cabaret and surreal performance. Stars of RuPaul's Drag Race – Bianca Del Rio, Trixie Mattel, Raja, Adore Delano – all performed on the stage."
 			),
-			‘imageIds’    => array_values( array_filter( [ $tl_id(3) ] ) ),
+			'imageIds'    => array_values( array_filter( [ $tl_id(3) ] ) ),
 		],
 		[
-			‘id’          => ‘ts-4’,
-			‘years’       => ‘1990s–2010s’,
-			‘title’       => ‘A VENUE WITH COMMUNITY WEIGHT’,
-			‘description’ => $paras(
-				“The Black Cap’s importance has never been limited to nightlife. For many, it represented something rare: a public place where being openly LGBTQ+ felt normal, safe, and shared. Former staff and regulars have described it as a welcoming, mixed crowd across ages \u{2013} a place to meet, talk, laugh, and feel part of something bigger than a night out. That community role was formally recognised when Camden Council granted Asset of Community Value (ACV) status \u{2013} a protection designed to acknowledge places that contribute to local social and cultural life.”,
-				“In more recent years, community work and campaigning continued beyond the building itself. Partnerships and grassroots groups helped keep the spirit of The Black Cap alive through organised meet-ups and advocacy driven by the belief that London needs queer spaces that aren’t disposable.”
+			'id'          => 'ts-4',
+			'years'       => '1990s–2010s',
+			'title'       => 'A VENUE WITH COMMUNITY WEIGHT',
+			'description' => $paras(
+				"The Black Cap's importance has never been limited to nightlife. For many, it represented something rare: a public place where being openly LGBTQ+ felt normal, safe, and shared. Former staff and regulars have described it as a welcoming, mixed crowd across ages – a place to meet, talk, laugh, and feel part of something bigger than a night out. That community role was formally recognised when Camden Council granted Asset of Community Value (ACV) status – a protection designed to acknowledge places that contribute to local social and cultural life.",
+				"In more recent years, community work and campaigning continued beyond the building itself. Partnerships and grassroots groups helped keep the spirit of The Black Cap alive through organised meet-ups and advocacy driven by the belief that London needs queer spaces that aren't disposable."
 			),
-			‘imageIds’    => array_values( array_filter( [ $tl_id(4) ] ) ),
+			'imageIds'    => array_values( array_filter( [ $tl_id(4) ] ) ),
 		],
 		[
-			‘id’          => ‘ts-5’,
-			‘years’       => ‘2020s’,
-			‘title’       => ‘A NEW CHAPTER’,
-			‘description’ => $paras(
-				“Now, at long last, the Cap is reopening. It’s been saved not just by law, but by love \u{2013} by the thousands who stood up for it, sang for it, and believed in it.”,
-				“The Black Cap returns with the same rebellious spirit, inclusive heart, and unforgettable nights that made it a cornerstone of queer culture in London. Join us as we celebrate our past, and raise a glass to the future.”
+			'id'          => 'ts-5',
+			'years'       => '2020s',
+			'title'       => 'A NEW CHAPTER',
+			'description' => $paras(
+				"Now, at long last, the Cap is reopening. It's been saved not just by law, but by love – by the thousands who stood up for it, sang for it, and believed in it.",
+				"The Black Cap returns with the same rebellious spirit, inclusive heart, and unforgettable nights that made it a cornerstone of queer culture in London. Join us as we celebrate our past, and raise a glass to the future."
 			),
-			‘imageIds’    => array_values( array_filter( [ $tl_id(5) ] ) ),
+			'imageIds'    => array_values( array_filter( [ $tl_id(5) ] ) ),
 		],
 	],
 ];
@@ -357,6 +356,8 @@ if ( $front_page && 'page' === $front_page->post_type ) {
 		}
 		if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/timeline' ) {
 			$has_timeline = true;
+			$block['attrs'] = $timeline_attrs;
+			$patched = true;
 		}
 	}
 	unset( $block );
@@ -408,7 +409,7 @@ if ( $front_page && 'page' === $front_page->post_type ) {
 
 		$b( 'story', [
 			'title' => 'Legendary',
-			'copy'  => "The Black Cap has been Camden’s queer heartbeat since 1967. Two bars, a legendary terrace, and a performance room that’s seen more feather boas than the law should allow. Shufflewick’s is where the pints happen. The stage is where the magic does.",
+			'copy'  => "The Black Cap has been Camden's queer heartbeat since 1967. Two bars, a legendary terrace, and a performance room that's seen more feather boas than the law should allow. Shufflewick's is where the pints happen. The stage is where the magic does.",
 			'photos' => [
 				[ 'url' => $story_img(1), 'scale' => 1.3,  'driftX' =>  1.2,  'driftY' => -12.5 ],
 				[ 'url' => $story_img(3), 'scale' => 2.2,  'driftX' =>  11.0, 'driftY' =>   3.0 ],

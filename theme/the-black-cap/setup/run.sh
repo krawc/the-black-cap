@@ -1,20 +1,29 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────
 # Usage:
-#   bash theme/the-black-cap/setup/run.sh                  # first-time setup only
-#   bash theme/the-black-cap/setup/run.sh /path/to/photos  # setup + upload room photos
-#
-# Re-running with a folder replaces existing media library entries
-# in-place, keeping the same attachment IDs.
+#   bash theme/the-black-cap/setup/run.sh                         # setup, no room photos
+#   bash theme/the-black-cap/setup/run.sh /path/to/photos         # setup + upload room photos
+#   bash theme/the-black-cap/setup/run.sh --skip-rooms            # skip room photo import
+#   bash theme/the-black-cap/setup/run.sh /path/to/photos --skip-rooms  # stage but don't import
 # ─────────────────────────────────────────────────────────────────
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 IMPORT_DIR="$REPO_ROOT/theme/the-black-cap/setup/import-images"
-IMG_SRC="${1:-}"
+IMG_SRC=""
+SKIP_ROOMS=0
 
-# ── Stage images if a path was given ──────────────────────────────
-if [[ -n "$IMG_SRC" ]]; then
+# ── Parse args ────────────────────────────────────────────────────
+for arg in "$@"; do
+  case "$arg" in
+    --skip-rooms) SKIP_ROOMS=1 ;;
+    -*) echo "✖  Unknown flag: $arg" >&2; exit 1 ;;
+    *)  IMG_SRC="$arg" ;;
+  esac
+done
+
+# ── Stage images if a path was given and not skipping ─────────────
+if [[ -n "$IMG_SRC" ]] && [[ "$SKIP_ROOMS" -eq 0 ]]; then
   if [[ ! -d "$IMG_SRC" ]]; then
     echo "✖  Not a directory: $IMG_SRC" >&2
     exit 1
@@ -26,7 +35,6 @@ if [[ -n "$IMG_SRC" ]]; then
   rm -rf "$IMPORT_DIR"
   mkdir -p "$IMPORT_DIR"
 
-  # Copy only image files, sorted so slot numbers are deterministic
   n=0
   while IFS= read -r -d '' f; do
     cp "$f" "$IMPORT_DIR/"
@@ -51,19 +59,20 @@ fi
 cd "$REPO_ROOT"
 echo "→ Running setup inside wp-env…"
 
-# Recent wp-env versions use `docker compose exec` for `wp-env run cli`,
-# which fails because the cli service is ephemeral (never persistently running).
-# Work around it by calling `docker compose run` directly on the compose file
-# wp-env generated for this project.
+if [[ "$SKIP_ROOMS" -eq 1 ]]; then
+  echo "   (room image import skipped)"
+fi
+
 WP_ENV_COMPOSE=$(grep -rl "the-black-cap" "$HOME/.wp-env" \
   --include="docker-compose.yml" 2>/dev/null | head -1)
 
 if [[ -n "$WP_ENV_COMPOSE" ]]; then
-  docker compose -f "$WP_ENV_COMPOSE" run --rm cli wp eval-file \
+  docker compose -f "$WP_ENV_COMPOSE" run --rm \
+    ${SKIP_ROOMS:+-e TBC_SKIP_ROOMS=1} \
+    cli wp eval-file \
     /var/www/html/wp-content/themes/the-black-cap/setup/setup.php
 else
-  # Fallback for older wp-env that supports run correctly
-  wp-env run cli wp eval-file \
+  TBC_SKIP_ROOMS=$SKIP_ROOMS wp-env run cli wp eval-file \
     /var/www/html/wp-content/themes/the-black-cap/setup/setup.php
 fi
 
