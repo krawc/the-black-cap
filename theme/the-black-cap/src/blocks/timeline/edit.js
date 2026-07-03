@@ -61,6 +61,13 @@ function TimestampEntry( { ts, idx, total, onChange, onRemove, onMoveUp, onMoveD
 			</div>
 
 			<TextControl
+				label={ __( 'Years', 'the-black-cap' ) }
+				value={ ts.years || '' }
+				onChange={ ( val ) => onChange( { years: val } ) }
+				placeholder={ __( 'e.g. 1960s–1980s', 'the-black-cap' ) }
+			/>
+
+			<TextControl
 				label={ __( 'Title', 'the-black-cap' ) }
 				value={ ts.title || '' }
 				onChange={ ( val ) => onChange( { title: val } ) }

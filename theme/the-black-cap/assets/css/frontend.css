@@ -1204,6 +1204,18 @@ h2 {
   padding-bottom: clamp(0.75rem, 1.5vw, 1.25rem);
 }
 
+.timelineItem__years {
+  display: block;
+  font-family: 'Train One', sans-serif;
+  font-size: clamp(1.15rem, 2.8vw, 1.5rem);
+  line-height: 1.1;
+  color: #fff;
+  margin: 0 0 0.3rem;
+  text-shadow:
+    0 0 0.5rem rgba(100, 244, 255, 0.45),
+    0 0 1.4rem rgba(214, 92, 255, 0.25);
+}
+
 .timelineItem__title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
@@ -1386,6 +1398,15 @@ h2 {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.tlLightbox__years {
+  display: block;
+  font-family: 'Train One', sans-serif;
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  line-height: 1.1;
+  color: #64F4FF;
+  margin: 0 0 0.25rem;
 }
 
 .tlLightbox__title {

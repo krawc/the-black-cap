@@ -3,7 +3,7 @@
  * Timeline block — server-side render.
  *
  * $attributes['introText']  string
- * $attributes['timestamps'] array of { id, title, description, imageIds: int[] }
+ * $attributes['timestamps'] array of { id, years, title, description, imageIds: int[] }
  */
 
 $intro_text = $attributes['introText'] ?? '';
@@ -14,8 +14,9 @@ $entries       = [];
 $lightbox_data = [];
 
 foreach ( $timestamps as $ts ) {
-	$title  = trim( $ts['title']       ?? '' );
-	$desc   = trim( $ts['description'] ?? '' );
+	$years  = trim( $ts['years']        ?? '' );
+	$title  = trim( $ts['title']        ?? '' );
+	$desc   = trim( $ts['description']  ?? '' );
 	$images = [];
 
 	foreach ( (array) ( $ts['imageIds'] ?? [] ) as $img_id ) {
@@ -27,7 +28,7 @@ foreach ( $timestamps as $ts ) {
 		if ( ! $full_url ) continue;
 
 		$thumb_url = wp_get_attachment_image_url( $img_id, 'thumbnail' ) ?: $full_url;
-		$alt       = trim( get_post_meta( $img_id, '_wp_attachment_image_alt', true ) ) ?: $title;
+		$alt       = trim( get_post_meta( $img_id, '_wp_attachment_image_alt', true ) ) ?: ( $title ?: $years );
 
 		$lb_idx   = count( $lightbox_data );
 		$images[] = [
@@ -38,12 +39,13 @@ foreach ( $timestamps as $ts ) {
 		$lightbox_data[] = [
 			'url'   => $full_url,
 			'alt'   => $alt,
+			'years' => $years,
 			'title' => $title,
 			'desc'  => $desc,
 		];
 	}
 
-	$entries[] = compact( 'title', 'desc', 'images' );
+	$entries[] = compact( 'years', 'title', 'desc', 'images' );
 }
 ?>
 <section class="timelineSection" id="timeline">
@@ -62,6 +64,10 @@ foreach ( $timestamps as $ts ) {
 			<div class="timelineItem">
 
 				<div class="timelineItem__card">
+					<?php if ( $entry['years'] ) : ?>
+					<span class="timelineItem__years"><?php echo esc_html( $entry['years'] ); ?></span>
+					<?php endif; ?>
+
 					<?php if ( $entry['title'] ) : ?>
 					<h3 class="timelineItem__title"><?php echo esc_html( $entry['title'] ); ?></h3>
 					<?php endif; ?>

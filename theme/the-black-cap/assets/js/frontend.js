@@ -331,6 +331,7 @@
     '      <span class="tlLightbox__counter"></span>',
     '    </div>',
     '    <div class="tlLightbox__info">',
+    '      <span class="tlLightbox__years"></span>',
     '      <h3 class="tlLightbox__title"></h3>',
     '      <p class="tlLightbox__desc"></p>',
     '    </div>',
@@ -371,6 +372,7 @@
     imgEl.alt = item.alt || '';
     imgEl.src = item.url;
 
+    lb.querySelector('.tlLightbox__years').textContent = item.years || '';
     lb.querySelector('.tlLightbox__title').textContent = item.title || '';
     lb.querySelector('.tlLightbox__desc').textContent  = item.desc  || '';
     lb.querySelector('.tlLightbox__counter').textContent = single
