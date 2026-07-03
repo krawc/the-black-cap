@@ -486,6 +486,29 @@ h2 {
   filter: saturate(0.55) brightness(0.85);
 }
 
+
+.eventCard__dates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.eventCard__dates-item {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64F4FF;
+}
+
+.eventCard__dates-more {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
 /* ── Event detail modal ──────────────────────────────────────────── */
 .eventModal {
   position: fixed;
@@ -596,6 +619,11 @@ h2 {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #64F4FF;
+}
+
+.eventModal__dates-item {
+  display: block;
+  line-height: 1.9;
 }
 
 .eventModal__title {

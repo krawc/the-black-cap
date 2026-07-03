@@ -21,8 +21,6 @@ if ( $token && $org_id ) {
 	$cached = get_transient( 'tbc_eventbrite_events' );
 
 	if ( false === $cached ) {
-		// Fetch all events (no time_filter), most recent first.
-		// Request double the limit so deduplication never undershoots.
 		$url = add_query_arg( [
 			'expand'    => 'logo',
 			'order_by'  => 'start_desc',
@@ -43,7 +41,7 @@ if ( $token && $org_id ) {
 		}
 	}
 
-	// Deduplicate by event ID (guards against the API returning repeats).
+	// Deduplicate by event ID.
 	$seen = [];
 	foreach ( $cached ?: [] as $ev ) {
 		$id = $ev['id'] ?? '';
@@ -69,7 +67,60 @@ if ( empty( $events ) && ! empty( $attributes['eventIds'] ) ) {
 	}
 }
 
-$events = array_slice( $events, 0, $limit );
+/* ── Collapse recurring events ──────────────────────────────────── */
+// Events that share a series_id are individual occurrences of the same
+// recurring event. Group them into one card showing all dates so they
+// don't flood the slider with duplicates.
+
+$by_series = [];
+$singles   = [];
+$now       = time();
+
+foreach ( $events as $ev ) {
+	$sid = $ev['series_id'] ?? '';
+	if ( $sid ) {
+		$by_series[ $sid ][] = $ev;
+	} else {
+		$singles[] = $ev;
+	}
+}
+
+$collapsed = $singles;
+
+foreach ( $by_series as $sid => $occurrences ) {
+	// Sort ascending so dates render chronologically.
+	usort( $occurrences, static function ( $a, $b ) {
+		return ( strtotime( $a['start']['local'] ?? '' ) ?: 0 )
+			<=> ( strtotime( $b['start']['local'] ?? '' ) ?: 0 );
+	} );
+
+	// Representative = soonest future occurrence; fall back to the last one.
+	$rep = end( $occurrences );
+	foreach ( $occurrences as $occ ) {
+		$ts = strtotime( $occ['start']['local'] ?? '' );
+		if ( $ts && $ts >= $now ) {
+			$rep = $occ;
+			break;
+		}
+	}
+
+	$rep['_recurring']   = true;
+	$rep['_all_starts']  = array_map(
+		static fn( array $o ): string => $o['start']['local'] ?? '',
+		$occurrences
+	);
+
+	$collapsed[] = $rep;
+}
+
+// Re-sort: newest first.
+usort( $collapsed, static function ( $a, $b ) {
+	$ta = strtotime( $a['start']['local'] ?? '' ) ?: 0;
+	$tb = strtotime( $b['start']['local'] ?? '' ) ?: 0;
+	return $tb <=> $ta;
+} );
+
+$events = array_slice( $collapsed, 0, $limit );
 ?>
 <section class="whatsOn" id="whats-on">
 	<div class="whatsOnInner">
@@ -79,17 +130,26 @@ $events = array_slice( $events, 0, $limit );
 		<div class="posterTrack">
 			<?php if ( $events ) :
 				foreach ( $events as $ev ) :
-					$title      = $ev['name']['text'] ?? '';
-					$full_desc  = $ev['description']['text'] ?? $ev['summary'] ?? '';
-					$excerpt    = wp_trim_words( $ev['summary'] ?? $full_desc, 18 );
-					$url        = $ev['url'] ?? '#';
-					$img        = $ev['logo']['original']['url'] ?? $ev['logo']['url'] ?? '';
-					$date       = tbc_format_event_date( $ev['start']['local'] ?? '' );
-					$short_desc = substr( $full_desc, 0, 600 );
+					$title        = $ev['name']['text'] ?? '';
+					$full_desc    = $ev['description']['text'] ?? $ev['summary'] ?? '';
+					$excerpt      = wp_trim_words( $ev['summary'] ?? $full_desc, 18 );
+					$url          = $ev['url'] ?? '#';
+					$img          = $ev['logo']['original']['url'] ?? $ev['logo']['url'] ?? '';
+					$date         = tbc_format_event_date( $ev['start']['local'] ?? '' );
+					$short_desc   = substr( $full_desc, 0, 600 );
+					$is_recurring = ! empty( $ev['_recurring'] );
 
-					// A past event = end time has already passed (UTC comparison).
+					// Formatted dates for recurring events.
+					$all_dates = [];
+					if ( $is_recurring ) {
+						foreach ( $ev['_all_starts'] ?? [] as $local ) {
+							$fmt = tbc_format_event_date( $local );
+							if ( $fmt ) $all_dates[] = $fmt;
+						}
+					}
+
 					$end_utc = $ev['end']['utc'] ?? '';
-					$is_past = $end_utc && ( strtotime( $end_utc ) < time() );
+					$is_past = $end_utc && ( strtotime( $end_utc ) < $now );
 
 					$btn_label = $is_past
 						? esc_html__( 'View Event', 'the-black-cap' )
@@ -102,6 +162,8 @@ $events = array_slice( $events, 0, $limit );
 				data-img="<?php echo esc_attr( $img ); ?>"
 				data-date="<?php echo esc_attr( $date ); ?>"
 				data-past="<?php echo $is_past ? '1' : ''; ?>"
+				data-recurring="<?php echo $is_recurring ? '1' : ''; ?>"
+				data-dates="<?php echo $is_recurring ? esc_attr( wp_json_encode( $all_dates ) ) : ''; ?>"
 				tabindex="0"
 				role="button"
 				aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'the-black-cap' ), $title ) ); ?>"
@@ -112,13 +174,26 @@ $events = array_slice( $events, 0, $limit );
 					<?php endif; ?>
 				</div>
 				<div class="eventCard__body">
-					<?php if ( $date ) : ?>
+
+					<?php if ( $is_recurring && $all_dates ) : ?>
+					<div class="eventCard__dates">
+						<?php foreach ( array_slice( $all_dates, 0, 3 ) as $d ) : ?>
+						<span class="eventCard__dates-item"><?php echo esc_html( $d ); ?></span>
+						<?php endforeach; ?>
+						<?php if ( count( $all_dates ) > 3 ) : ?>
+						<span class="eventCard__dates-more">+<?php echo count( $all_dates ) - 3; ?> more</span>
+						<?php endif; ?>
+					</div>
+					<?php elseif ( $date ) : ?>
 					<time class="eventCard__date"><?php echo esc_html( $date ); ?></time>
 					<?php endif; ?>
+
 					<h3 class="eventCard__title"><?php echo esc_html( $title ); ?></h3>
+
 					<?php if ( $excerpt ) : ?>
 					<p class="eventCard__excerpt"><?php echo esc_html( $excerpt ); ?></p>
 					<?php endif; ?>
+
 					<a class="eventCard__tickets<?php echo $is_past ? ' eventCard__tickets--past' : ''; ?>"
 						href="<?php echo esc_url( $url ); ?>"
 						target="_blank"

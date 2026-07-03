@@ -382,19 +382,31 @@
   function openModal(card) {
     ensureModal();
 
-    var title = card.dataset.title || '';
-    var desc  = card.dataset.desc  || '';
-    var url   = card.dataset.url   || '#';
-    var img   = card.dataset.img   || '';
-    var date  = card.dataset.date  || '';
-    var isPast = card.dataset.past === '1';
+    var title       = card.dataset.title     || '';
+    var desc        = card.dataset.desc      || '';
+    var url         = card.dataset.url       || '#';
+    var img         = card.dataset.img       || '';
+    var date        = card.dataset.date      || '';
+    var isPast      = card.dataset.past      === '1';
+    var isRecurring = card.dataset.recurring === '1';
+    var allDates    = [];
+    if ( isRecurring ) {
+      try { allDates = JSON.parse( card.dataset.dates || '[]' ); } catch (_) {}
+    }
 
     modal.querySelector('.eventModal__title').textContent = title;
     modal.querySelector('.eventModal__desc').textContent  = desc;
 
     var dateEl = modal.querySelector('.eventModal__date');
-    dateEl.textContent = date;
-    dateEl.hidden = !date;
+    if ( isRecurring && allDates.length ) {
+      dateEl.innerHTML = allDates
+        .map( function (d) { return '<span class="eventModal__dates-item">' + d + '</span>'; } )
+        .join('');
+      dateEl.hidden = false;
+    } else {
+      dateEl.textContent = date;
+      dateEl.hidden = !date;
+    }
 
     // Image with preloader — hide first, fade in once loaded
     var imgWrap = modal.querySelector('.eventModal__img');
