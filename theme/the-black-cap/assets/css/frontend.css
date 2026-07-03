@@ -288,6 +288,24 @@ h1 {
   width: auto;
 }
 
+/* Fade-in mode (parallax toggle off) */
+.photoRow--fade .photoPlaceholder {
+  opacity: 0;
+  transform: translateY(1.8rem);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  will-change: opacity, transform;
+}
+
+.photoRow--fade .photoPlaceholder.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.photoRow--fade .photoPlaceholder:nth-child(2) { transition-delay: 0.12s; }
+.photoRow--fade .photoPlaceholder:nth-child(3) { transition-delay: 0.24s; }
+.photoRow--fade .photoPlaceholder:nth-child(4) { transition-delay: 0.36s; }
+.photoRow--fade .photoPlaceholder:nth-child(5) { transition-delay: 0.48s; }
+
 h2 {
   margin-bottom: 0;
   font-size: clamp(2rem, 6vw, 4.6rem);

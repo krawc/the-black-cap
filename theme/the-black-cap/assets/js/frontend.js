@@ -33,32 +33,47 @@
   });
 })();
 
-/* ── Story photo parallax ───────────────────────────────────────── */
+/* ── Story photos: parallax or scroll-fade ──────────────────────── */
 (function () {
-  const row = document.getElementById('tbc-photo-row');
+  var row = document.getElementById('tbc-photo-row');
   if (!row) return;
 
-  var photos = Array.from(row.children).map(function (el) {
-    return {
-      el:     el,
-      driftX: parseFloat(el.dataset.driftX || 0),
-      driftY: parseFloat(el.dataset.driftY || 0),
-    };
-  });
+  if (row.dataset.storyMode === 'fade') {
+    /* Fade-in on scroll via IntersectionObserver */
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
 
-  function update() {
-    var rect     = row.getBoundingClientRect();
-    var progress = (window.innerHeight / 2 - (rect.top + rect.height / 2)) / window.innerHeight;
-    var mobile   = window.innerWidth <= 700;
-    photos.forEach(function (p) {
-      p.el.style.transform = mobile
-        ? 'translateX(' + (p.driftX * progress * 0.12) + 'rem)'
-        : 'translate(' + (p.driftX * progress) + 'rem, ' + (p.driftY * progress) + 'rem)';
+    Array.from(row.children).forEach(function (el) { obs.observe(el); });
+  } else {
+    /* Parallax drift */
+    var photos = Array.from(row.children).map(function (el) {
+      return {
+        el:     el,
+        driftX: parseFloat(el.dataset.driftX || 0),
+        driftY: parseFloat(el.dataset.driftY || 0),
+      };
     });
-  }
 
-  window.addEventListener('scroll', update, { passive: true });
-  update();
+    function update() {
+      var rect     = row.getBoundingClientRect();
+      var progress = (window.innerHeight / 2 - (rect.top + rect.height / 2)) / window.innerHeight;
+      var mobile   = window.innerWidth <= 700;
+      photos.forEach(function (p) {
+        p.el.style.transform = mobile
+          ? 'translateX(' + (p.driftX * progress * 0.12) + 'rem)'
+          : 'translate(' + (p.driftX * progress) + 'rem, ' + (p.driftY * progress) + 'rem)';
+      });
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }
 })();
 
 /* ── FrameGallery + Room lightbox ───────────────────────────────── */

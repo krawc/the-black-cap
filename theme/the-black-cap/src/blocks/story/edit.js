@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls, RichText, MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
-import { PanelBody, Button, RangeControl } from '@wordpress/components';
+import { PanelBody, Button, RangeControl, ToggleControl } from '@wordpress/components';
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { title, copy, photos } = attributes;
+	const { title, copy, photos, parallax } = attributes;
 	const blockProps = useBlockProps( { style: { background: '#000', color: '#fff', padding: '2rem 2rem 4rem' } } );
 
 	function updatePhoto( index, key, value ) {
@@ -18,6 +18,16 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
+				<PanelBody title={ __( 'Animation', 'the-black-cap' ) } initialOpen={ false }>
+					<ToggleControl
+						label={ __( 'Floating parallax', 'the-black-cap' ) }
+						help={ parallax
+							? __( 'Photos drift as you scroll.', 'the-black-cap' )
+							: __( 'Photos fade in on scroll.', 'the-black-cap' ) }
+						checked={ !! parallax }
+						onChange={ ( v ) => setAttributes( { parallax: v } ) }
+					/>
+				</PanelBody>
 				<PanelBody title={ __( 'Photos & Parallax', 'the-black-cap' ) } initialOpen>
 					{ photos.map( ( photo, i ) => (
 						<div key={ i } style={ { marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid #ddd' } }>

@@ -3,9 +3,10 @@
  * Story block — server-side render.
  */
 
-$title  = $attributes['title'] ?? 'Legendary';
-$copy   = $attributes['copy']  ?? '';
-$photos = $attributes['photos'] ?? [];
+$title    = $attributes['title']    ?? 'Legendary';
+$copy     = $attributes['copy']     ?? '';
+$photos   = $attributes['photos']   ?? [];
+$parallax = $attributes['parallax'] ?? true;
 
 $regina_url = esc_url( get_template_directory_uri() . '/assets/svg/regina.svg' );
 ?>
@@ -21,7 +22,7 @@ $regina_url = esc_url( get_template_directory_uri() . '/assets/svg/regina.svg' )
 			<?php endif; ?>
 
 			<?php if ( $photos ) : ?>
-			<div class="photoRow" id="tbc-photo-row">
+			<div class="photoRow<?php echo $parallax ? '' : ' photoRow--fade'; ?>" id="tbc-photo-row" data-story-mode="<?php echo $parallax ? 'parallax' : 'fade'; ?>">
 				<?php foreach ( $photos as $photo ) :
 					$scale  = (float) ( $photo['scale']  ?? 1 );
 					$driftX = (float) ( $photo['driftX'] ?? 0 );

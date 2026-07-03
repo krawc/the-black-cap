@@ -10,6 +10,7 @@
   "attributes": {
     "title": { "type": "string", "default": "Legendary" },
     "copy":  { "type": "string", "default": "" },
+    "parallax": { "type": "boolean", "default": true },
     "photos": {
       "type": "array",
       "default": [],
