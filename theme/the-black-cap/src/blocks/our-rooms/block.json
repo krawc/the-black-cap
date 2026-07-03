@@ -14,8 +14,8 @@
       "items": {
         "type": "object",
         "properties": {
-          "svgFile": { "type": "string", "default": "Frame 1.svg" },
-          "photos":  { "type": "array",  "default": [], "items": { "type": "string" } },
+          "svgFile": { "type": "string",  "default": "Frame 1.svg" },
+          "roomId":  { "type": "integer", "default": 0 },
           "wide":    { "type": "boolean", "default": false }
         }
       }

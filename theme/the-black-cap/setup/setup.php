@@ -305,28 +305,220 @@ $timeline_attrs = [
 $theme_base = rtrim( get_option( 'siteurl' ), '/' ) . '/wp-content/themes/the-black-cap';
 $story_img  = static fn( int $n ): string => "{$theme_base}/assets/img/story/{$n}.webp";
 
-// For a given slot, prefer the uploaded media URL; fall back to theme asset
-$room_url = static function ( int $slot ) use ( $mapping, $story_img ): string {
-	if ( isset( $mapping[ $slot ] ) ) {
-		$url = wp_get_attachment_url( $mapping[ $slot ] );
-		if ( $url ) return $url;
+/* ══════════════════════════════════════════════════════════════════
+   §3  ROOM DEFINITIONS
+   ══════════════════════════════════════════════════════════════════ */
+
+$paras_r = static function ( string ...$ps ): string {
+	return implode( "\n\n", $ps );
+};
+
+$room_defs = [
+	1 => [
+		'name' => "Adrella's Dressing Room",
+		'desc' => $paras_r(
+			"Bathed in deep reds and soft golden light, Room One is a love letter to The Black Cap's unapologetic spirit. Plush bedding, playful artwork and theatrical touches bring a sense of drama to every corner. Fringe bedside lamps shimmer like flapper dresses, sunset-toned curtains frame the room, and a sculptural mannequin stands ready to strike a pose.",
+			"It's bold, sultry and delightfully expressive — a room that celebrates individuality with a wink and a touch of glamour."
+		),
+		'imgs' => [
+			'https://cdn.mews.com/media/image/8127f737-ea3b-43ff-8040-b41900c266e5?quality=85&width=1920&height=1080',
+			'https://cdn.mews.com/media/image/a159a717-aee0-4b77-b06a-b41900c22ae3?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/5f4de961-be5a-4bda-83da-b41900c24529?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/fa99178d-f187-488d-b74d-b41900c24fbd?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/911fa27d-6045-4ae3-9bda-b41900c23311?quality=85&width=1366&height=768',
+		],
+	],
+	2 => [
+		'name' => "Maisie Trollette's Legacy Room",
+		'desc' => $paras_r(
+			"A little mischievous and undeniably luxurious, Room Two is designed to make an impression. Moody colours, deep velvet tones and statement artwork create a space that feels both intimate and dramatic.",
+			"Golden accents and sculptural lighting bring a touch of glamour, while the rich textures feel indulgent and inviting. Stylish, seductive and a little bit provocative — this is a room that knows exactly how to set the mood."
+		),
+		'imgs' => [
+			'https://cdn.mews.com/media/image/a0da4a10-25f1-407d-9bfa-b41900c379a3?quality=85&width=1920&height=1080',
+			'https://cdn.mews.com/media/image/b6cf530a-3546-4775-8116-b41900c38779?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/b303fc2c-6288-4f9d-a156-b41900c39da9?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/a3a594e1-16c0-4714-b6b8-b41900c3a82b?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/4af52a61-c72c-4a7d-b04e-b41900c3c0f5?quality=85&width=1366&height=768',
+		],
+	],
+	3 => [
+		'name' => "Miss Jason's Miss Behave Room",
+		'desc' => $paras_r(
+			"Room Three brings big-top energy with bedroom swagger. Deep burgundy headboards, a warm golden glow and a striped ceiling inspired by vintage circus tents create a space made to steal the spotlight.",
+			"Statement lighting and sculptural forms add playful flair, while warm wood finishes and rich textures keep the room cosy enough for a long encore. Confident, creative and delightfully theatrical — just the way we like it."
+		),
+		'imgs' => [
+			'https://cdn.mews.com/media/image/9a3722fd-39ce-44dd-b66e-b41900c43b6c?quality=85&width=1920&height=1080',
+			'https://cdn.mews.com/media/image/8aad7005-2f84-4d20-aece-b41900c4483f?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/e5a47790-82c1-4f92-8d22-b41900c451ad?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/6c8542cb-3d7f-434f-b001-b41900c45e33?quality=85&width=1366&height=768',
+		],
+	],
+	4 => [
+		'name' => 'The Harlequeens Masquerade',
+		'desc' => $paras_r(
+			"Room Four is pure theatre — bold, beautiful and full of personality. Wrapped in deep green panelling and blooming floral wallpaper, it feels like a stage set designed for indulgence.",
+			"Jewel tones, velvet textures and flashes of neon drama create a feast for the senses. From parrot-shaped lights to fringe lamps and golden bedside tables, every detail has its moment. Cabaret glamour meets irresistible comfort in a room that was made for centre stage."
+		),
+		'imgs' => [
+			'https://cdn.mews.com/media/image/21e4021a-b9b0-47bd-9354-b41900c4d82d?quality=85&width=1920&height=1080',
+			'https://cdn.mews.com/media/image/5b74ab7f-cf09-401f-9a00-b41900c4ecc0?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/b0223819-3a47-4242-81ca-b41900c51bfc?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/31fec44d-dfbb-4091-a828-b41900c52fc7?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/37faab57-2293-4c3f-a21f-b41900c53bf3?quality=85&width=1366&height=768',
+		],
+	],
+	5 => [
+		'name' => "Danny La Rue's La Rue Luxe",
+		'desc' => $paras_r(
+			"Room Six blends vintage charm with a hint of wild glamour. Deep blues and warm amber tones create an atmosphere that feels like golden hour stretching into the night.",
+			"Feathered lighting, curved shapes and layered textures bring a touch of theatre, while mid-century furniture adds timeless style. Relaxed yet charismatic, it's the kind of room that invites you to stay up late and enjoy the mood."
+		),
+		'imgs' => [
+			'https://cdn.mews.com/media/image/e8fe70e9-91df-4daa-a32c-b41900c6422a?quality=85&width=1920&height=1080',
+			'https://cdn.mews.com/media/image/ecdde622-0813-400a-a15b-b41900c650b1?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/d2c9114b-9246-4f8a-95f4-b41900c657db?quality=85&width=1366&height=768',
+		],
+	],
+	6 => [
+		'name' => 'Imperial Suite',
+		'desc' => $paras_r(
+			"The Imperial Suite blends outrageous styling with more space to create a blend of artistry, camp frolicking and decadence that will make you feel like the Queen you are!",
+			"Subtle walls blend with bold design, and who doesn't love a neon queen above their bed?"
+		),
+		'imgs' => [
+			'https://cdn.mews.com/media/image/24aad023-53ca-49e8-8ca9-b41900c74da3?quality=85&width=1920&height=1080',
+			'https://cdn.mews.com/media/image/38e38470-8d4e-4d29-bed5-b41900c75766?quality=85&width=1366&height=768',
+			'https://cdn.mews.com/media/image/3c6a5881-a7d9-469f-9454-b41900c76322?quality=85&width=1366&height=768',
+		],
+	],
+	7 => [
+		'name' => 'The Vivienne House of Vivienne',
+		'desc' => 'Coming soon!',
+		'imgs' => [
+			'https://cdn.mews.com/media/image/42355982-bf18-46ed-9c03-b41900c5d876?quality=85&width=1920&height=1080',
+		],
+	],
+];
+
+/* ══════════════════════════════════════════════════════════════════
+   §3a  SIDELOAD CDN IMAGES  (skips URLs already in the cache)
+   ══════════════════════════════════════════════════════════════════ */
+
+// tbc_room_cdn_images: url → attachment_id  (persists across runs)
+$cdn_map     = (array) get_option( 'tbc_room_cdn_images', [] );
+$cdn_changed = false;
+
+WP_CLI::log( '' );
+WP_CLI::log( '→ Sideloading room images from CDN…' );
+
+foreach ( $room_defs as $slot => $def ) {
+	foreach ( $def['imgs'] as $i => $url ) {
+		if ( isset( $cdn_map[ $url ] ) ) {
+			WP_CLI::log( "  Already imported: room {$slot} img " . ( $i + 1 ) . " → ID {$cdn_map[ $url ]}" );
+			continue;
+		}
+
+		// media_sideload_image() requires a file extension in the URL path,
+		// which Mews CDN URLs lack. Download manually and supply a filename.
+		$tmp = download_url( $url );
+		if ( is_wp_error( $tmp ) ) {
+			WP_CLI::warning( "  Download failed: {$url} — " . $tmp->get_error_message() );
+			continue;
+		}
+
+		$mime    = wp_get_image_mime( $tmp ) ?: 'image/jpeg';
+		$ext_map = [ 'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif', 'image/avif' => 'avif' ];
+		$ext     = $ext_map[ $mime ] ?? 'jpg';
+
+		$file_array = [
+			'name'     => "room-{$slot}-" . ( $i + 1 ) . ".{$ext}",
+			'tmp_name' => $tmp,
+		];
+
+		$att_id = media_handle_sideload( $file_array, 0, null );
+
+		if ( is_wp_error( $att_id ) ) {
+			@unlink( $tmp );
+			WP_CLI::warning( "  Import failed: {$url} — " . $att_id->get_error_message() );
+		} else {
+			$cdn_map[ $url ] = (int) $att_id;
+			$cdn_changed     = true;
+			WP_CLI::success( "  Imported room {$slot} img " . ( $i + 1 ) . " → ID {$att_id}" );
+		}
 	}
-	return $story_img( ( ( $slot - 1 ) % 4 ) + 1 );
+}
+
+if ( $cdn_changed ) {
+	update_option( 'tbc_room_cdn_images', $cdn_map );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   §3b  ENSURE ROOM CPT POSTS + ASSIGN IMAGES
+   ══════════════════════════════════════════════════════════════════ */
+
+WP_CLI::log( '' );
+WP_CLI::log( '→ Ensuring Room posts…' );
+
+$room_post_ids = [];  // slot → tbc_room post ID
+
+foreach ( $room_defs as $slot => $def ) {
+	// Use "room-{slot}" slug — different from "tbc-room-{slot}" used by §1 attachments.
+	// Avoid get_page_by_path(): it silently appends 'attachment' to the type query,
+	// which causes it to match the §1 gallery attachments instead of CPT posts.
+	$slug   = "room-{$slot}";
+	$found  = get_posts( [
+		'post_type'   => 'tbc_room',
+		'post_status' => 'any',
+		'name'        => $slug,
+		'numberposts' => 1,
+	] );
+	$existing = $found[0] ?? null;
+
+	if ( $existing ) {
+		$room_post_ids[ $slot ] = $existing->ID;
+		wp_update_post( [ 'ID' => $existing->ID, 'post_title' => $def['name'] ] );
+		WP_CLI::log( "  Slot {$slot} → updated (ID {$existing->ID}: {$def['name']})" );
+	} else {
+		$new_id = wp_insert_post( [
+			'post_type'   => 'tbc_room',
+			'post_title'  => $def['name'],
+			'post_name'   => $slug,
+			'post_status' => 'publish',
+		] );
+		$room_post_ids[ $slot ] = $new_id;
+		WP_CLI::success( "  Slot {$slot} → created '{$def['name']}' (ID {$new_id})" );
+	}
+
+	$pid = $room_post_ids[ $slot ];
+	update_post_meta( $pid, 'tbc_room_description', $def['desc'] );
+
+	$att_ids = array_values( array_filter( array_map(
+		static fn( string $u ): int => $cdn_map[ $u ] ?? 0,
+		$def['imgs']
+	) ) );
+	update_post_meta( $pid, 'tbc_room_image_ids', $att_ids );
+}
+
+// Helper: get tbc_room post ID for a slot (0 if not found)
+$room_id = static function ( int $slot ) use ( $room_post_ids ): int {
+	return $room_post_ids[ $slot ] ?? 0;
 };
 
 /* ══════════════════════════════════════════════════════════════════
-   §3  BUILD Our Rooms frame array
+   §4  BUILD Our Rooms frame array
    ══════════════════════════════════════════════════════════════════ */
 
 $frames = [
-	[ 'svgFile' => 'Frame 1.svg', 'photos' => [ $room_url(1) ],                               'wide' => false ],
-	[ 'svgFile' => 'Frame 2.svg', 'photos' => [ $room_url(2) ],                               'wide' => false ],
-	[ 'svgFile' => 'Frame 3.svg', 'photos' => [ $room_url(3) ],                               'wide' => false ],
-	[ 'svgFile' => 'Frame 4.svg', 'photos' => [ $room_url(4) ],                               'wide' => false ],
-	[ 'svgFile' => 'Frame 5.svg', 'photos' => [ $room_url(1) ],                               'wide' => false ],
-	[ 'svgFile' => 'Frame 6.svg', 'photos' => [ $room_url(2), $room_url(3), $room_url(4) ],   'wide' => true  ],
-	[ 'svgFile' => 'Frame 7.svg', 'photos' => [ $room_url(2) ],                               'wide' => false ],
-	[ 'svgFile' => 'Frame 8.svg', 'photos' => [ $room_url(1), $room_url(3), $room_url(4) ],   'wide' => true  ],
+	[ 'svgFile' => 'Frame 1.svg', 'roomId' => $room_id(1), 'wide' => false ],
+	[ 'svgFile' => 'Frame 2.svg', 'roomId' => $room_id(2), 'wide' => false ],
+	[ 'svgFile' => 'Frame 3.svg', 'roomId' => $room_id(3), 'wide' => false ],
+	[ 'svgFile' => 'Frame 4.svg', 'roomId' => $room_id(4), 'wide' => false ],
+	[ 'svgFile' => 'Frame 5.svg', 'roomId' => $room_id(5), 'wide' => false ],
+	[ 'svgFile' => 'Frame 6.svg', 'roomId' => $room_id(6), 'wide' => true  ],
+	[ 'svgFile' => 'Frame 7.svg', 'roomId' => $room_id(7), 'wide' => false ],
+	[ 'svgFile' => 'Frame 8.svg', 'roomId' => $room_id(1), 'wide' => true  ],
 ];
 
 /* ══════════════════════════════════════════════════════════════════
@@ -350,7 +542,7 @@ if ( $front_page && 'page' === $front_page->post_type ) {
 	$has_timeline = false;
 
 	foreach ( $blocks as &$block ) {
-		if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/our-rooms' && $staged ) {
+		if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/our-rooms' ) {
 			$block['attrs']['frames'] = $frames;
 			$patched = true;
 		}

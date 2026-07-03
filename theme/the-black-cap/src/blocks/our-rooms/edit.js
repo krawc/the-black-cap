@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, InspectorControls, MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, Button, SelectControl, ToggleControl } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 
 const SVG_OPTIONS = [
 	{ label: 'Frame 1', value: 'Frame 1.svg' },
@@ -15,11 +17,29 @@ const SVG_OPTIONS = [
 
 export default function Edit( { attributes, setAttributes } ) {
 	const { frames } = attributes;
-	const blockProps = useBlockProps( { style: { background: '#000', color: '#fff', padding: '2rem', textAlign: 'center' } } );
+	const blockProps = useBlockProps( {
+		style: { background: '#000', color: '#fff', padding: '2rem', textAlign: 'center' },
+	} );
 
-	function updateFrame( idx, key, val ) {
+	const rooms = useSelect( ( select ) => {
+		return select( coreStore ).getEntityRecords( 'postType', 'tbc_room', {
+			per_page: -1,
+			status:   'publish',
+			_fields:  'id,title,meta',
+		} ) || [];
+	}, [] );
+
+	const roomOptions = [
+		{ label: '— No room —', value: 0 },
+		...rooms.map( ( r ) => ( {
+			label: r.title?.rendered || `Room ${ r.id }`,
+			value: r.id,
+		} ) ),
+	];
+
+	function updateFrame( idx, patch ) {
 		setAttributes( {
-			frames: frames.map( ( fr, i ) => ( i === idx ? { ...fr, [ key ]: val } : fr ) ),
+			frames: frames.map( ( fr, i ) => ( i === idx ? { ...fr, ...patch } : fr ) ),
 		} );
 	}
 
@@ -28,74 +48,62 @@ export default function Edit( { attributes, setAttributes } ) {
 	}
 
 	function addFrame() {
-		setAttributes( { frames: [ ...frames, { svgFile: 'Frame 1.svg', photos: [], wide: false } ] } );
+		setAttributes( {
+			frames: [ ...frames, { svgFile: 'Frame 1.svg', roomId: 0, wide: false } ],
+		} );
 	}
 
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Frames', 'the-black-cap' ) } initialOpen>
-					{ frames.map( ( frame, idx ) => (
-						<div key={ idx } style={ { marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid #e0e0e0' } }>
-							<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' } }>
-								<strong>{ __( 'Frame', 'the-black-cap' ) } { idx + 1 }</strong>
-								<Button variant="link" isDestructive onClick={ () => removeFrame( idx ) }>
-									{ __( 'Remove', 'the-black-cap' ) }
-								</Button>
-							</div>
-
-							<SelectControl
-								label={ __( 'Frame shape', 'the-black-cap' ) }
-								value={ frame.svgFile }
-								options={ SVG_OPTIONS }
-								onChange={ ( v ) => updateFrame( idx, 'svgFile', v ) }
-							/>
-
-							<ToggleControl
-								label={ __( 'Wide (span 2 grid columns)', 'the-black-cap' ) }
-								checked={ frame.wide }
-								onChange={ ( v ) => updateFrame( idx, 'wide', v ) }
-							/>
-
-							<MediaUploadCheck>
-								<MediaUpload
-									title={ __( 'Frame photos', 'the-black-cap' ) }
-									onSelect={ ( media ) => {
-										const urls = ( Array.isArray( media ) ? media : [ media ] ).map( ( m ) => m.url );
-										updateFrame( idx, 'photos', urls );
-									} }
-									allowedTypes={ [ 'image' ] }
-									multiple
-									value={ frame.photos }
-									render={ ( { open } ) => (
-										<Button variant="secondary" onClick={ open }>
-											{ frame.photos.length > 0
-												? `${ __( 'Edit photos', 'the-black-cap' ) } (${ frame.photos.length })`
-												: __( 'Add photos', 'the-black-cap' ) }
-										</Button>
-									) }
-								/>
-							</MediaUploadCheck>
-
-							{ frame.photos.length > 0 && (
-								<div style={ { display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '6px' } }>
-									{ frame.photos.slice( 0, 4 ).map( ( url, pi ) => (
-										<img
-											key={ pi }
-											src={ url }
-											style={ { width: '36px', height: '36px', objectFit: 'cover', borderRadius: '2px' } }
-											alt=""
-										/>
-									) ) }
-									{ frame.photos.length > 4 && (
-										<span style={ { fontSize: '0.7rem', color: '#888', alignSelf: 'center' } }>
-											+{ frame.photos.length - 4 }
-										</span>
-									) }
+					{ frames.map( ( frame, idx ) => {
+						const room     = rooms.find( ( r ) => r.id === frame.roomId );
+						const imgCount = room?.meta?.tbc_room_image_ids?.length ?? 0;
+						return (
+							<div
+								key={ idx }
+								style={ {
+									marginBottom:  '1.5rem',
+									paddingBottom: '1rem',
+									borderBottom:  '1px solid #e0e0e0',
+								} }
+							>
+								<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' } }>
+									<strong>{ __( 'Frame', 'the-black-cap' ) } { idx + 1 }</strong>
+									<Button variant="link" isDestructive onClick={ () => removeFrame( idx ) }>
+										{ __( 'Remove', 'the-black-cap' ) }
+									</Button>
 								</div>
-							) }
-						</div>
-					) ) }
+
+								<SelectControl
+									label={ __( 'Frame shape', 'the-black-cap' ) }
+									value={ frame.svgFile }
+									options={ SVG_OPTIONS }
+									onChange={ ( v ) => updateFrame( idx, { svgFile: v } ) }
+								/>
+
+								<SelectControl
+									label={ __( 'Room', 'the-black-cap' ) }
+									value={ frame.roomId || 0 }
+									options={ roomOptions }
+									onChange={ ( v ) => updateFrame( idx, { roomId: Number( v ) } ) }
+								/>
+
+								{ room && (
+									<p style={ { fontSize: '0.8rem', color: '#666', margin: '0 0 0.75rem' } }>
+										{ imgCount } image{ imgCount !== 1 ? 's' : '' } in this room
+									</p>
+								) }
+
+								<ToggleControl
+									label={ __( 'Wide (span 2 columns)', 'the-black-cap' ) }
+									checked={ !! frame.wide }
+									onChange={ ( v ) => updateFrame( idx, { wide: v } ) }
+								/>
+							</div>
+						);
+					} ) }
 					<Button variant="secondary" onClick={ addFrame }>
 						{ __( '+ Add frame', 'the-black-cap' ) }
 					</Button>

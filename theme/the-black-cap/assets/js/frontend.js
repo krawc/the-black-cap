@@ -61,48 +61,193 @@
   update();
 })();
 
-/* ── FrameGallery ───────────────────────────────────────────────── */
+/* ── FrameGallery + Room lightbox ───────────────────────────────── */
 (function () {
   var RED_SELECTOR = '[fill="#FF0000"],[fill="#ff0000"],[fill="#f00"],[fill="red"]';
-  var lightbox = null;
+  var MEWS_ID      = '8a6e6542-af3c-4a36-b19e-b36b00a8c958';
 
-  function openLightbox(photo) {
-    closeLightbox();
-    lightbox = document.createElement('div');
-    lightbox.className = 'lightboxOverlay';
+  /* ── Cursor tooltip ─────────────────────────────────────────────── */
+  var tooltip = document.createElement('div');
+  tooltip.className = 'roomTooltip';
+  tooltip.setAttribute('aria-hidden', 'true');
+  tooltip.hidden = true;
+  document.body.appendChild(tooltip);
 
+  document.addEventListener('mousemove', function (e) {
+    if (!tooltip.hidden) {
+      tooltip.style.left = (e.clientX + 16) + 'px';
+      tooltip.style.top  = (e.clientY - 10) + 'px';
+    }
+  });
+
+  /* ── Room lightbox ──────────────────────────────────────────────── */
+  var rlbEl  = null;
+  var rlbIdx = 0;
+  var rlbPhotos = [];
+  var rlbImgEl  = null;
+  var rlbCounterEl = null;
+
+  function setRlbPhoto(i) {
+    rlbIdx = (i + rlbPhotos.length) % rlbPhotos.length;
+    rlbImgEl.src = rlbPhotos[rlbIdx];
+    if (rlbCounterEl) rlbCounterEl.textContent = (rlbIdx + 1) + ' / ' + rlbPhotos.length;
+  }
+
+  function openRoomLightbox(photos, name, desc) {
+    closeRoomLightbox();
+    rlbPhotos = photos;
+    rlbIdx    = 0;
+
+    var lb = document.createElement('div');
+    lb.className = 'roomLightbox';
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+
+    var bd = document.createElement('div');
+    bd.className = 'roomLightbox__bd';
+    bd.addEventListener('click', closeRoomLightbox);
+    lb.appendChild(bd);
+
+    var panel = document.createElement('div');
+    panel.className = 'roomLightbox__panel';
+    lb.appendChild(panel);
+
+    /* close button */
     var closeBtn = document.createElement('button');
-    closeBtn.className  = 'lightboxClose';
+    closeBtn.className = 'roomLightbox__close';
     closeBtn.setAttribute('aria-label', 'Close');
     closeBtn.textContent = '✕';
-    closeBtn.addEventListener('click', closeLightbox);
+    closeBtn.addEventListener('click', closeRoomLightbox);
+    panel.appendChild(closeBtn);
 
-    var img = document.createElement('img');
-    img.className = 'lightboxImg';
-    img.src = photo;
-    img.alt = '';
-    img.addEventListener('click', function (e) { e.stopPropagation(); });
+    /* image column */
+    var imgWrap = document.createElement('div');
+    imgWrap.className = 'roomLightbox__img-wrap';
+    panel.appendChild(imgWrap);
 
-    lightbox.appendChild(closeBtn);
-    lightbox.appendChild(img);
-    lightbox.addEventListener('click', closeLightbox);
+    rlbImgEl = document.createElement('img');
+    rlbImgEl.className = 'roomLightbox__img';
+    rlbImgEl.alt = name;
+    rlbImgEl.src = photos[0] || '';
+    imgWrap.appendChild(rlbImgEl);
 
-    document.body.appendChild(lightbox);
-    document.addEventListener('keydown', onKey);
+    if (photos.length > 1) {
+      rlbCounterEl = document.createElement('span');
+      rlbCounterEl.className = 'roomLightbox__counter';
+      imgWrap.appendChild(rlbCounterEl);
+
+      var prev = document.createElement('button');
+      prev.className = 'roomLightbox__prev';
+      prev.setAttribute('aria-label', 'Previous photo');
+      prev.innerHTML = '&#8249;';
+      prev.addEventListener('click', function () { setRlbPhoto(rlbIdx - 1); });
+      imgWrap.appendChild(prev);
+
+      var next = document.createElement('button');
+      next.className = 'roomLightbox__next';
+      next.setAttribute('aria-label', 'Next photo');
+      next.innerHTML = '&#8250;';
+      next.addEventListener('click', function () { setRlbPhoto(rlbIdx + 1); });
+      imgWrap.appendChild(next);
+    }
+
+    /* info column */
+    var info = document.createElement('div');
+    info.className = 'roomLightbox__info';
+    panel.appendChild(info);
+
+    var titleEl = document.createElement('h2');
+    titleEl.className = 'roomLightbox__title';
+    titleEl.textContent = name;
+    info.appendChild(titleEl);
+
+    if (desc) {
+      var descEl = document.createElement('p');
+      descEl.className = 'roomLightbox__desc';
+
+      var isMobile = window.innerWidth <= 640;
+      var preview  = null;
+      if (isMobile) {
+        // Match up to and including the second sentence-ending punctuation
+        var m = desc.match(/^.+?[.!?](?:\s|$).+?[.!?](?=\s|$)/su);
+        if (m && m[0].length < desc.trim().length) {
+          preview = m[0].trimEnd();
+        }
+      }
+
+      if (preview) {
+        var previewSpan = document.createElement('span');
+        previewSpan.textContent = preview + ' ';
+        descEl.appendChild(previewSpan);
+
+        var readMore = document.createElement('button');
+        readMore.className = 'roomLightbox__readMore';
+        readMore.textContent = 'Read More…';
+        readMore.addEventListener('click', function () {
+          descEl.textContent = desc;
+        });
+        descEl.appendChild(readMore);
+      } else {
+        descEl.textContent = desc;
+      }
+
+      info.appendChild(descEl);
+    }
+
+    var cta = document.createElement('button');
+    cta.className = 'neonButton roomLightbox__cta';
+    cta.textContent = 'View Availability';
+    cta.addEventListener('click', function () {
+      closeRoomLightbox();
+      if (window.MewsApi && window.MewsApi.open) {
+        window.MewsApi.open();
+      } else if (window.Mews && window.Mews.D) {
+        try { window.Mews.D([MEWS_ID]); } catch (_) {}
+      }
+    });
+    info.appendChild(cta);
+
+    document.body.appendChild(lb);
+    document.addEventListener('keydown', onRlbKey);
+    rlbEl = lb;
+    setRlbPhoto(0);
   }
 
-  function closeLightbox() {
-    if (lightbox) { lightbox.remove(); lightbox = null; }
-    document.removeEventListener('keydown', onKey);
+  function closeRoomLightbox() {
+    if (rlbEl) { rlbEl.remove(); rlbEl = null; }
+    rlbImgEl = null;
+    rlbCounterEl = null;
+    document.removeEventListener('keydown', onRlbKey);
   }
 
-  function onKey(e) { if (e.key === 'Escape') closeLightbox(); }
+  function onRlbKey(e) {
+    if (e.key === 'Escape') { closeRoomLightbox(); return; }
+    if (e.key === 'ArrowLeft')  setRlbPhoto(rlbIdx - 1);
+    if (e.key === 'ArrowRight') setRlbPhoto(rlbIdx + 1);
+  }
 
+  /* ── SVG frame init ─────────────────────────────────────────────── */
   function initFrame(container) {
-    var svgUrl = container.dataset.svg;
-    var photos = [];
+    var svgUrl   = container.dataset.svg;
+    var photos   = [];
+    var roomName = container.dataset.roomName || '';
+    var roomDesc = container.dataset.roomDesc || '';
     try { photos = JSON.parse(container.dataset.photos || '[]'); } catch (_) {}
     if (!svgUrl || !photos.length) return;
+
+    container.style.cursor = 'pointer';
+
+    container.addEventListener('mouseenter', function () {
+      if (!roomName) return;
+      tooltip.textContent = roomName;
+      tooltip.hidden = false;
+    });
+    container.addEventListener('mouseleave', function () {
+      tooltip.hidden = true;
+    });
+    container.addEventListener('click', function () {
+      openRoomLightbox(photos, roomName, roomDesc);
+    });
 
     var uid = Math.random().toString(36).slice(2, 7);
 
@@ -143,26 +288,34 @@
           cp.appendChild(shape);
           defs.appendChild(cp);
 
-          var img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-          img.setAttribute('href', photo);
-          img.setAttribute('x', String(bbox.x));
-          img.setAttribute('y', String(bbox.y));
-          img.setAttribute('width', String(bbox.width));
-          img.setAttribute('height', String(bbox.height));
-          img.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-          img.setAttribute('clip-path', 'url(#' + clipId + ')');
-          img.style.cursor = 'pointer';
-          img.addEventListener('click', (function (p) {
-            return function () { openLightbox(p); };
-          })(photo));
+          var imgEl = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+          imgEl.setAttribute('href', photo);
+          imgEl.setAttribute('x', String(bbox.x));
+          imgEl.setAttribute('y', String(bbox.y));
+          imgEl.setAttribute('width', String(bbox.width));
+          imgEl.setAttribute('height', String(bbox.height));
+          imgEl.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+          imgEl.setAttribute('clip-path', 'url(#' + clipId + ')');
 
-          el.replaceWith(img);
+          el.replaceWith(imgEl);
         });
       })
       .catch(function (err) { console.error('[FrameGallery]', err); });
   }
 
   document.querySelectorAll('.frameGallery[data-svg]').forEach(initFrame);
+
+  /* ── Mobile room slide cards ────────────────────────────────────── */
+  document.querySelectorAll('.roomSlideCard').forEach(function (card) {
+    var photos   = [];
+    var roomName = card.dataset.roomName || '';
+    var roomDesc = card.dataset.roomDesc || '';
+    try { photos = JSON.parse(card.dataset.photos || '[]'); } catch (_) {}
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', function () {
+      openRoomLightbox(photos, roomName, roomDesc);
+    });
+  });
 })();
 
 /* ── Event card modal ───────────────────────────────────────────── */
