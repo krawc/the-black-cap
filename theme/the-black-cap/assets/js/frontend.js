@@ -430,6 +430,14 @@
           openAt(data, parseInt(btn.dataset.index, 10) || 0);
         });
       });
+
+      section.querySelectorAll('.timelineItem__card[data-tl-index]').forEach(function (card) {
+        var idx = parseInt(card.dataset.tlIndex, 10) || 0;
+        card.addEventListener('click', function () { openAt(data, idx); });
+        card.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAt(data, idx); }
+        });
+      });
     });
   }
 

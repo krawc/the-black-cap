@@ -1156,10 +1156,10 @@ h2 {
  */
 .timelineTrack {
   --tl-pad: clamp(1.15rem, 4vw, 4rem);
-  --tl-dot: 22px;
+  --tl-dot: 30px;
   display: flex;
   flex-wrap: nowrap;
-  align-items: flex-end;
+  align-items: flex-start;
   position: relative;
   width: max-content;
   padding-left: var(--tl-pad);
@@ -1167,15 +1167,15 @@ h2 {
   gap: clamp(1.15rem, 4vw, 4rem);
 }
 
-/* Rainbow gradient line at the centre of the dots */
+/* Rainbow gradient line centred on the dots at the top */
 .timelineTrack::before {
   content: '';
   position: absolute;
-  bottom: calc(var(--tl-dot) / 2);
+  top: calc(var(--tl-dot) / 2);
   left: 0;
   right: 0;
-  height: 3px;
-  transform: translateY(50%);
+  height: 5px;
+  transform: translateY(-50%);
   background: linear-gradient(
     to right,
     #D65CFF,
@@ -1189,7 +1189,7 @@ h2 {
     0 0 16px rgba(214, 92, 255, 0.2);
 }
 
-/* Each timestamp column — fixed width, content above, dot below */
+/* Each timestamp column — fixed width, dot above, content below */
 .timelineItem {
   flex: 0 0 clamp(240px, 38vw, 540px);
   display: flex;
@@ -1198,10 +1198,26 @@ h2 {
   scroll-snap-align: start;
 }
 
-/* Content lives above the dot; padding-bottom creates the gap */
+/* Dark circle sitting on the line at the top of each item */
+.timelineDot {
+  flex-shrink: 0;
+  width: var(--tl-dot);
+  height: var(--tl-dot);
+  border-radius: 50%;
+  background: #000;
+  border: 3px solid rgba(255, 255, 255, 1);
+  position: relative;
+  z-index: 1;
+}
+
+/* Content card hangs below the dot */
 .timelineItem__card {
   width: 100%;
-  padding-bottom: clamp(0.75rem, 1.5vw, 1.25rem);
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.timelineItem__card--open {
+  cursor: pointer;
 }
 
 .timelineItem__years {
@@ -1210,7 +1226,7 @@ h2 {
   font-size: clamp(1.15rem, 2.8vw, 1.5rem);
   line-height: 1.1;
   color: #fff;
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.75rem;
   text-shadow:
     0 0 0.5rem rgba(100, 244, 255, 0.45),
     0 0 1.4rem rgba(214, 92, 255, 0.25);
@@ -1220,7 +1236,7 @@ h2 {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: clamp(0.9rem, 1.8vw, 1.05rem);
-  margin: 0 0 0.45rem;
+  margin: 0 0 0.85rem;
   color: #fff;
 }
 
@@ -1228,28 +1244,22 @@ h2 {
   font-size: clamp(0.8rem, 1.3vw, 0.875rem);
   line-height: 1.65;
   color: rgba(255, 255, 255, 0.68);
-  margin: 0 0 0.75rem;
+  margin: 0;
+}
+
+.timelineItem__readMore {
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .timelineItem__images {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+  margin-top: 0.85rem;
 }
 
-/* Dark circle sitting on the line; left edge matches card's left edge */
-.timelineDot {
-  flex-shrink: 0;
-  width: var(--tl-dot);
-  height: var(--tl-dot);
-  border-radius: 50%;
-  background: #000;
-  border: 2px solid rgba(255, 255, 255, 1);
-  position: relative;
-  z-index: 1;
-}
-
-/* Square thumbnail buttons */
 .timelineThumb {
   display: block;
   width: clamp(52px, 9vw, 100px);
@@ -1303,8 +1313,8 @@ h2 {
 .tlLightbox__panel {
   position: relative;
   z-index: 1;
-  width: min(92vw, 920px);
-  height: clamp(320px, 60vh, 560px);
+  width: 90vw;
+  height: 85vh;
   background: #111;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
@@ -1405,7 +1415,7 @@ h2 {
   font-family: 'Train One', sans-serif;
   font-size: clamp(1rem, 2.2vw, 1.3rem);
   line-height: 1.1;
-  color: #64F4FF;
+  color: #fff;
   margin: 0 0 0.25rem;
 }
 

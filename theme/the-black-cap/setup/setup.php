@@ -243,7 +243,7 @@ $paras = static function ( string ...$ps ): string {
 };
 
 $timeline_attrs = [
-	'introText'  => '',
+	'introText'  => "For more than 250 years, The Black Cap has been at the heart of Camden. Known as one of London's most historic pubs and a cornerstone of LGBTQ+ culture, it has hosted legendary performers, launched careers and offered generations a safe and celebratory space.\n\nNow, at long last, the Cap is OPEN once more. It's been saved not just by law, but by love, by the thousands who stood up for it, sang for it, and believed in it. The Cap has always been more than bricks and mortar. It's drag and glitter, it's protest and power, it's the place where outsiders became insiders.",
 	'timestamps' => [
 		[
 			'id'          => 'ts-1',
@@ -409,7 +409,7 @@ if ( $front_page && 'page' === $front_page->post_type ) {
 
 		$b( 'story', [
 			'title' => 'Legendary',
-			'copy'  => "The Black Cap has been Camden's queer heartbeat since 1967. Two bars, a legendary terrace, and a performance room that's seen more feather boas than the law should allow. Shufflewick's is where the pints happen. The stage is where the magic does.",
+			'copy'  => "The Black Cap isn't just a venue with a famous name - it's a building, a stage, and a community landmark. From its historic façade on Camden High Street to the performance room that helped shape London cabaret, The Black Cap has long been a place where talent breaks through, audiences gather and queer culture is celebrated.",
 			'photos' => [
 				[ 'url' => $story_img(1), 'scale' => 1.3,  'driftX' =>  1.2,  'driftY' => -12.5 ],
 				[ 'url' => $story_img(3), 'scale' => 2.2,  'driftX' =>  11.0, 'driftY' =>   3.0 ],
