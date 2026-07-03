@@ -310,3 +310,130 @@
     initCards();
   }
 })();
+
+/* ── Timeline lightbox ──────────────────────────────────────────── */
+(function () {
+  'use strict';
+
+  var lb        = null;
+  var lbData    = [];
+  var lbIdx     = 0;
+
+  var LB_HTML = [
+    '<div class="tlLightbox" id="tbc-tl-lb" role="dialog" aria-modal="true" aria-label="Photo" hidden>',
+    '  <div class="tlLightbox__bd"></div>',
+    '  <div class="tlLightbox__panel">',
+    '    <button class="tlLightbox__close" aria-label="Close">&#x2715;</button>',
+    '    <div class="tlLightbox__img-wrap">',
+    '      <img class="tlLightbox__img" src="" alt="">',
+    '      <button class="tlLightbox__prev" aria-label="Previous photo">&#x2039;</button>',
+    '      <button class="tlLightbox__next" aria-label="Next photo">&#x203a;</button>',
+    '      <span class="tlLightbox__counter"></span>',
+    '    </div>',
+    '    <div class="tlLightbox__info">',
+    '      <h3 class="tlLightbox__title"></h3>',
+    '      <p class="tlLightbox__desc"></p>',
+    '    </div>',
+    '  </div>',
+    '</div>',
+  ].join('');
+
+  function ensureLb() {
+    if (lb) return;
+    document.body.insertAdjacentHTML('beforeend', LB_HTML);
+    lb = document.getElementById('tbc-tl-lb');
+
+    lb.querySelector('.tlLightbox__bd').addEventListener('click', closeLb);
+    lb.querySelector('.tlLightbox__close').addEventListener('click', closeLb);
+    lb.querySelector('.tlLightbox__prev').addEventListener('click', function () { showSlide(lbIdx - 1); });
+    lb.querySelector('.tlLightbox__next').addEventListener('click', function () { showSlide(lbIdx + 1); });
+
+    document.addEventListener('keydown', function (e) {
+      if (!lb || lb.hidden) return;
+      if (e.key === 'Escape')      { closeLb(); return; }
+      if (e.key === 'ArrowLeft')   showSlide(lbIdx - 1);
+      if (e.key === 'ArrowRight')  showSlide(lbIdx + 1);
+    });
+  }
+
+  function showSlide(idx) {
+    if (!lbData.length) return;
+    lbIdx = ((idx % lbData.length) + lbData.length) % lbData.length;
+    var item   = lbData[lbIdx];
+    var total  = lbData.length;
+    var imgEl  = lb.querySelector('.tlLightbox__img');
+    var single = total === 1;
+
+    imgEl.style.opacity = '0';
+    imgEl.src = '';
+    imgEl.onload  = function () { imgEl.style.opacity = '1'; };
+    imgEl.onerror = function () { imgEl.style.opacity = '1'; };
+    imgEl.alt = item.alt || '';
+    imgEl.src = item.url;
+
+    lb.querySelector('.tlLightbox__title').textContent = item.title || '';
+    lb.querySelector('.tlLightbox__desc').textContent  = item.desc  || '';
+    lb.querySelector('.tlLightbox__counter').textContent = single
+      ? '' : (lbIdx + 1) + ' / ' + total;
+
+    lb.querySelector('.tlLightbox__prev').hidden = single;
+    lb.querySelector('.tlLightbox__next').hidden = single;
+  }
+
+  function openAt(data, idx) {
+    ensureLb();
+    lbData = data;
+    lb.hidden = false;
+    document.documentElement.style.overflow = 'hidden';
+    showSlide(idx);
+    lb.querySelector('.tlLightbox__close').focus();
+  }
+
+  function closeLb() {
+    if (!lb) return;
+    lb.hidden = true;
+    document.documentElement.style.overflow = '';
+    var imgEl = lb.querySelector('.tlLightbox__img');
+    imgEl.src = '';
+    imgEl.style.opacity = '0';
+  }
+
+  function initTimelines() {
+    document.querySelectorAll('.timelineSection').forEach(function (section) {
+      // ── Intro fade-in via IntersectionObserver ──
+      var intro = section.querySelector('.timelineIntro');
+      if (intro && 'IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              intro.classList.add('isVisible');
+              obs.unobserve(intro);
+            }
+          });
+        }, { threshold: 0.2 }).observe(intro);
+      } else if (intro) {
+        intro.classList.add('isVisible'); // fallback: always visible
+      }
+
+      // ── Lightbox ──
+      var dataEl = section.querySelector('.tbc-timeline-data');
+      if (!dataEl) return;
+
+      var data;
+      try { data = JSON.parse(dataEl.textContent); } catch (_) { return; }
+      if (!Array.isArray(data) || !data.length) return;
+
+      section.querySelectorAll('.timelineThumb').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          openAt(data, parseInt(btn.dataset.index, 10) || 0);
+        });
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTimelines);
+  } else {
+    initTimelines();
+  }
+})();

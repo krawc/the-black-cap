@@ -98,6 +98,38 @@ function tbc_replace_attachment_file( int $id, string $new_src ): void {
 	wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $dest ) );
 }
 
+/**
+ * Upload a timeline image to wp-content/uploads/tbc-timeline/timeline-{N}.{ext}.
+ */
+function tbc_upload_timeline_image( string $src, int $slot ): int {
+	$upload = wp_upload_dir();
+	$dir    = $upload['basedir'] . '/tbc-timeline';
+	wp_mkdir_p( $dir );
+
+	$ext  = strtolower( pathinfo( $src, PATHINFO_EXTENSION ) );
+	$name = "timeline-{$slot}.{$ext}";
+	$dest = "{$dir}/{$name}";
+
+	copy( $src, $dest );
+
+	$mime = wp_check_filetype( $dest );
+	$id   = wp_insert_attachment(
+		[
+			'guid'           => $upload['baseurl'] . "/tbc-timeline/{$name}",
+			'post_title'     => "Timeline Image {$slot}",
+			'post_name'      => "tbc-timeline-{$slot}",
+			'post_mime_type' => $mime['type'],
+			'post_status'    => 'inherit',
+			'post_content'   => '',
+		],
+		$dest,
+		0
+	);
+
+	wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $dest ) );
+	return $id;
+}
+
 // Collect staged images (alphabetical → deterministic slot order)
 $import_dir = __DIR__ . '/import-images';
 $staged     = [];
@@ -159,6 +191,102 @@ if ( $staged ) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
+   §1b  TIMELINE IMAGE UPLOAD
+   ══════════════════════════════════════════════════════════════════ */
+
+$tl_img_dir  = get_template_directory() . '/assets/img/timeline';
+$tl_mapping  = (array) get_option( 'tbc_timeline_images', [] );
+$tl_uploaded = false;
+
+WP_CLI::log( '' );
+WP_CLI::log( '→ Ensuring timeline images are in media library…' );
+
+for ( $tl_slot = 1; $tl_slot <= 5; $tl_slot++ ) {
+	$tl_src     = "{$tl_img_dir}/{$tl_slot}.webp";
+	$tl_prev_id = isset( $tl_mapping[ $tl_slot ] ) ? (int) $tl_mapping[ $tl_slot ] : 0;
+	$tl_post    = $tl_prev_id ? get_post( $tl_prev_id ) : null;
+
+	if ( $tl_post && 'attachment' === $tl_post->post_type ) {
+		WP_CLI::log( "  Timeline slot {$tl_slot} → already uploaded (ID {$tl_prev_id})" );
+	} elseif ( ! file_exists( $tl_src ) ) {
+		WP_CLI::warning( "  Timeline slot {$tl_slot} → source not found: {$tl_src}" );
+	} else {
+		$tl_new_id             = tbc_upload_timeline_image( $tl_src, $tl_slot );
+		$tl_mapping[ $tl_slot ] = $tl_new_id;
+		$tl_uploaded            = true;
+		WP_CLI::success( sprintf(
+			'  Slot %d → uploaded   ID %-6d  %s',
+			$tl_slot, $tl_new_id, basename( $tl_src )
+		) );
+	}
+}
+
+if ( $tl_uploaded ) {
+	update_option( 'tbc_timeline_images', $tl_mapping );
+}
+
+// Helper: get a timeline attachment ID (0 if the slot was not uploaded)
+$tl_id = static function ( int $slot ) use ( $tl_mapping ): int {
+	return isset( $tl_mapping[ $slot ] ) ? (int) $tl_mapping[ $slot ] : 0;
+};
+
+// Combine multiple paragraphs with a blank-line separator (preserved by pre-wrap in CSS)
+$paras = static function ( string ...$ps ): string {
+	return implode( "\n\n", $ps );
+};
+
+$timeline_attrs = [
+	'introText'  => '',
+	'timestamps' => [
+		[
+			'id'          => 'ts-1',
+			'title'       => '1751–1960: WITCHES & THE START OF SOMETHING SPECIAL',
+			'description' => $paras(
+				"The Black Cap’s story begins way back in 1751, when it first opened as the Mother Black Cap. Local Camden folklore says it was named after a witch – “Mother Damnable” – who was said to curse anyone who crossed her. By 1781, the pub had moved to its current spot on Camden High Street, and in 1889 it was rebuilt into the Victorian building you see today. If you look up, you’ll spot her: a stone bust of Mother Black Cap, still watching over the door like she has for over a century."
+			),
+			'imageIds'    => array_values( array_filter( [ $tl_id(1) ] ) ),
+		],
+		[
+			'id'          => 'ts-2',
+			'title'       => '1960s: FROM LOCAL TO QUEER HEAVEN',
+			'description' => $paras(
+				"In the 1960s, long before it was legal to be openly gay in this country, the Black Cap became something more than a pub. It became a safe meeting place. By the mid-60s it had already built a reputation as one of London’s very first “gay pubs” and by the 70s it had a new title too: the Palladium of Drag.",
+				"Legends of British drag like Danny La Rue, Hinge & Bracket, and above all Mrs Shufflewick made this their stage. Shufflewick’s Sunday shows were infamous – packed with everyone from local regulars to big names like Barry Humphries."
+			),
+			'imageIds'    => array_values( array_filter( [ $tl_id(2) ] ) ),
+		],
+		[
+			'id'          => 'ts-3',
+			'title'       => '1970s–1980s: THE GOLDEN YEARS',
+			'description' => $paras(
+				"Through the 80s and 90s the Cap wasn’t just a pub – it was a lifeline. You came here to laugh with a drag queen tearing the house down, to flirt, to dance, to cry on someone’s shoulder. For many, it was the first place they truly felt at home.",
+				"Acts like Regina Fong brought the house down night after night, with a fanbase who called themselves the “Fongettes.” The Cap also gave space to community groups: from trans support meetups to London Gay Symphonic Winds rehearsals. It wasn’t just entertainment, it was solidarity.",
+				"By the 2000s, the Cap was still buzzing, with nights like The Meth Lab mixing drag, cabaret and surreal performance. Stars of RuPaul’s Drag Race – Bianca Del Rio, Trixie Mattel, Raja, Adore Delano, all performed on the stage."
+			),
+			'imageIds'    => array_values( array_filter( [ $tl_id(3) ] ) ),
+		],
+		[
+			'id'          => 'ts-4',
+			'title'       => '1990s–2010s: A VENUE WITH COMMUNITY WEIGHT',
+			'description' => $paras(
+				"The Black Cap’s importance has never been limited to nightlife. For many, it represented something rare: a public place where being openly LGBTQ+ felt normal, safe, and shared. Former staff and regulars have described it as a welcoming, mixed crowd across ages – a place to meet, talk, laugh, and feel part of something bigger than a night out. That community role was formally recognised when Camden Council granted Asset of Community Value (ACV) status – a protection designed to acknowledge places that contribute to local social and cultural life.",
+				"In more recent years, community work and campaigning continued beyond the building itself. Partnerships and grassroots groups helped keep the spirit of The Black Cap alive through organised meet-ups and advocacy that was driven by the belief that London needs queer spaces that aren’t disposable."
+			),
+			'imageIds'    => array_values( array_filter( [ $tl_id(4) ] ) ),
+		],
+		[
+			'id'          => 'ts-5',
+			'title'       => '2020s: A NEW CHAPTER',
+			'description' => $paras(
+				"Now, at long last, the Cap is reopening. It’s been saved not just by law, but by love, by the thousands who stood up for it, sang for it, and believed in it.",
+				"The Black Cap returns with the same rebellious spirit, inclusive heart, and unforgettable nights that made it a cornerstone of queer culture in London. Join us as we celebrate our past, and raise a glass to the future."
+			),
+			'imageIds'    => array_values( array_filter( [ $tl_id(5) ] ) ),
+		],
+	],
+];
+
+/* ══════════════════════════════════════════════════════════════════
    §2  RESOLVE IMAGE URLS
    ══════════════════════════════════════════════════════════════════ */
 
@@ -204,31 +332,48 @@ $front_page    = $front_page_id ? get_post( $front_page_id ) : null;
 
 if ( $front_page && 'page' === $front_page->post_type ) {
 
-	// Page already exists — only patch Our Rooms if fresh images were staged
-	if ( $staged ) {
-		$blocks  = parse_blocks( $front_page->post_content );
-		$patched = false;
+	// Always parse so we can both patch Our Rooms and insert Timeline if missing.
+	$blocks       = parse_blocks( $front_page->post_content );
+	$patched      = false;
+	$has_timeline = false;
 
-		foreach ( $blocks as &$block ) {
-			if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/our-rooms' ) {
-				$block['attrs']['frames'] = $frames;
-				$patched = true;
+	foreach ( $blocks as &$block ) {
+		if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/our-rooms' && $staged ) {
+			$block['attrs']['frames'] = $frames;
+			$patched = true;
+		}
+		if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/timeline' ) {
+			$has_timeline = true;
+		}
+	}
+	unset( $block );
+
+	// Insert Timeline block after Our Story if it doesn't exist yet.
+	if ( ! $has_timeline ) {
+		$story_pos = null;
+		foreach ( $blocks as $idx => $blk ) {
+			if ( ( $blk['blockName'] ?? '' ) === 'the-black-cap/story' ) {
+				$story_pos = $idx;
 				break;
 			}
 		}
-		unset( $block );
-
-		if ( $patched ) {
-			wp_update_post( [
-				'ID'           => $front_page_id,
-				'post_content' => serialize_blocks( $blocks ),
-			] );
-			WP_CLI::success( "Patched Our Rooms block in front page (ID {$front_page_id})." );
-		} else {
-			WP_CLI::warning( 'Our Rooms block not found — page content unchanged.' );
+		$tl_parsed = parse_blocks( $b( 'timeline', $timeline_attrs ) );
+		if ( ! empty( $tl_parsed[0] ) ) {
+			$insert_at = $story_pos !== null ? $story_pos + 1 : count( $blocks );
+			array_splice( $blocks, $insert_at, 0, [ $tl_parsed[0] ] );
+			$patched = true;
+			WP_CLI::success( 'Inserted Timeline block after Our Story.' );
 		}
+	}
+
+	if ( $patched ) {
+		wp_update_post( [
+			'ID'           => $front_page_id,
+			'post_content' => serialize_blocks( $blocks ),
+		] );
+		WP_CLI::success( "Updated front page (ID {$front_page_id})." );
 	} else {
-		WP_CLI::log( "  Front page (ID {$front_page_id}) already exists — skipping content." );
+		WP_CLI::log( "  Front page (ID {$front_page_id}) is already up to date." );
 	}
 
 } else {
@@ -258,6 +403,8 @@ if ( $front_page && 'page' === $front_page->post_type ) {
 				[ 'url' => $story_img(2), 'scale' => 1.1,  'driftX' => -11.6, 'driftY' =>  14.5 ],
 			],
 		] ),
+
+		$b( 'timeline', $timeline_attrs ),
 
 		$b( 'highlights', [
 			'videoIds' => '7644927884900961558,7642689026490912003,7640829274840190240,7640504644887776544,7640442725908712737,7640087100393606433,7639762417546824992,7639360399963360545',

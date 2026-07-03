@@ -1105,3 +1105,401 @@ h2 {
 .admin-bar .hero {
   padding-top: calc(clamp(1.1rem, 3vw, 2.8rem) + 32px);
 }
+
+/* ── Timeline ────────────────────────────────────────────────────── */
+.timelineSection {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  background: #000;
+}
+
+/* Intro text — fades in when scrolled into view */
+.timelineIntro {
+    max-width: 48rem;
+    margin: 0 auto clamp(2rem, 8vw, 8rem) 0;
+    padding: 0 clamp(1.15rem, 4vw, 4rem);
+    text-align: left;
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.timelineIntro.isVisible {
+  opacity: 1;
+  transform: none;
+}
+
+.timelineIntro p {
+  /* font-size: clamp(1rem, 2.2vw, 1.2rem); */
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Horizontal scroll wrapper */
+.timelineScroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  scroll-padding-left: clamp(1.15rem, 4vw, 4rem);
+}
+
+.timelineScroll::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * Track: horizontal flex row, items bottom-aligned so all dots sit at the
+ * same Y regardless of card height. The rainbow line is ::before, centred
+ * on the 22 px dots (= 11 px from track bottom).
+ */
+.timelineTrack {
+  --tl-pad: clamp(1.15rem, 4vw, 4rem);
+  --tl-dot: 22px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  position: relative;
+  width: max-content;
+  padding-left: var(--tl-pad);
+  padding-right: var(--tl-pad);
+  gap: clamp(1.15rem, 4vw, 4rem);
+}
+
+/* Rainbow gradient line at the centre of the dots */
+.timelineTrack::before {
+  content: '';
+  position: absolute;
+  bottom: calc(var(--tl-dot) / 2);
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform: translateY(50%);
+  background: linear-gradient(
+    to right,
+    #D65CFF,
+    #3F7CFF,
+    #64F4FF,
+    #79FF5A,
+    #FFF84A
+  );
+  box-shadow:
+    0 0 8px rgba(100, 244, 255, 0.35),
+    0 0 16px rgba(214, 92, 255, 0.2);
+}
+
+/* Each timestamp column — fixed width, content above, dot below */
+.timelineItem {
+  flex: 0 0 clamp(240px, 38vw, 540px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  scroll-snap-align: start;
+}
+
+/* Content lives above the dot; padding-bottom creates the gap */
+.timelineItem__card {
+  width: 100%;
+  padding-bottom: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+.timelineItem__title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+  margin: 0 0 0.45rem;
+  color: #fff;
+}
+
+.timelineItem__desc {
+  font-size: clamp(0.8rem, 1.3vw, 0.875rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.68);
+  margin: 0 0 0.75rem;
+}
+
+.timelineItem__images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Dark circle sitting on the line; left edge matches card's left edge */
+.timelineDot {
+  flex-shrink: 0;
+  width: var(--tl-dot);
+  height: var(--tl-dot);
+  border-radius: 50%;
+  background: #000;
+  border: 2px solid rgba(255, 255, 255, 1);
+  position: relative;
+  z-index: 1;
+}
+
+/* Square thumbnail buttons */
+.timelineThumb {
+  display: block;
+  width: clamp(52px, 9vw, 100px);
+  height: clamp(52px, 9vw, 100px);
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #0d0d0d;
+  transition: border-color 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.timelineThumb:hover,
+.timelineThumb:focus-visible {
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.07);
+  outline: none;
+}
+
+.timelineThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Timeline lightbox ───────────────────────────────────────────── */
+.tlLightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.tlLightbox[hidden] {
+  display: none;
+}
+
+.tlLightbox__bd {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+}
+
+/* Desktop: image left, info right */
+.tlLightbox__panel {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 920px);
+  height: clamp(320px, 60vh, 560px);
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+.tlLightbox__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.tlLightbox__close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.tlLightbox__img-wrap {
+  flex: 0 0 55%;
+  position: relative;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.tlLightbox__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.3s ease;
+}
+
+.tlLightbox__counter {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.tlLightbox__prev,
+.tlLightbox__next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  width: 38px;
+  height: 56px;
+  cursor: pointer;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.tlLightbox__prev { left: 0; border-radius: 0 4px 4px 0; }
+.tlLightbox__next { right: 0; border-radius: 4px 0 0 4px; }
+
+.tlLightbox__prev:hover,
+.tlLightbox__next:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.tlLightbox__info {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 2.5vw, 1.75rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tlLightbox__title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 2vw, 1.2rem);
+  color: #fff;
+  margin: 0 0 0.6rem;
+}
+
+.tlLightbox__desc {
+  font-size: clamp(0.82rem, 1.5vw, 0.9rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* ── Gutenberg editor styles for timeline block ──────────────────── */
+.tl-editor {
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 6px;
+  color: #fff;
+}
+
+.tl-editor__intro-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.tl-editor__entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.tl-editor__entry {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tl-editor__entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.tl-editor__entry-num {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tl-editor__entry-btns {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.tl-editor__thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.tl-editor__thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tl-editor__thumb--missing {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.tl-editor__add-wrap {
+  padding-top: 0.5rem;
+}
+
+/* ── Timeline responsive ─────────────────────────────────────────── */
+@media (max-width: 560px) {
+  /* Nearly full-width card with a peek of the next item */
+  .timelineItem {
+    flex-basis: calc(100vw - clamp(1.15rem, 3vw, 2rem) - 3rem);
+  }
+}
+
+@media (max-width: 640px) {
+  /* Lightbox: stack vertically on narrow screens */
+  .tlLightbox__panel {
+    flex-direction: column;
+    width: min(92vw, 480px);
+    height: auto;
+    max-height: 90vh;
+  }
+
+  .tlLightbox__img-wrap {
+    flex: none;
+  }
+
+  .tlLightbox__img {
+    height: auto;
+    max-height: 45vh;
+  }
+
+  .tlLightbox__info {
+    justify-content: flex-start;
+  }
+}
