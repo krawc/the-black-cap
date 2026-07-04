@@ -130,6 +130,38 @@ function tbc_upload_timeline_image( string $src, int $slot ): int {
 	return $id;
 }
 
+/**
+ * Upload a venue image to wp-content/uploads/tbc-venues/venue-{N}.{ext}.
+ */
+function tbc_upload_venue_image( string $src, int $slot ): int {
+	$upload = wp_upload_dir();
+	$dir    = $upload['basedir'] . '/tbc-venues';
+	wp_mkdir_p( $dir );
+
+	$ext  = strtolower( pathinfo( $src, PATHINFO_EXTENSION ) );
+	$name = "venue-{$slot}.{$ext}";
+	$dest = "{$dir}/{$name}";
+
+	copy( $src, $dest );
+
+	$mime = wp_check_filetype( $dest );
+	$id   = wp_insert_attachment(
+		[
+			'guid'           => $upload['baseurl'] . "/tbc-venues/{$name}",
+			'post_title'     => "Venue Image {$slot}",
+			'post_name'      => "tbc-venue-img-{$slot}",
+			'post_mime_type' => $mime['type'],
+			'post_status'    => 'inherit',
+			'post_content'   => '',
+		],
+		$dest,
+		0
+	);
+
+	wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $dest ) );
+	return $id;
+}
+
 // Set by run.sh via docker -e TBC_SKIP_ROOMS=1 to skip the room image import.
 $skip_rooms = ! empty( getenv( 'TBC_SKIP_ROOMS' ) );
 
@@ -507,6 +539,115 @@ $room_id = static function ( int $slot ) use ( $room_post_ids ): int {
 };
 
 /* ══════════════════════════════════════════════════════════════════
+   §3c  VENUE DEFINITIONS
+   ══════════════════════════════════════════════════════════════════ */
+
+$venue_img_dir = get_template_directory() . '/assets/img/venues';
+
+$venue_defs = [
+	1 => [
+		'name' => 'Regina Fong Terrace',
+		'desc' => 'The outdoor rooftop space located at the rear of the first floor, accessed directly through the Shufflewick Bar.',
+		'img'  => "{$venue_img_dir}/terrace.webp",
+	],
+	2 => [
+		'name' => 'Ms Shufflewick Bar',
+		'desc' => 'The first-floor bar area with seating booths, named after the pioneering 1950s drag performer.',
+		'img'  => "{$venue_img_dir}/shufflewick.webp",
+	],
+	3 => [
+		'name' => "Lily's Bar",
+		'desc' => 'The ground-floor main showroom, performance stage, dance floor, and primary social hub, named in honor of Lily Savage.',
+		'img'  => "{$venue_img_dir}/lilys.webp",
+	],
+];
+
+/* ══════════════════════════════════════════════════════════════════
+   §3d  VENUE IMAGE UPLOAD  (idempotent — skips already-uploaded)
+   ══════════════════════════════════════════════════════════════════ */
+
+$venue_img_mapping  = (array) get_option( 'tbc_venue_images', [] );
+$venue_img_changed  = false;
+
+WP_CLI::log( '' );
+WP_CLI::log( '→ Ensuring venue images are in media library…' );
+
+foreach ( $venue_defs as $slot => $def ) {
+	$prev_id = isset( $venue_img_mapping[ $slot ] ) ? (int) $venue_img_mapping[ $slot ] : 0;
+	$post    = $prev_id ? get_post( $prev_id ) : null;
+
+	if ( $post && 'attachment' === $post->post_type ) {
+		WP_CLI::log( "  Venue slot {$slot} → already uploaded (ID {$prev_id})" );
+	} elseif ( ! file_exists( $def['img'] ) ) {
+		WP_CLI::warning( "  Venue slot {$slot} → source not found: {$def['img']}" );
+	} else {
+		$new_id                    = tbc_upload_venue_image( $def['img'], $slot );
+		$venue_img_mapping[ $slot ] = $new_id;
+		$venue_img_changed          = true;
+		WP_CLI::success( sprintf(
+			'  Slot %d → uploaded   ID %-6d  %s',
+			$slot, $new_id, basename( $def['img'] )
+		) );
+	}
+}
+
+if ( $venue_img_changed ) {
+	update_option( 'tbc_venue_images', $venue_img_mapping );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   §3e  ENSURE VENUE CPT POSTS + ASSIGN IMAGES
+   ══════════════════════════════════════════════════════════════════ */
+
+WP_CLI::log( '' );
+WP_CLI::log( '→ Ensuring Venue posts…' );
+
+$venue_post_ids = [];
+
+foreach ( $venue_defs as $slot => $def ) {
+	$slug    = "venue-{$slot}";
+	$found   = get_posts( [
+		'post_type'   => 'tbc_venue',
+		'post_status' => 'any',
+		'name'        => $slug,
+		'numberposts' => 1,
+	] );
+	$existing = $found[0] ?? null;
+
+	if ( $existing ) {
+		$venue_post_ids[ $slot ] = $existing->ID;
+		wp_update_post( [ 'ID' => $existing->ID, 'post_title' => $def['name'] ] );
+		WP_CLI::log( "  Slot {$slot} → updated (ID {$existing->ID}: {$def['name']})" );
+	} else {
+		$new_id = wp_insert_post( [
+			'post_type'   => 'tbc_venue',
+			'post_title'  => $def['name'],
+			'post_name'   => $slug,
+			'post_status' => 'publish',
+		] );
+		$venue_post_ids[ $slot ] = $new_id;
+		WP_CLI::success( "  Slot {$slot} → created '{$def['name']}' (ID {$new_id})" );
+	}
+
+	$pid     = $venue_post_ids[ $slot ];
+	$att_id  = isset( $venue_img_mapping[ $slot ] ) ? (int) $venue_img_mapping[ $slot ] : 0;
+	update_post_meta( $pid, 'tbc_venue_description', $def['desc'] );
+	update_post_meta( $pid, 'tbc_venue_image_ids', $att_id ? [ $att_id ] : [] );
+}
+
+// Helper: get tbc_venue post ID for a slot (0 if not found)
+$venue_id = static function ( int $slot ) use ( $venue_post_ids ): int {
+	return $venue_post_ids[ $slot ] ?? 0;
+};
+
+// Venue-hire block slots: SVG paths are indexed bottom→top (0=ground, 1=first, 2=roof)
+$venue_slots = [
+	[ 'venueId' => $venue_id(3) ], // index 0 (bottom) → Lily's Bar (ground floor)
+	[ 'venueId' => $venue_id(2) ], // index 1 (middle) → Ms Shufflewick Bar (first floor)
+	[ 'venueId' => $venue_id(1) ], // index 2 (top)    → Regina Fong Terrace (rooftop)
+];
+
+/* ══════════════════════════════════════════════════════════════════
    §4  BUILD Our Rooms frame array
    ══════════════════════════════════════════════════════════════════ */
 
@@ -537,9 +678,10 @@ $front_page    = $front_page_id ? get_post( $front_page_id ) : null;
 if ( $front_page && 'page' === $front_page->post_type ) {
 
 	// Always parse so we can both patch Our Rooms and insert Timeline if missing.
-	$blocks       = parse_blocks( $front_page->post_content );
-	$patched      = false;
-	$has_timeline = false;
+	$blocks            = parse_blocks( $front_page->post_content );
+	$patched           = false;
+	$has_timeline      = false;
+	$has_venue_hire    = false;
 
 	foreach ( $blocks as &$block ) {
 		if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/our-rooms' ) {
@@ -549,6 +691,11 @@ if ( $front_page && 'page' === $front_page->post_type ) {
 		if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/timeline' ) {
 			$has_timeline = true;
 			$block['attrs'] = $timeline_attrs;
+			$patched = true;
+		}
+		if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/venue-hire' ) {
+			$has_venue_hire = true;
+			$block['attrs']['slots'] = $venue_slots;
 			$patched = true;
 		}
 	}
@@ -569,6 +716,24 @@ if ( $front_page && 'page' === $front_page->post_type ) {
 			array_splice( $blocks, $insert_at, 0, [ $tl_parsed[0] ] );
 			$patched = true;
 			WP_CLI::success( 'Inserted Timeline block after Our Story.' );
+		}
+	}
+
+	// Insert Venue Hire block after Our Rooms if it doesn't exist yet.
+	if ( ! $has_venue_hire ) {
+		$rooms_pos = null;
+		foreach ( $blocks as $idx => $blk ) {
+			if ( ( $blk['blockName'] ?? '' ) === 'the-black-cap/our-rooms' ) {
+				$rooms_pos = $idx;
+				break;
+			}
+		}
+		$vh_parsed = parse_blocks( $b( 'venue-hire', [ 'slots' => $venue_slots ] ) );
+		if ( ! empty( $vh_parsed[0] ) ) {
+			$insert_at = $rooms_pos !== null ? $rooms_pos + 1 : count( $blocks );
+			array_splice( $blocks, $insert_at, 0, [ $vh_parsed[0] ] );
+			$patched = true;
+			WP_CLI::success( 'Inserted Venue Hire block after Our Rooms.' );
 		}
 	}
 
@@ -649,6 +814,8 @@ if ( $front_page && 'page' === $front_page->post_type ) {
 		] ),
 
 		$b( 'our-rooms', [ 'frames' => $frames ] ),
+
+		$b( 'venue-hire', [ 'slots' => $venue_slots ] ),
 
 	] );
 

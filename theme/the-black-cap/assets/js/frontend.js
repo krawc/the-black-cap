@@ -491,6 +491,60 @@
   }
 })();
 
+/* ── Venue Hire ─────────────────────────────────────────────────── */
+(function () {
+  'use strict';
+
+  function initVenueHire() {
+    document.querySelectorAll('.venueHireLayout').forEach(function (layout) {
+      var venues = [];
+      try { venues = JSON.parse(layout.dataset.venues || '{}'); } catch (_) {}
+
+      var shapes   = layout.querySelectorAll('.venueShape');
+      var hitZones = layout.querySelectorAll('.venueHitZone');
+      var nameEl   = layout.querySelector('.venueHirePanel__name');
+      var descEl   = layout.querySelector('.venueHirePanel__desc');
+
+      if (!shapes.length) return;
+
+      function activate(idx) {
+        shapes.forEach(function (s) { s.classList.remove('venueShape--active'); });
+        if (shapes[idx]) shapes[idx].classList.add('venueShape--active');
+        var v = venues[idx] || {};
+        if (nameEl) nameEl.textContent = v.title || '';
+        if (descEl) descEl.textContent = v.desc  || '';
+      }
+
+      // Visual paths: keyboard-accessible
+      shapes.forEach(function (shape, i) {
+        shape.addEventListener('mouseenter', function () { activate(i); });
+        shape.addEventListener('click', function () { activate(i); });
+        shape.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(i); }
+        });
+      });
+
+      // Hit zones: expand hover/click area beyond the thin stroke
+      hitZones.forEach(function (hz) {
+        var i = parseInt(hz.dataset.venueIndex, 10);
+        hz.addEventListener('mouseenter', function () { activate(i); });
+        hz.addEventListener('click', function () { activate(i); });
+      });
+
+      // Pre-activate initial slot set in the data attribute
+      var panel   = layout.querySelector('.venueHirePanel');
+      var initIdx = panel ? (parseInt(panel.dataset.activeIdx, 10) || 0) : 0;
+      activate(initIdx);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVenueHire);
+  } else {
+    initVenueHire();
+  }
+})();
+
 /* ── Timeline lightbox ──────────────────────────────────────────── */
 (function () {
   'use strict';

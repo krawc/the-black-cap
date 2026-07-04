@@ -54,6 +54,15 @@ The memo boundary is intentional: lightbox open/close in the parent must not tri
 
 Edit `scripts/raw/curve-001.json` or `curve-002.json`, then re-run `node scripts/gen-curves.js` to update all five output curves.
 
+### Setup scripts
+
+Import/setup scripts live in `theme/the-black-cap/setup/`. Whenever any logic in `setup.php` changes, update **all** runner scripts to stay in sync — currently:
+
+- `run.sh` — runs setup via wp-env (local Docker environment)
+- `run-remote.sh` — runs setup directly on a remote server (SSH in first, then execute)
+
+If new runner scripts are added, list them here and keep them all updated together.
+
 ### Fonts
 
 `Train One` (headings) and `Montserrat` (body) loaded from Google Fonts in `index.html`. The neon glow aesthetic uses `text-shadow` with the brand palette: `#D65CFF` (purple), `#3F7CFF` (blue), `#64F4FF` (cyan), `#79FF5A` (green), `#FFF84A` (yellow).

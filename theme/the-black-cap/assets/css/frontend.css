@@ -1809,6 +1809,137 @@ h2 {
   padding-top: 0.5rem;
 }
 
+/* ── Venue Hire ─────────────────────────────────────────────────── */
+.venueHireSection {
+  padding: clamp(2rem, 6vw, 5rem) 0;
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+}
+
+.venueHireInner {
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+}
+
+.venueHireTitle {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.venueHireLayout {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+.venueHireSvg {
+  flex: 0 0 auto;
+  width: clamp(14rem, 36vw, 26rem);
+  max-height: 70vh;
+  overflow: visible;
+}
+
+.venueHireSvg svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+}
+
+/* Path interactivity */
+.venueShape {
+  fill: transparent;
+  cursor: pointer;
+  stroke: #545454;
+  transition: stroke 0.3s ease, filter 0.3s ease;
+  pointer-events: all;
+}
+
+.venueShape:focus,
+.venueShape:focus-visible {
+  outline: none;
+}
+
+.venueShape:hover {
+  stroke: #9a9a9a;
+}
+
+.venueShape--active {
+  stroke: #ffffff;
+  filter: drop-shadow(0 0 6px rgba(100, 244, 255, 0.55));
+}
+
+.venueShape--active:hover {
+  stroke: #ffffff;
+}
+
+/* Invisible fat-stroke overlay — expands the hover/click target beyond the 10px stroke */
+.venueHitZone {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 40;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.venueHitZone:focus,
+.venueHitZone:focus-visible {
+  outline: none;
+}
+
+/* Info panel */
+.venueHirePanel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: clamp(1rem, 3vw, 2rem);
+}
+
+.venueHirePanel__name {
+  font-family: 'Train One', sans-serif;
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  font-weight: 400;
+  color: #fff;
+  margin: 0;
+  line-height: 1.1;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.5),
+    0 0 2rem rgba(100, 244, 255, 0.25);
+  transition: opacity 0.3s ease;
+}
+
+.venueHirePanel__desc {
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+  white-space: pre-wrap;
+  transition: opacity 0.3s ease;
+}
+
+.venueHirePanel__cta {
+  align-self: flex-start;
+  text-decoration: none;
+}
+
+@media (max-width: 700px) {
+  .venueHireLayout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .venueHireSvg {
+    width: clamp(12rem, 72vw, 22rem);
+    max-height: 55vh;
+  }
+
+  .venueHirePanel {
+    width: 100%;
+    padding-top: 0;
+    align-items: flex-start;
+  }
+}
+
 /* ── Timeline responsive ─────────────────────────────────────────── */
 @media (max-width: 560px) {
   /* Nearly full-width card with a peek of the next item */
