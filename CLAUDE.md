@@ -2,9 +2,26 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## WordPress theme
+## Active development target
 
-A full WordPress theme lives in [theme/the-black-cap/](theme/the-black-cap/). Full developer documentation is in [theme/the-black-cap/THEME-DOCS.md](theme/the-black-cap/THEME-DOCS.md) — covers installation, the six custom blocks, API credentials (Instagram + TikTok), nav menu setup, and the FrameGallery clip-path mechanism.
+**All ongoing work is in the plugin: [plugin/the-black-cap/](plugin/the-black-cap/).** The theme in `theme/the-black-cap/` is the historical source that the plugin was derived from — do not make changes there.
+
+## WordPress plugin
+
+The plugin lives in [plugin/the-black-cap/](plugin/the-black-cap/). Key files:
+
+- [plugin/the-black-cap/the-black-cap.php](plugin/the-black-cap/the-black-cap.php) — main entry point; defines `TBC_PLUGIN_DIR` / `TBC_PLUGIN_URL` constants
+- [plugin/the-black-cap/inc/](plugin/the-black-cap/inc/) — CPTs, settings page, block patterns
+- [plugin/the-black-cap/inc/setup/](plugin/the-black-cap/inc/setup/) — dashboard-based import runner (`class-setup-runner.php`, `admin-page.php`, `ajax-handlers.php`)
+- [plugin/the-black-cap/build/blocks/](plugin/the-black-cap/build/blocks/) — compiled block output (registered at runtime)
+- [plugin/the-black-cap/src/blocks/](plugin/the-black-cap/src/blocks/) — block source (JS/edit side); rebuild with `npm run build` from `plugin/the-black-cap/`
+- [plugin/the-black-cap/assets/](plugin/the-black-cap/assets/) — CSS, JS, SVGs, images
+
+All paths inside render.php files use `TBC_PLUGIN_DIR` (filesystem) or `TBC_PLUGIN_URL` (web URL) — never `get_template_directory()`.
+
+## WordPress theme (archived)
+
+A legacy theme lives in [theme/the-black-cap/](theme/the-black-cap/). It is the source the plugin was derived from and is no longer actively developed.
 
 ## Commands
 
