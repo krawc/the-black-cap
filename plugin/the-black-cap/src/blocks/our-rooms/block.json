@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "the-black-cap/our-rooms",
+  "title": "Our Rooms",
+  "description": "Grid of SVG photo frames. Each frame accepts a preset SVG frame shape and one or more photos from the media library, clipped to the frame shape in the browser.",
+  "category": "theme",
+  "icon": "grid-view",
+  "supports": { "html": false },
+  "attributes": {
+    "frames": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "svgFile": { "type": "string",  "default": "Frame 1.svg" },
+          "roomId":  { "type": "integer", "default": 0 },
+          "wide":    { "type": "boolean", "default": false }
+        }
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}

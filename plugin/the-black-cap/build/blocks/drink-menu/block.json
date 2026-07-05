@@ -1,0 +1,46 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "the-black-cap/drink-menu",
+  "title": "Drink Menu",
+  "description": "Drinks menu with collapsible category sections, each containing item name and price pairs.",
+  "category": "theme",
+  "icon": "beer",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "sections": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "default": ""
+          },
+          "items": {
+            "type": "array",
+            "default": [],
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "default": ""
+                },
+                "price": {
+                  "type": "string",
+                  "default": ""
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}

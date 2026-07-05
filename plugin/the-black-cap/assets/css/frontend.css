@@ -1,0 +1,2138 @@
+:root {
+  color: #fff;
+  background: #000;
+  font-family:
+    Montserrat, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #000;
+  scroll-behavior: smooth;
+}
+
+body,
+#root,
+.page {
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.page {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #000;
+}
+
+/* ── Hero ───────────────────────────────────────────────────────── */
+.hero {
+  display: grid;
+  min-height: 100vh;
+  grid-template-rows: auto 1fr auto;
+  place-items: center;
+  padding: clamp(1.1rem, 3vw, 2.8rem);
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin-top: 0;
+}
+
+h1, h2 {
+  font-family: 'Train One', sans-serif;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: clamp(2rem, 7vw, 5.8rem);
+  line-height: 0.9;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.logoOrbit {
+  position: relative;
+  display: grid;
+  width: min(86vmin, 46rem);
+  aspect-ratio: 1;
+  place-items: center;
+}
+
+.logoButton {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(72vmin, 38rem);
+  aspect-ratio: 1;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  color: #fff;
+  background: transparent;
+  cursor: pointer;
+  transform-origin: 50% 100%;
+  transition: transform 460ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logoButton::before {
+  position: absolute;
+  width: 68%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 0 4rem rgba(100, 244, 255, 0.12),
+    0 0 6rem rgba(255, 49, 49, 0.1);
+  content: "";
+}
+
+.logoButton:focus-visible {
+  outline: 0.18rem solid #fff;
+  outline-offset: 0.45rem;
+}
+
+.flame {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.rainbowMenu {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.rainbowItem {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(7.5rem, 21vmin, 11rem);
+  min-height: 3.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform:
+    translate(-50%, -50%)
+    translate(0, 0)
+    scale(0.72);
+  border: 1px solid color-mix(in srgb, var(--item-color), #fff 22%);
+  border-radius: 999px;
+  color: #fff;
+  background-color: rgba(4, 4, 4, 0.88);
+  box-shadow:
+    0 0 1rem color-mix(in srgb, var(--item-color), transparent 42%),
+    inset 0 0 1.2rem color-mix(in srgb, var(--item-color), transparent 72%);
+  opacity: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 400;
+  text-align: center;
+  transition:
+    transform 480ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 240ms ease,
+    background-color 120ms ease,
+    color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.logoOrbit.isOpen .logoButton {
+  transform: scale(0.88);
+}
+
+.logoOrbit.isOpen .rainbowItem {
+  transform:
+    translate(-50%, -50%)
+    translate(var(--item-x), var(--item-y))
+    scale(1);
+  opacity: 1;
+  transition-delay: calc(var(--item-index) * 58ms), calc(var(--item-index) * 58ms), 0ms, 0ms, 0ms;
+}
+
+.rainbowItem:hover,
+.rainbowItem:focus-visible {
+  color: #000;
+  background-color: var(--item-color);
+  box-shadow:
+    0 0 1.6rem color-mix(in srgb, var(--item-color), transparent 25%),
+    inset 0 0 1.1rem rgba(255, 255, 255, 0.42);
+  outline: none;
+  transition-delay: 0ms;
+}
+
+.venueInfo {
+  display: flex;
+  width: min(100%, 70rem);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.venueInfo a {
+  min-height: 2.55rem;
+  padding: 0.72rem 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.92rem;
+}
+
+.venueInfo a:hover,
+.venueInfo a:focus-visible {
+  border-color: rgba(255, 255, 255, 0.7);
+  outline: none;
+}
+
+/* ── Story / Legendary ──────────────────────────────────────────── */
+.content {
+  position: relative;
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+}
+
+.legendaryScene {
+  display: flex;
+  align-items: flex-start;
+  gap: 0 clamp(2rem, 4vw, 3.5rem);
+}
+
+.reginaBlock {
+  flex-shrink: 0;
+  width: clamp(10.5rem, 22.5vw, 21rem);
+  margin-left: calc(-1 * clamp(1.15rem, 4vw, 4rem));
+}
+
+.reginaSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.legendaryRight {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: clamp(5rem, 18vw, 14rem);
+  flex: 1;
+}
+
+.legendaryTitle {
+  margin-bottom: 0;
+  font-weight: 700;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 0.85;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.legendaryCopy {
+  max-width: 38rem;
+  margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  line-height: 1.75;
+}
+
+.photoRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding-top: clamp(1.5rem, 3vw, 3rem);
+}
+
+.photoPlaceholder {
+  --photo-h: clamp(16rem, 38vh, 26rem);
+  flex: 0 0 auto;
+  height: calc(var(--photo-h) * var(--h-scale, 1));
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 2.5rem rgba(0, 0, 0, 0.6), 0 0.1rem 0.6rem rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.04);
+  will-change: transform;
+}
+
+.photoImg {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+
+/* Fade-in mode (parallax toggle off) */
+.photoRow--fade .photoPlaceholder {
+  opacity: 0;
+  transform: translateY(1.8rem);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  will-change: opacity, transform;
+}
+
+.photoRow--fade .photoPlaceholder.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.photoRow--fade .photoPlaceholder:nth-child(2) { transition-delay: 0.12s; }
+.photoRow--fade .photoPlaceholder:nth-child(3) { transition-delay: 0.24s; }
+.photoRow--fade .photoPlaceholder:nth-child(4) { transition-delay: 0.36s; }
+.photoRow--fade .photoPlaceholder:nth-child(5) { transition-delay: 0.48s; }
+
+h2 {
+  margin-bottom: 0;
+  font-size: clamp(2rem, 6vw, 4.6rem);
+  line-height: 0.94;
+  letter-spacing: 0;
+}
+
+/* ── What's On ──────────────────────────────────────────────────── */
+.whatsOn {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  background: #000;
+}
+
+.whatsOnInner {
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.whatsOnTitle {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.posterSlider {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* No padding here — cards align via the track's padding-left.
+     scroll-padding-left ensures every snap lands at the same indent. */
+  scroll-padding-left: clamp(1.15rem, 4vw, 4rem);
+}
+
+.posterSlider::-webkit-scrollbar {
+  display: none;
+}
+
+.posterTrack {
+  display: flex;
+  gap: 1rem;
+  padding-left: clamp(1.15rem, 4vw, 4rem);
+  padding-right: 2rem;
+}
+
+.posterCard {
+  flex: 0 0 auto;
+  width: clamp(11rem, 23vw, 19rem);
+  aspect-ratio: 2/3;
+  scroll-snap-align: start;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.eventCard {
+  /* Desktop default: 4 cards fill the viewport after the left indent.
+     Formula: (100vw − indent − 3×gap) / 4 */
+  flex: 0 0 calc((100vw - clamp(1.15rem, 4vw, 4rem) - 3rem) / 4);
+  min-width: 0;
+  scroll-snap-align: start;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  outline: none;
+}
+
+.eventCard:hover,
+.eventCard:focus-visible {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 1.4rem rgba(255, 255, 255, 0.1);
+}
+
+.eventCard__img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+
+.eventCard__img--empty {
+  background: linear-gradient(145deg, rgba(214, 92, 255, 0.06), rgba(63, 124, 255, 0.06));
+}
+
+.eventCard__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.eventCard:hover .eventCard__img img {
+  transform: scale(1.05);
+}
+
+.eventCard__body {
+  padding: 0.9rem 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.eventCard__date {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64F4FF;
+}
+
+.eventCard__title {
+  margin: 0;
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+  line-height: 1.2;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.eventCard__excerpt {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: 'Montserrat', sans-serif;
+  flex: 1;
+}
+
+.eventCard__tickets {
+  margin-top: 0.65rem;
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.42rem 1.1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.65);
+  border-radius: 2rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.eventCard__tickets:hover {
+  background: #fff;
+  color: #000;
+}
+
+.eventCard__tickets--past {
+  color: rgba(255, 255, 255, 0.45);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.eventCard__tickets--past:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.eventCard--past .eventCard__img img {
+  filter: saturate(0.55) brightness(0.85);
+}
+
+
+.eventCard__dates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.eventCard__dates-item {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64F4FF;
+}
+
+.eventCard__dates-more {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Event detail modal ──────────────────────────────────────────── */
+.eventModal {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.75rem, 3vw, 2rem);
+}
+
+.eventModal[hidden] {
+  display: none;
+}
+
+.eventModal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.eventModal__panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.7);
+  max-width: 58rem;
+  width: 100%;
+  max-height: 88vh;
+  overflow: hidden;
+}
+
+.eventModal__close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 50%;
+  width: 2.1rem;
+  height: 2.1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  line-height: 1;
+}
+
+.eventModal__close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.eventModal__img {
+  flex: 0 0 38%;
+  overflow: hidden;
+  position: relative;
+  background: #0a0a0a;
+}
+
+.eventModal__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.eventModal__img--loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2rem;
+  height: 2rem;
+  margin: -1rem 0 0 -1rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgba(255, 255, 255, 0.65);
+  border-radius: 50%;
+  animation: tbc-spin 0.65s linear infinite;
+}
+
+@keyframes tbc-spin {
+  to { transform: rotate(360deg); }
+}
+
+.eventModal__body {
+  flex: 1;
+  padding: 2.25rem 3.5rem 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+.eventModal__date {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #64F4FF;
+}
+
+.eventModal__dates-item {
+  display: block;
+  line-height: 1.9;
+}
+
+.eventModal__title {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  line-height: 1.08;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.eventModal__desc {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: 'Montserrat', sans-serif;
+  flex: 1;
+}
+
+.eventModal__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.eventModal__tickets {
+  display: inline-block;
+  padding: 0.65rem 2rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.65);
+  border-radius: 2rem;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.eventModal__tickets:hover {
+  background: #fff;
+  color: #000;
+}
+
+.shareBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  line-height: 0;
+  padding: 0.2rem;
+  transition: color 0.2s, transform 0.15s;
+}
+
+.shareBtn:hover {
+  color: #fff;
+  transform: scale(1.2);
+}
+
+/* ── What's On slider — responsive card counts ───────────────────── */
+@media (max-width: 860px) {
+  /* Tablet: 2 cards side by side */
+  .eventCard {
+    flex-basis: calc((100vw - clamp(1.15rem, 4vw, 2.5rem) - 1rem) / 2);
+  }
+}
+
+@media (max-width: 560px) {
+  /* Mobile: 1 card; next card peeks by ~2.5rem */
+  .eventCard {
+    flex-basis: calc(100vw - clamp(1.15rem, 3vw, 2rem) - 3.5rem);
+  }
+}
+
+@media (max-width: 680px) {
+  .eventModal__panel {
+    flex-direction: column;
+    max-height: 90vh;
+  }
+
+  .eventModal__img {
+    flex: 0 0 auto;
+    max-width: 100%;
+    height: 42vw;
+  }
+
+  .eventModal__body {
+    padding: 1.4rem 1.25rem;
+    overflow-y: auto;
+  }
+}
+
+/* ── Highlights / TikTok ────────────────────────────────────────── */
+.highlights {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  background: #000;
+}
+
+.highlightsInner {
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.highlightsTitle {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.highlightSlider {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+}
+
+.highlightSlider::-webkit-scrollbar {
+  display: none;
+}
+
+.highlightTrack {
+  display: flex;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  padding-right: clamp(1.15rem, 4vw, 4rem);
+}
+
+.highlightCard {
+  flex: 0 0 auto;
+  width: clamp(10rem, 38vmin, 20rem);
+  aspect-ratio: 9/16;
+  scroll-snap-align: start;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tiktokSlide {
+  flex: 0 0 auto;
+  width: clamp(20rem, 46vmin, 28rem);
+  aspect-ratio: 9/19;
+  scroll-snap-align: start;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  position: relative;
+  background: #000;
+}
+
+.tiktokEmbed {
+  margin-top: 4em;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ── Menu ───────────────────────────────────────────────────────── */
+.menuSection {
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+}
+
+.menuScene {
+  display: flex;
+  align-items: flex-start;
+  gap: 0 clamp(2rem, 4vw, 3.5rem);
+}
+
+.menuSvgBlock {
+  flex-shrink: 0;
+  width: clamp(10.5rem, 22.5vw, 21rem);
+  margin-left: calc(-1 * clamp(1.15rem, 4vw, 4rem));
+}
+
+.menuSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.menuRight {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: clamp(3rem, 10vw, 8rem);
+  flex: 1;
+  max-width: 42rem;
+}
+
+.menuHeadline {
+  margin: 0;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 0.85;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.menuList {
+  display: grid;
+  gap: 2rem;
+}
+
+.menuCategory {
+  display: grid;
+}
+
+.menuCategoryName {
+  margin: 0 0 0.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.menuItemName {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.95rem;
+}
+
+.menuItemPrice {
+  flex-shrink: 0;
+  color: #64f4ff;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* ── Our Rooms ──────────────────────────────────────────────────── */
+.roomsSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2rem, 4vw, 3rem);
+  padding: clamp(3rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+  text-align: center;
+}
+
+.roomsHeadline {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.neonButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.2rem;
+  padding: 0.85rem 2.2rem;
+  border: 1px solid rgba(100, 244, 255, 0.7);
+  border-radius: 999px;
+  color: #64f4ff;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow:
+    0 0 1.2rem rgba(100, 244, 255, 0.25),
+    inset 0 0 1.2rem rgba(100, 244, 255, 0.08);
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.neonButton:hover,
+.neonButton:focus-visible {
+  color: #000;
+  background: #64f4ff;
+  border-color: #64f4ff;
+  box-shadow:
+    0 0 2rem rgba(100, 244, 255, 0.55),
+    inset 0 0 1rem rgba(255, 255, 255, 0.3);
+  outline: none;
+}
+
+/* ── FrameGallery ───────────────────────────────────────────────── */
+.framesGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: clamp(16rem, 90vw, 90rem);
+}
+
+.frameGallery.frameWide {
+  grid-column: span 2;
+}
+
+.frameGallery svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ── Room cursor tooltip ────────────────────────────────────────── */
+.roomTooltip {
+  position: fixed;
+  z-index: 8500;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  transform: translateY(-100%);
+}
+
+.roomTooltip[hidden] {
+  display: none;
+}
+
+/* ── Room lightbox ──────────────────────────────────────────────── */
+.roomLightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.roomLightbox__bd {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.roomLightbox__panel {
+  position: relative;
+  z-index: 1;
+  width: 90vw;
+  height: 85vh;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+.roomLightbox__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.roomLightbox__close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.roomLightbox__img-wrap {
+  flex: 0 0 55%;
+  position: relative;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.roomLightbox__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.3s ease;
+}
+
+.roomLightbox__counter {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.roomLightbox__prev,
+.roomLightbox__next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  width: 38px;
+  height: 56px;
+  cursor: pointer;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.roomLightbox__prev { left: 0; border-radius: 0 4px 4px 0; }
+.roomLightbox__next { right: 0; border-radius: 4px 0 0 4px; }
+
+.roomLightbox__prev:hover,
+.roomLightbox__next:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.roomLightbox__info {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1.25rem, 2.5vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.roomLightbox__title {
+  font-family: 'Train One', sans-serif;
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 400;
+  color: #fff;
+  margin: 0;
+  line-height: 1.15;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.4),
+    0 0 2rem rgba(100, 244, 255, 0.2);
+}
+
+.roomLightbox__desc {
+  font-size: clamp(0.82rem, 1.5vw, 0.93rem);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+  white-space: pre-wrap;
+  flex: 1;
+}
+
+.roomLightbox__readMore {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #64f4ff;
+  font: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.roomLightbox__cta {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+/* ── Mobile room slider ─────────────────────────────────────────── */
+.roomsSlider {
+  display: none;
+  width: 100%;
+}
+
+.roomSlideCard {
+  flex: 0 0 clamp(10rem, 70vw, 18rem);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.25s;
+}
+
+.roomSlideCard:hover,
+.roomSlideCard:focus-visible {
+  border-color: rgba(255, 255, 255, 0.45);
+  outline: none;
+}
+
+.roomSlideCard__img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.roomSlideCard__img--empty {
+  background: linear-gradient(145deg, rgba(214, 92, 255, 0.07), rgba(63, 124, 255, 0.07));
+  aspect-ratio: 4 / 3;
+}
+
+.roomSlideCard__label {
+  padding: 0.75rem 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.03em;
+}
+
+/* ── Lightbox ───────────────────────────────────────────────────── */
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  cursor: zoom-out;
+}
+
+.lightboxImg {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  cursor: default;
+  display: block;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 0.25rem 0.5rem;
+}
+
+.lightboxClose:hover {
+  opacity: 1;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+.siteFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding: clamp(1.8rem, 4vw, 2.8rem) clamp(1.15rem, 4vw, 4rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.4rem;
+}
+
+.footerLinks a {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.78rem;
+  transition: color 120ms ease;
+}
+
+.footerLinks a:hover,
+.footerLinks a:focus-visible {
+  color: rgba(255, 255, 255, 0.88);
+  outline: none;
+}
+
+.footerCopy {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 0.75rem;
+}
+
+/* ── Room lightbox mobile ───────────────────────────────────────── */
+@media (max-width: 640px) {
+  .roomLightbox__panel {
+    flex-direction: column;
+    width: min(92vw, 480px);
+    height: auto;
+    max-height: 90vh;
+  }
+
+  .roomLightbox__img-wrap {
+    flex: none;
+  }
+
+  .roomLightbox__img {
+    height: auto;
+    max-height: 45vh;
+    object-fit: contain;
+  }
+
+  .roomLightbox__info {
+    justify-content: flex-start;
+  }
+}
+
+/* ── Rooms: switch to slider on mobile ──────────────────────────── */
+@media (max-width: 767px) {
+  .framesGrid {
+    display: none;
+  }
+
+  .roomsSlider {
+    display: block;
+  }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (min-width: 860px) {
+  .flame {
+    margin: 4em 0 2em;
+  }
+}
+
+@media (max-width: 860px) {
+  .hero {
+    min-height: 96vh;
+  }
+
+  .logoOrbit {
+    width: min(92vmin, 33rem);
+  }
+
+  .logoButton {
+    width: min(82vmin, 29rem);
+  }
+
+  .logoOrbit.isOpen .logoButton {
+    transform: scale(0.76);
+  }
+
+  .logoOrbit.isOpen .rainbowItem {
+    transform:
+      translate(-50%, -50%)
+      translate(var(--mobile-item-x), var(--mobile-item-y))
+      scale(1);
+  }
+
+  .rainbowItem {
+    width: clamp(6.3rem, 28vmin, 8.6rem);
+    min-height: 2.9rem;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.74rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .menuScene {
+    flex-direction: column;
+  }
+
+  .menuSvgBlock {
+    width: clamp(7rem, 36vw, 12rem);
+  }
+
+  .menuRight {
+    width: 100%;
+    padding-top: 0;
+    margin-top: -2rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .framesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .hero {
+    grid-template-rows: auto auto auto;
+    align-content: center;
+  }
+
+  .logoOrbit {
+    margin-block: 0.25rem;
+  }
+
+  .venueInfo {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .venueInfo a {
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+
+  .legendaryScene {
+    flex-direction: column;
+  }
+
+  .reginaBlock {
+    width: clamp(9rem, 48vw, 14rem);
+  }
+
+  .legendaryRight {
+    padding-top: 1.5rem;
+  }
+
+  .photoRow {
+    flex-direction: column;
+  }
+
+  .photoPlaceholder {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .photoImg {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .framesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .frameGallery.frameWide {
+    grid-column: span 1;
+  }
+}
+
+/* ── WordPress admin bar offset ─────────────────────────────────── */
+.admin-bar .hero {
+  padding-top: calc(clamp(1.1rem, 3vw, 2.8rem) + 32px);
+}
+
+/* ── Timeline ────────────────────────────────────────────────────── */
+.timelineSection {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  background: #000;
+}
+
+/* Intro text — fades in when scrolled into view */
+.timelineIntro {
+    max-width: 48rem;
+    margin: 0 auto clamp(2rem, 8vw, 8rem) 0;
+    padding: 0 clamp(1.15rem, 4vw, 4rem);
+    text-align: left;
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.timelineIntro.isVisible {
+  opacity: 1;
+  transform: none;
+}
+
+.timelineIntro p {
+  /* font-size: clamp(1rem, 2.2vw, 1.2rem); */
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Horizontal scroll wrapper */
+.timelineScroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  scroll-padding-left: clamp(1.15rem, 4vw, 4rem);
+}
+
+.timelineScroll::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * Track: horizontal flex row, items bottom-aligned so all dots sit at the
+ * same Y regardless of card height. The rainbow line is ::before, centred
+ * on the 22 px dots (= 11 px from track bottom).
+ */
+.timelineTrack {
+  --tl-pad: clamp(1.15rem, 4vw, 4rem);
+  --tl-dot: 30px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  position: relative;
+  width: max-content;
+  padding-left: var(--tl-pad);
+  padding-right: var(--tl-pad);
+  gap: clamp(1.15rem, 4vw, 4rem);
+}
+
+/* Rainbow gradient line centred on the dots at the top */
+.timelineTrack::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--tl-dot) / 2);
+  left: 0;
+  right: 0;
+  height: 5px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    to right,
+    #D65CFF,
+    #3F7CFF,
+    #64F4FF,
+    #79FF5A,
+    #FFF84A
+  );
+  box-shadow:
+    0 0 8px rgba(100, 244, 255, 0.35),
+    0 0 16px rgba(214, 92, 255, 0.2);
+}
+
+/* Each timestamp column — fixed width, dot above, content below */
+.timelineItem {
+  flex: 0 0 clamp(240px, 38vw, 540px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  scroll-snap-align: start;
+}
+
+/* Dark circle sitting on the line at the top of each item */
+.timelineDot {
+  flex-shrink: 0;
+  width: var(--tl-dot);
+  height: var(--tl-dot);
+  border-radius: 50%;
+  background: #000;
+  border: 3px solid rgba(255, 255, 255, 1);
+  position: relative;
+  z-index: 1;
+}
+
+/* Content card hangs below the dot */
+.timelineItem__card {
+  width: 100%;
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.timelineItem__card--open {
+  cursor: pointer;
+}
+
+.timelineItem__years {
+  display: block;
+  font-family: 'Train One', sans-serif;
+  font-size: clamp(1.15rem, 2.8vw, 1.5rem);
+  line-height: 1.1;
+  color: #fff;
+  margin: 0 0 0.75rem;
+  text-shadow:
+    0 0 0.5rem rgba(100, 244, 255, 0.45),
+    0 0 1.4rem rgba(214, 92, 255, 0.25);
+}
+
+.timelineItem__title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+  margin: 0 0 0.85rem;
+  color: #fff;
+}
+
+.timelineItem__desc {
+  font-size: clamp(0.8rem, 1.3vw, 0.875rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.68);
+  margin: 0;
+}
+
+.timelineItem__readMore {
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.timelineItem__images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+}
+
+.timelineThumb {
+  display: block;
+  width: clamp(52px, 9vw, 100px);
+  height: clamp(52px, 9vw, 100px);
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #0d0d0d;
+  transition: border-color 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.timelineThumb:hover,
+.timelineThumb:focus-visible {
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.07);
+  outline: none;
+}
+
+.timelineThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Timeline lightbox ───────────────────────────────────────────── */
+.tlLightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.tlLightbox[hidden] {
+  display: none;
+}
+
+.tlLightbox__bd {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+}
+
+/* Desktop: image left, info right */
+.tlLightbox__panel {
+  position: relative;
+  z-index: 1;
+  width: 90vw;
+  height: 85vh;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+.tlLightbox__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.tlLightbox__close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.tlLightbox__img-wrap {
+  flex: 0 0 55%;
+  position: relative;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.tlLightbox__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.3s ease;
+}
+
+.tlLightbox__counter {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.tlLightbox__prev,
+.tlLightbox__next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  width: 38px;
+  height: 56px;
+  cursor: pointer;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.tlLightbox__prev { left: 0; border-radius: 0 4px 4px 0; }
+.tlLightbox__next { right: 0; border-radius: 4px 0 0 4px; }
+
+.tlLightbox__prev:hover,
+.tlLightbox__next:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.tlLightbox__info {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 2.5vw, 1.75rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tlLightbox__years {
+  display: block;
+  font-family: 'Train One', sans-serif;
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  line-height: 1.1;
+  color: #fff;
+  margin: 0 0 0.25rem;
+}
+
+.tlLightbox__title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 2vw, 1.2rem);
+  color: #fff;
+  margin: 0 0 0.6rem;
+}
+
+.tlLightbox__desc {
+  font-size: clamp(0.82rem, 1.5vw, 0.9rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* ── Gutenberg editor styles for timeline block ──────────────────── */
+.tl-editor {
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 6px;
+  color: #fff;
+}
+
+.tl-editor__intro-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.tl-editor__entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.tl-editor__entry {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tl-editor__entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.tl-editor__entry-num {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tl-editor__entry-btns {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.tl-editor__thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.tl-editor__thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tl-editor__thumb--missing {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.tl-editor__add-wrap {
+  padding-top: 0.5rem;
+}
+
+/* ── Venue Hire ─────────────────────────────────────────────────── */
+.venueHireSection {
+  padding: clamp(2rem, 6vw, 5rem) 0;
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: #000;
+}
+
+.venueHireInner {
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+}
+
+.venueHireTitle {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.venueHireLayout {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+.venueHireSvg {
+  flex: 0 0 auto;
+  width: clamp(14rem, 36vw, 26rem);
+  max-height: 70vh;
+  overflow: visible;
+}
+
+.venueHireSvg svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+}
+
+/* Path interactivity */
+.venueShape {
+  fill: transparent;
+  cursor: pointer;
+  stroke: #545454;
+  transition: stroke 0.3s ease, filter 0.3s ease;
+  pointer-events: all;
+}
+
+.venueShape:focus,
+.venueShape:focus-visible {
+  outline: none;
+}
+
+.venueShape:hover {
+  stroke: #9a9a9a;
+}
+
+.venueShape--active {
+  stroke: #ffffff;
+  filter: drop-shadow(0 0 6px rgba(100, 244, 255, 0.55));
+}
+
+.venueShape--active:hover {
+  stroke: #ffffff;
+}
+
+/* Invisible fat-stroke overlay — expands the hover/click target beyond the 10px stroke */
+.venueHitZone {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 40;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.venueHitZone:focus,
+.venueHitZone:focus-visible {
+  outline: none;
+}
+
+/* Info panel */
+.venueHirePanel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: clamp(1rem, 3vw, 2rem);
+}
+
+.venueHirePanel__name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.2rem, 2.8vw, 2rem);
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  line-height: 1.15;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.5),
+    0 0 2rem rgba(100, 244, 255, 0.25);
+  transition: opacity 0.3s ease;
+}
+
+.venueHirePanel__desc {
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+  white-space: pre-wrap;
+  transition: opacity 0.3s ease;
+}
+
+.venueHirePanel__cta {
+  align-self: flex-start;
+  text-decoration: none;
+}
+
+/* Venue photo thumbnails */
+.venueThumbGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.venueThumb {
+  width: 128px;
+  height: 128px;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  display: block;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.venueThumb:hover,
+.venueThumb:focus-visible {
+  border-color: rgba(100, 244, 255, 0.55);
+  transform: scale(1.07);
+  outline: none;
+}
+
+/* Venue photo lightbox */
+.venueLb {
+  position: fixed;
+  inset: 0;
+  z-index: 9200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.venueLb[hidden] {
+  display: none;
+}
+
+.venueLb__bd {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  cursor: zoom-out;
+}
+
+.venueLb__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.venueLb__img {
+  display: block;
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 4px;
+  transition: opacity 0.25s ease;
+}
+
+.venueLb__close {
+  position: fixed;
+  top: 1rem;
+  right: 1.25rem;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.venueLb__close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.venueLb__close:focus-visible {
+  outline: none;
+}
+
+.venueLb__prev,
+.venueLb__next {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  width: 44px;
+  height: 64px;
+  font-size: 1.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.venueLb__prev { left: 0; border-radius: 0 4px 4px 0; }
+.venueLb__next { right: 0; border-radius: 4px 0 0 4px; }
+
+.venueLb__prev:hover,
+.venueLb__next:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.venueLb__prev:focus-visible,
+.venueLb__next:focus-visible {
+  outline: none;
+}
+
+.venueLb__counter {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+@media (max-width: 700px) {
+  .venueHireSection {
+    overflow: hidden; /* clips the SVG bleed at the screen edge */
+  }
+
+  .venueHireLayout {
+    display: grid;
+    /* Content spans 2 of 3 equal columns; SVG occupies the 3rd */
+    grid-template-columns: 60vw 1fr;
+    align-items: center;
+    gap: 0 1rem;
+  }
+
+  .venueHirePanel {
+    grid-column: 1; /* content always in the left 2fr column */
+    padding-top: 0;
+    align-items: flex-start;
+    width: auto;
+  }
+
+  .venueHireSvg {
+    grid-column: 2; /* SVG always in the right 1fr column, bleeds off edge */
+    grid-row: 1;
+    overflow: visible;
+    width: auto;
+  }
+
+  .venueHireSvg svg {
+    /*
+     * Bleed formula: SVG center = screen right edge.
+     * With layout padding P and a 2fr/1fr grid:
+     *   container_left = P + 2*(100vw - 2P)/3
+     *   SVG_width = 2*(100vw - container_left) = 2*(100vw + P)/3
+     * The section's overflow:hidden clips the right half.
+     */
+    /* width: calc(2 * (100vw + clamp(1.15rem, 4vw, 4rem)) / 3); */
+    width: 50vw;
+    height: auto;
+    max-height: none;
+  }
+
+  .venueThumb {
+    width: 64px;
+    height: 64px;
+  }
+
+  .venueHirePanel__cta {
+    font-size: 0.78rem;
+    padding: 0.6rem 1.3rem;
+    min-height: 2.5rem;
+  }
+}
+
+/* ── Timeline responsive ─────────────────────────────────────────── */
+@media (max-width: 560px) {
+  /* Nearly full-width card with a peek of the next item */
+  .timelineItem {
+    flex-basis: calc(100vw - clamp(1.15rem, 3vw, 2rem) - 3rem);
+  }
+}
+
+@media (max-width: 640px) {
+  /* Lightbox: stack vertically on narrow screens */
+  .tlLightbox__panel {
+    flex-direction: column;
+    width: min(92vw, 480px);
+    height: auto;
+    max-height: 90vh;
+  }
+
+  .tlLightbox__img-wrap {
+    flex: none;
+  }
+
+  .tlLightbox__img {
+    height: auto;
+    max-height: 45vh;
+  }
+
+  .tlLightbox__info {
+    justify-content: flex-start;
+  }
+}

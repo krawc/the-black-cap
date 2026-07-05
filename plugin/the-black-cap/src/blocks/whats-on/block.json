@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "the-black-cap/whats-on",
+  "title": "What's On (Eventbrite)",
+  "description": "Horizontal scroll slider of upcoming events fetched from Eventbrite. Credentials are configured in Settings → Black Cap.",
+  "category": "theme",
+  "icon": "calendar",
+  "supports": { "html": false },
+  "attributes": {
+    "eventIds": {
+      "type": "string",
+      "default": "",
+      "description": "Comma-separated Eventbrite event IDs used as fallback when no API token is configured."
+    },
+    "limit": { "type": "integer", "default": 10 }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "the-black-cap/highlights",
+  "title": "Highlights (TikTok)",
+  "description": "Horizontal scroll slider of TikTok video embeds. Auto-fetches via TikTok Display API when a token is set in Settings → Black Cap; falls back to manual video IDs.",
+  "category": "theme",
+  "icon": "video-alt",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "videoIds": {
+      "type": "string",
+      "default": "",
+      "description": "Comma-separated TikTok numeric video IDs used as fallback."
+    },
+    "limit": {
+      "type": "integer",
+      "default": 8
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}
