@@ -18,15 +18,21 @@ add_action( 'wp_ajax_tbc_setup_run_step', function (): void {
 		wp_send_json_error( [ 'error' => 'No step specified.' ], 400 );
 	}
 
+	$mode = sanitize_key( $_POST['mode'] ?? 'production' );
+	if ( ! in_array( $mode, [ 'production', 'staging' ], true ) ) {
+		$mode = 'production';
+	}
+
 	try {
 		$runner = new TBC_Setup_Runner();
-		$result = $runner->run_step( $step );
+		$result = $runner->run_step( $step, $mode );
 		wp_send_json_success( $result );
 	} catch ( Throwable $e ) {
 		wp_send_json_success( [
 			'logs'      => [],
 			'error'     => $e->getMessage() . ' (' . $e->getFile() . ':' . $e->getLine() . ')',
 			'next_step' => '',
+			'page_url'  => '',
 		] );
 	}
 } );

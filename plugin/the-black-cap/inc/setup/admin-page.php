@@ -58,13 +58,27 @@ function tbc_render_setup_page(): void {
 		<div class="tbc-setup-card">
 			<p class="tbc-setup-intro">
 				This tool imports all content into your WordPress installation: room images,
-				timeline photos, venue images, CPT posts, the front page with all blocks,
+				timeline photos, venue images, CPT posts, the site page with all blocks,
 				navigation menus, and API defaults.
 			</p>
 			<p class="tbc-setup-intro">
 				<strong>Safe to run multiple times</strong> &mdash; each step is idempotent
 				and skips work already done.
 			</p>
+
+			<fieldset class="tbc-mode-fieldset">
+				<legend class="tbc-mode-legend">Import target</legend>
+				<label class="tbc-mode-option">
+					<input type="radio" name="tbc-mode" value="production" checked>
+					<span class="tbc-mode-option__label">Production</span>
+					<span class="tbc-mode-option__desc">Set as the WordPress front page</span>
+				</label>
+				<label class="tbc-mode-option">
+					<input type="radio" name="tbc-mode" value="staging">
+					<span class="tbc-mode-option__label">Staging</span>
+					<span class="tbc-mode-option__desc">Import to a separate preview page &mdash; front page untouched</span>
+				</label>
+			</fieldset>
 
 			<div class="tbc-setup-actions">
 				<button id="tbc-setup-start" class="button button-primary button-hero">
@@ -91,7 +105,10 @@ function tbc_render_setup_page(): void {
 
 			<div id="tbc-setup-done" class="tbc-setup-done" style="display:none">
 				<span class="tbc-setup-done__icon">&#10003;</span>
-				Setup complete &mdash; all steps finished successfully.
+				<span id="tbc-setup-done-msg">Setup complete &mdash; all steps finished successfully.</span>
+				<a id="tbc-setup-page-link" href="#" target="_blank" rel="noopener" style="display:none;margin-left:1rem">
+					View staging page &rarr;
+				</a>
 			</div>
 
 			<div id="tbc-setup-error" class="tbc-setup-error" style="display:none">

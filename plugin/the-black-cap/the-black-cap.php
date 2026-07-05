@@ -30,8 +30,14 @@ add_action( 'init', function () {
 	}
 } );
 
-/* ── Frontend assets ──────────────────────────────────────────────────── */
+/* ── Frontend assets (scoped to pages that contain our blocks) ────────── */
 add_action( 'wp_enqueue_scripts', function () {
+	// Only load on singular pages whose content contains at least one TBC block.
+	// This covers both the production front page and any staging page automatically.
+	global $post;
+	if ( ! is_singular() || ! $post instanceof WP_Post ) return;
+	if ( strpos( $post->post_content, '<!-- wp:the-black-cap/' ) === false ) return;
+
 	wp_enqueue_style(
 		'tbc-google-fonts',
 		'https://fonts.googleapis.com/css2?family=Train+One&family=Montserrat:wght@400;700;800;900&display=swap',

@@ -16,10 +16,18 @@
 	var consoleWrap  = document.getElementById('tbc-setup-console');
 	var consoleInner = document.getElementById('tbc-console-inner');
 	var doneEl       = document.getElementById('tbc-setup-done');
+	var doneMsgEl    = document.getElementById('tbc-setup-done-msg');
+	var pageLinkEl   = document.getElementById('tbc-setup-page-link');
 	var errorEl      = document.getElementById('tbc-setup-error');
 	var errorMsg     = document.getElementById('tbc-setup-error-msg');
 
-	var running = false;
+	var running  = false;
+	var pageUrl  = '';  // set by front_page step in staging mode
+
+	function getMode() {
+		var checked = document.querySelector('input[name="tbc-mode"]:checked');
+		return checked ? checked.value : 'production';
+	}
 
 	function appendLog(lines, type) {
 		(lines || []).forEach(function (line) {
@@ -46,11 +54,22 @@
 		errorEl.style.display = 'block';
 	}
 
-	function runStep(stepIndex) {
+	function runStep(stepIndex, mode) {
 		if (stepIndex >= STEPS.length) {
 			setProgress(STEPS.length);
 			progressLabel.textContent = 'Complete';
-			doneEl.style.display = 'block';
+
+			// Build done message depending on mode.
+			if (mode === 'staging' && pageUrl) {
+				doneMsgEl.textContent = 'Staging import complete.';
+				pageLinkEl.href = pageUrl;
+				pageLinkEl.style.display = 'inline';
+			} else {
+				doneMsgEl.textContent = 'Setup complete — all steps finished successfully.';
+				pageLinkEl.style.display = 'none';
+			}
+
+			doneEl.style.display = 'flex';
 			resetBtn.style.display = 'inline-block';
 			running = false;
 			return;
@@ -63,7 +82,8 @@
 		appendLog(['> ' + (LABELS[step] || step) + '…'], 'step');
 
 		var body = 'action=tbc_setup_run_step'
-			+ '&step=' + encodeURIComponent(step)
+			+ '&step='  + encodeURIComponent(step)
+			+ '&mode='  + encodeURIComponent(mode)
 			+ '&_ajax_nonce=' + encodeURIComponent(nonce);
 
 		fetch(ajaxurl, {
@@ -88,6 +108,11 @@
 			var data = resp.data || {};
 			appendLog(data.logs || []);
 
+			// Capture staging page URL whenever the server provides it.
+			if (data.page_url) {
+				pageUrl = data.page_url;
+			}
+
 			if (data.error) {
 				appendLog(['[error] ' + data.error], 'error');
 				showError(data.error);
@@ -96,8 +121,7 @@
 				return;
 			}
 
-			// Proceed to next step.
-			runStep(stepIndex + 1);
+			runStep(stepIndex + 1, mode);
 		})
 		.catch(function (err) {
 			appendLog(['[error] ' + err.message], 'error');
@@ -109,9 +133,15 @@
 
 	function startSetup() {
 		if (running) return;
-		running = true;
+		running  = true;
+		pageUrl  = '';
 
-		startBtn.disabled    = true;
+		var mode = getMode();
+
+		// Lock mode selection while running.
+		document.querySelectorAll('input[name="tbc-mode"]').forEach(function (r) { r.disabled = true; });
+
+		startBtn.disabled      = true;
 		startBtn.style.display = 'none';
 		resetBtn.style.display = 'none';
 		progressWrap.style.display = 'block';
@@ -120,12 +150,17 @@
 		errorEl.style.display      = 'none';
 		consoleInner.innerHTML     = '';
 
+		appendLog(['Mode: ' + mode], 'step');
 		setProgress(0);
-		runStep(0);
+		runStep(0, mode);
 	}
 
 	function resetSetup() {
-		running = false;
+		running  = false;
+		pageUrl  = '';
+
+		document.querySelectorAll('input[name="tbc-mode"]').forEach(function (r) { r.disabled = false; });
+
 		startBtn.disabled      = false;
 		startBtn.style.display = 'inline-block';
 		resetBtn.style.display = 'none';
@@ -133,6 +168,7 @@
 		consoleWrap.style.display  = 'none';
 		doneEl.style.display       = 'none';
 		errorEl.style.display      = 'none';
+		pageLinkEl.style.display   = 'none';
 		consoleInner.innerHTML     = '';
 		progressFill.style.width   = '0%';
 	}

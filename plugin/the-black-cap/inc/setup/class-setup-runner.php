@@ -23,6 +23,9 @@ class TBC_Setup_Runner {
 	/** @var string[] */
 	private array $logs = [];
 
+	/** 'production' | 'staging' — set at the start of each run_step() call */
+	private string $mode = 'production';
+
 	/* ─────────────────────────────────────────────────────────────
 	   Public API
 	   ───────────────────────────────────────────────────────────── */
@@ -32,9 +35,11 @@ class TBC_Setup_Runner {
 	 *   logs      => string[]  — log lines produced this step
 	 *   error     => string    — non-empty if a fatal error occurred
 	 *   next_step => string|'' — name of next step, or '' if done
+	 *   page_url  => string    — set by the front_page step in staging mode
 	 */
-	public function run_step( string $step ): array {
+	public function run_step( string $step, string $mode = 'production' ): array {
 		$this->logs = [];
+		$this->mode = ( $mode === 'staging' ) ? 'staging' : 'production';
 
 		if ( ! in_array( $step, self::STEPS, true ) ) {
 			return $this->result( 'Unknown step: ' . $step );
@@ -282,24 +287,20 @@ class TBC_Setup_Runner {
 		$this->log( '  Done.' );
 	}
 
-	/** §6  Create / update front page with all blocks */
+	/** §6  Create / update the target page with all blocks */
 	private function step_front_page(): void {
-		$this->log( '→ Setting up front page…' );
+		$label = $this->mode === 'staging' ? 'staging page' : 'front page';
+		$this->log( "→ Setting up {$label}…" );
 
 		try {
-			$cdn_map     = (array) get_option( 'tbc_room_cdn_images', [] );
-			$tl_mapping  = (array) get_option( 'tbc_timeline_images', [] );
-			$venue_map   = (array) get_option( 'tbc_venue_images', [] );
+			$tl_mapping = (array) get_option( 'tbc_timeline_images', [] );
+			$tl_id     = static fn( int $s ): int => isset( $tl_mapping[ $s ] ) ? (int) $tl_mapping[ $s ] : 0;
 
-			$tl_id = static fn( int $s ) use ( $tl_mapping ): int => isset( $tl_mapping[ $s ] ) ? (int) $tl_mapping[ $s ] : 0;
+			$room_ids  = $this->get_cpt_post_ids( 'tbc_room',  $this->room_definitions(),  'room' );
+			$venue_ids = $this->get_cpt_post_ids( 'tbc_venue', $this->venue_definitions(), 'venue' );
 
-			$room_defs   = $this->room_definitions();
-			$room_ids    = $this->get_cpt_post_ids( 'tbc_room', $room_defs, 'room' );
-			$venue_defs  = $this->venue_definitions();
-			$venue_ids   = $this->get_cpt_post_ids( 'tbc_venue', $venue_defs, 'venue' );
-
-			$room_id  = static fn( int $s ) use ( $room_ids )  : int => $room_ids[ $s ]  ?? 0;
-			$venue_id = static fn( int $s ) use ( $venue_ids ) : int => $venue_ids[ $s ] ?? 0;
+			$room_id  = static fn( int $s ): int => $room_ids[ $s ]  ?? 0;
+			$venue_id = static fn( int $s ): int => $venue_ids[ $s ] ?? 0;
 
 			$frames = [
 				[ 'svgFile' => 'Frame 1.svg', 'roomId' => $room_id(1), 'wide' => false ],
@@ -327,130 +328,182 @@ class TBC_Setup_Runner {
 					. ' /-->';
 			};
 
-			$front_page_id = (int) get_option( 'page_on_front' );
-			$front_page    = $front_page_id ? get_post( $front_page_id ) : null;
+			// Full block content — identical for both modes.
+			$full_content = implode( "\n\n", [
+				$b( 'hero-nav', [
+					'menuSlug' => 'primary',
+					'address'  => '171 Camden High Street, London NW1 7JY',
+					'phone'    => '020 7428 2721',
+					'email'    => 'Sassy@blackcapcamden.co.uk',
+				] ),
+				$b( 'whats-on', [ 'eventIds' => '', 'limit' => 8 ] ),
+				$b( 'story', [
+					'title' => 'Legendary',
+					'copy'  => "The Black Cap isn't just a venue with a famous name - it's a building, a stage, and a community landmark. From its historic façade on Camden High Street to the performance room that helped shape London cabaret, The Black Cap has long been a place where talent breaks through, audiences gather and queer culture is celebrated.",
+					'photos' => [
+						[ 'url' => $story_img(1), 'scale' => 1.3,  'driftX' =>  1.2,  'driftY' => -12.5 ],
+						[ 'url' => $story_img(3), 'scale' => 2.2,  'driftX' =>  11.0, 'driftY' =>   3.0 ],
+						[ 'url' => $story_img(4), 'scale' => 2.45, 'driftX' =>  -5.4, 'driftY' =>  -9.0 ],
+						[ 'url' => $story_img(2), 'scale' => 1.1,  'driftX' => -11.6, 'driftY' =>  14.5 ],
+					],
+				] ),
+				$b( 'timeline', $timeline_attrs ),
+				$b( 'highlights', [
+					'videoIds' => '7644927884900961558,7642689026490912003,7640829274840190240,7640504644887776544,7640442725908712737,7640087100393606433,7639762417546824992,7639360399963360545',
+					'limit'    => 8,
+				] ),
+				$b( 'drink-menu', [ 'sections' => $this->drink_menu_sections() ] ),
+				$b( 'our-rooms',  [ 'frames'   => $frames ] ),
+				$b( 'venue-hire', [ 'slots'    => $venue_slots ] ),
+			] );
 
-			if ( $front_page && 'page' === $front_page->post_type ) {
-				$blocks         = parse_blocks( $front_page->post_content );
-				$patched        = false;
-				$has_timeline   = false;
-				$has_venue_hire = false;
-
-				foreach ( $blocks as &$block ) {
-					if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/our-rooms' ) {
-						$block['attrs']['frames'] = $frames;
-						$patched = true;
-					}
-					if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/timeline' ) {
-						$has_timeline       = true;
-						$block['attrs']     = $timeline_attrs;
-						$patched            = true;
-					}
-					if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/venue-hire' ) {
-						$has_venue_hire         = true;
-						$block['attrs']['slots'] = $venue_slots;
-						$patched                = true;
-					}
-				}
-				unset( $block );
-
-				if ( ! $has_timeline ) {
-					$story_pos = null;
-					foreach ( $blocks as $idx => $blk ) {
-						if ( ( $blk['blockName'] ?? '' ) === 'the-black-cap/story' ) { $story_pos = $idx; break; }
-					}
-					$tl_parsed = parse_blocks( $b( 'timeline', $timeline_attrs ) );
-					if ( ! empty( $tl_parsed[0] ) ) {
-						$insert_at = $story_pos !== null ? $story_pos + 1 : count( $blocks );
-						array_splice( $blocks, $insert_at, 0, [ $tl_parsed[0] ] );
-						$patched = true;
-						$this->log( '  [ok] Inserted Timeline block.' );
-					}
-				}
-
-				if ( ! $has_venue_hire ) {
-					$rooms_pos = null;
-					foreach ( $blocks as $idx => $blk ) {
-						if ( ( $blk['blockName'] ?? '' ) === 'the-black-cap/our-rooms' ) { $rooms_pos = $idx; break; }
-					}
-					$vh_parsed = parse_blocks( $b( 'venue-hire', [ 'slots' => $venue_slots ] ) );
-					if ( ! empty( $vh_parsed[0] ) ) {
-						$insert_at = $rooms_pos !== null ? $rooms_pos + 1 : count( $blocks );
-						array_splice( $blocks, $insert_at, 0, [ $vh_parsed[0] ] );
-						$patched = true;
-						$this->log( '  [ok] Inserted Venue Hire block.' );
-					}
-				}
-
-				if ( $patched ) {
-					wp_update_post( [ 'ID' => $front_page_id, 'post_content' => serialize_blocks( $blocks ) ] );
-					$this->log( "  [ok] Updated front page (ID {$front_page_id})." );
-				} else {
-					$this->log( "  Front page (ID {$front_page_id}) already up to date." );
-				}
-
+			if ( $this->mode === 'staging' ) {
+				$this->apply_staging_page( $full_content, $frames, $venue_slots, $timeline_attrs, $b );
 			} else {
-				// First run: create the full page.
-				$content = implode( "\n\n", [
-					$b( 'hero-nav', [
-						'menuSlug' => 'primary',
-						'address'  => '171 Camden High Street, London NW1 7JY',
-						'phone'    => '020 7428 2721',
-						'email'    => 'Sassy@blackcapcamden.co.uk',
-					] ),
-					$b( 'whats-on', [ 'eventIds' => '', 'limit' => 8 ] ),
-					$b( 'story', [
-						'title' => 'Legendary',
-						'copy'  => "The Black Cap isn't just a venue with a famous name - it's a building, a stage, and a community landmark. From its historic façade on Camden High Street to the performance room that helped shape London cabaret, The Black Cap has long been a place where talent breaks through, audiences gather and queer culture is celebrated.",
-						'photos' => [
-							[ 'url' => $story_img(1), 'scale' => 1.3,  'driftX' =>  1.2,  'driftY' => -12.5 ],
-							[ 'url' => $story_img(3), 'scale' => 2.2,  'driftX' =>  11.0, 'driftY' =>   3.0 ],
-							[ 'url' => $story_img(4), 'scale' => 2.45, 'driftX' =>  -5.4, 'driftY' =>  -9.0 ],
-							[ 'url' => $story_img(2), 'scale' => 1.1,  'driftX' => -11.6, 'driftY' =>  14.5 ],
-						],
-					] ),
-					$b( 'timeline', $timeline_attrs ),
-					$b( 'highlights', [
-						'videoIds' => '7644927884900961558,7642689026490912003,7640829274840190240,7640504644887776544,7640442725908712737,7640087100393606433,7639762417546824992,7639360399963360545',
-						'limit'    => 8,
-					] ),
-					$b( 'drink-menu', [ 'sections' => $this->drink_menu_sections() ] ),
-					$b( 'our-rooms',  [ 'frames' => $frames ] ),
-					$b( 'venue-hire', [ 'slots'  => $venue_slots ] ),
-				] );
-
-				$page_id = wp_insert_post( [
-					'post_title'     => 'Home',
-					'post_name'      => 'home',
-					'post_content'   => $content,
-					'post_status'    => 'publish',
-					'post_type'      => 'page',
-					'comment_status' => 'closed',
-					'ping_status'    => 'closed',
-				], true );
-
-				if ( is_wp_error( $page_id ) ) {
-					throw new \RuntimeException( 'Could not create page: ' . $page_id->get_error_message() );
-				}
-
-				update_option( 'show_on_front', 'page' );
-				update_option( 'page_on_front', $page_id );
-				$this->log( "  [ok] Created front page (ID {$page_id}) and set as static homepage." );
+				$this->apply_production_page( $full_content, $frames, $venue_slots, $timeline_attrs, $b );
 			}
 
-			// Always ensure show_on_front is set correctly.
-			update_option( 'show_on_front', 'page' );
-			if ( ! (int) get_option( 'page_on_front' ) ) {
-				$p = get_page_by_path( 'home' );
-				if ( $p ) {
-					update_option( 'page_on_front', $p->ID );
-				}
-			}
 		} catch ( Throwable $e ) {
 			$this->log( '  [error] ' . $e->getMessage() );
 			throw $e;
 		}
 		$this->log( '  Done.' );
+	}
+
+	/**
+	 * Production mode: create or update the WordPress front page.
+	 * Sets show_on_front + page_on_front; patches existing content surgically.
+	 */
+	private function apply_production_page( string $full_content, array $frames, array $venue_slots, array $timeline_attrs, callable $b ): void {
+		$front_page_id = (int) get_option( 'page_on_front' );
+		$front_page    = $front_page_id ? get_post( $front_page_id ) : null;
+
+		if ( $front_page && 'page' === $front_page->post_type ) {
+			$blocks         = parse_blocks( $front_page->post_content );
+			$patched        = false;
+			$has_timeline   = false;
+			$has_venue_hire = false;
+
+			foreach ( $blocks as &$block ) {
+				if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/our-rooms' ) {
+					$block['attrs']['frames'] = $frames;
+					$patched = true;
+				}
+				if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/timeline' ) {
+					$has_timeline   = true;
+					$block['attrs'] = $timeline_attrs;
+					$patched        = true;
+				}
+				if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/venue-hire' ) {
+					$has_venue_hire          = true;
+					$block['attrs']['slots'] = $venue_slots;
+					$patched                 = true;
+				}
+			}
+			unset( $block );
+
+			if ( ! $has_timeline ) {
+				$story_pos = null;
+				foreach ( $blocks as $idx => $blk ) {
+					if ( ( $blk['blockName'] ?? '' ) === 'the-black-cap/story' ) { $story_pos = $idx; break; }
+				}
+				$tl_parsed = parse_blocks( $b( 'timeline', $timeline_attrs ) );
+				if ( ! empty( $tl_parsed[0] ) ) {
+					array_splice( $blocks, $story_pos !== null ? $story_pos + 1 : count( $blocks ), 0, [ $tl_parsed[0] ] );
+					$patched = true;
+					$this->log( '  [ok] Inserted Timeline block.' );
+				}
+			}
+
+			if ( ! $has_venue_hire ) {
+				$rooms_pos = null;
+				foreach ( $blocks as $idx => $blk ) {
+					if ( ( $blk['blockName'] ?? '' ) === 'the-black-cap/our-rooms' ) { $rooms_pos = $idx; break; }
+				}
+				$vh_parsed = parse_blocks( $b( 'venue-hire', [ 'slots' => $venue_slots ] ) );
+				if ( ! empty( $vh_parsed[0] ) ) {
+					array_splice( $blocks, $rooms_pos !== null ? $rooms_pos + 1 : count( $blocks ), 0, [ $vh_parsed[0] ] );
+					$patched = true;
+					$this->log( '  [ok] Inserted Venue Hire block.' );
+				}
+			}
+
+			if ( $patched ) {
+				wp_update_post( [ 'ID' => $front_page_id, 'post_content' => serialize_blocks( $blocks ) ] );
+				$this->log( "  [ok] Updated front page (ID {$front_page_id})." );
+			} else {
+				$this->log( "  Front page (ID {$front_page_id}) already up to date." );
+			}
+		} else {
+			$page_id = wp_insert_post( [
+				'post_title'     => 'Home',
+				'post_name'      => 'home',
+				'post_content'   => $full_content,
+				'post_status'    => 'publish',
+				'post_type'      => 'page',
+				'comment_status' => 'closed',
+				'ping_status'    => 'closed',
+			], true );
+
+			if ( is_wp_error( $page_id ) ) {
+				throw new \RuntimeException( 'Could not create page: ' . $page_id->get_error_message() );
+			}
+
+			update_option( 'show_on_front', 'page' );
+			update_option( 'page_on_front', $page_id );
+			$this->log( "  [ok] Created front page (ID {$page_id}) and set as static homepage." );
+		}
+
+		// Ensure show_on_front is always correct.
+		update_option( 'show_on_front', 'page' );
+		if ( ! (int) get_option( 'page_on_front' ) ) {
+			$p = get_page_by_path( 'home' );
+			if ( $p ) update_option( 'page_on_front', $p->ID );
+		}
+	}
+
+	/**
+	 * Staging mode: create or update a separate preview page (slug: tbc-staging).
+	 * Never touches show_on_front / page_on_front.
+	 * Sets $this->page_url so the UI can show a direct link.
+	 */
+	private function apply_staging_page( string $full_content, array $frames, array $venue_slots, array $timeline_attrs, callable $b ): void {
+		$staging_id = (int) get_option( 'tbc_staging_page_id' );
+		$existing   = $staging_id ? get_post( $staging_id ) : null;
+
+		// Also look up by slug in case the option was lost.
+		if ( ! $existing || 'page' !== $existing->post_type ) {
+			$found    = get_posts( [ 'post_type' => 'page', 'post_status' => 'any', 'name' => 'tbc-staging', 'numberposts' => 1 ] );
+			$existing = $found[0] ?? null;
+		}
+
+		if ( $existing ) {
+			// Update the existing staging page with fresh block content.
+			wp_update_post( [ 'ID' => $existing->ID, 'post_content' => $full_content ] );
+			update_option( 'tbc_staging_page_id', $existing->ID );
+			$this->page_url = get_permalink( $existing->ID );
+			$this->log( "  [ok] Updated staging page (ID {$existing->ID})." );
+		} else {
+			$page_id = wp_insert_post( [
+				'post_title'     => 'Black Cap — Staging',
+				'post_name'      => 'tbc-staging',
+				'post_content'   => $full_content,
+				'post_status'    => 'publish',
+				'post_type'      => 'page',
+				'comment_status' => 'closed',
+				'ping_status'    => 'closed',
+			], true );
+
+			if ( is_wp_error( $page_id ) ) {
+				throw new \RuntimeException( 'Could not create staging page: ' . $page_id->get_error_message() );
+			}
+
+			update_option( 'tbc_staging_page_id', $page_id );
+			$this->page_url = get_permalink( $page_id );
+			$this->log( "  [ok] Created staging page (ID {$page_id})." );
+		}
+
+		$this->log( "  Preview URL: {$this->page_url}" );
 	}
 
 	/** §7  Create nav menus */
@@ -789,11 +842,15 @@ class TBC_Setup_Runner {
 		$this->logs[] = $line;
 	}
 
+	/** @var string URL to surface to the UI after the front_page step (staging mode) */
+	private string $page_url = '';
+
 	private function result( string $error = '', string $next_step = '' ): array {
 		return [
 			'logs'      => $this->logs,
 			'error'     => $error,
 			'next_step' => $next_step,
+			'page_url'  => $this->page_url,
 		];
 	}
 }
