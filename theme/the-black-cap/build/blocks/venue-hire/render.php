@@ -75,6 +75,7 @@ if ( $svg_raw ) {
 			<div class="venueHirePanel" data-active-idx="<?php echo esc_attr( $initial_idx ); ?>">
 				<h3 class="venueHirePanel__name"><?php echo esc_html( $initial['title'] ); ?></h3>
 				<p class="venueHirePanel__desc"><?php echo esc_html( $initial['desc'] ); ?></p>
+				<div class="venueThumbGrid"></div>
 				<a class="neonButton venueHirePanel__cta"
 					href="mailto:sassy@blackcapcamden.co.uk"
 				>Book the Venue</a>

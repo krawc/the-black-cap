@@ -495,17 +495,108 @@
 (function () {
   'use strict';
 
+  /* ── Lightbox ── */
+  var venueLb       = null;
+  var venueLbPhotos = [];
+  var venueLbIdx    = 0;
+
+  var LB_HTML = [
+    '<div class="venueLb" id="tbc-venue-lb" role="dialog" aria-modal="true" hidden>',
+    '  <div class="venueLb__bd"></div>',
+    '  <button class="venueLb__close" aria-label="Close">&#x2715;</button>',
+    '  <div class="venueLb__inner">',
+    '    <img class="venueLb__img" src="" alt="">',
+    '    <button class="venueLb__prev" aria-label="Previous photo">&#x2039;</button>',
+    '    <button class="venueLb__next" aria-label="Next photo">&#x203a;</button>',
+    '    <span class="venueLb__counter"></span>',
+    '  </div>',
+    '</div>',
+  ].join('');
+
+  function ensureLb() {
+    if (venueLb) return;
+    document.body.insertAdjacentHTML('beforeend', LB_HTML);
+    venueLb = document.getElementById('tbc-venue-lb');
+
+    venueLb.querySelector('.venueLb__bd').addEventListener('click', closeLb);
+    venueLb.querySelector('.venueLb__close').addEventListener('click', closeLb);
+    venueLb.querySelector('.venueLb__prev').addEventListener('click', function () { showSlide(venueLbIdx - 1); });
+    venueLb.querySelector('.venueLb__next').addEventListener('click', function () { showSlide(venueLbIdx + 1); });
+
+    document.addEventListener('keydown', function (e) {
+      if (!venueLb || venueLb.hidden) return;
+      if (e.key === 'Escape')     { closeLb(); return; }
+      if (e.key === 'ArrowLeft')  showSlide(venueLbIdx - 1);
+      if (e.key === 'ArrowRight') showSlide(venueLbIdx + 1);
+    });
+  }
+
+  function showSlide(idx) {
+    if (!venueLbPhotos.length) return;
+    venueLbIdx    = ((idx % venueLbPhotos.length) + venueLbPhotos.length) % venueLbPhotos.length;
+    var total     = venueLbPhotos.length;
+    var single    = total === 1;
+    var imgEl     = venueLb.querySelector('.venueLb__img');
+
+    imgEl.style.opacity = '0';
+    imgEl.src = '';
+    imgEl.onload  = function () { imgEl.style.opacity = '1'; };
+    imgEl.onerror = function () { imgEl.style.opacity = '1'; };
+    imgEl.src = venueLbPhotos[venueLbIdx];
+
+    venueLb.querySelector('.venueLb__counter').textContent = single ? '' : (venueLbIdx + 1) + ' / ' + total;
+    venueLb.querySelector('.venueLb__prev').hidden = single;
+    venueLb.querySelector('.venueLb__next').hidden = single;
+  }
+
+  function openLb(photos, startIdx) {
+    ensureLb();
+    venueLbPhotos = photos;
+    venueLb.hidden = false;
+    document.documentElement.style.overflow = 'hidden';
+    showSlide(startIdx);
+    venueLb.querySelector('.venueLb__close').focus();
+  }
+
+  function closeLb() {
+    if (!venueLb) return;
+    venueLb.hidden = true;
+    document.documentElement.style.overflow = '';
+    var imgEl = venueLb.querySelector('.venueLb__img');
+    imgEl.src = '';
+    imgEl.style.opacity = '0';
+  }
+
+  /* ── Main init ── */
   function initVenueHire() {
     document.querySelectorAll('.venueHireLayout').forEach(function (layout) {
-      var venues = [];
+      var venues = {};
       try { venues = JSON.parse(layout.dataset.venues || '{}'); } catch (_) {}
 
-      var shapes   = layout.querySelectorAll('.venueShape');
-      var hitZones = layout.querySelectorAll('.venueHitZone');
-      var nameEl   = layout.querySelector('.venueHirePanel__name');
-      var descEl   = layout.querySelector('.venueHirePanel__desc');
+      var shapes    = layout.querySelectorAll('.venueShape');
+      var hitZones  = layout.querySelectorAll('.venueHitZone');
+      var nameEl    = layout.querySelector('.venueHirePanel__name');
+      var descEl    = layout.querySelector('.venueHirePanel__desc');
+      var thumbGrid = layout.querySelector('.venueThumbGrid');
 
       if (!shapes.length) return;
+
+      function renderThumbs(photos) {
+        if (!thumbGrid) return;
+        thumbGrid.innerHTML = '';
+        (photos || []).forEach(function (url, i) {
+          var img = document.createElement('img');
+          img.className = 'venueThumb';
+          img.src       = url;
+          img.alt       = '';
+          img.tabIndex  = 0;
+          img.addEventListener('click', function () { openLb(photos, i); });
+          img.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(photos, i); }
+          });
+          thumbGrid.appendChild(img);
+        });
+      }
 
       function activate(idx) {
         shapes.forEach(function (s) { s.classList.remove('venueShape--active'); });
@@ -513,25 +604,23 @@
         var v = venues[idx] || {};
         if (nameEl) nameEl.textContent = v.title || '';
         if (descEl) descEl.textContent = v.desc  || '';
+        renderThumbs(v.photos || []);
       }
 
-      // Visual paths: keyboard-accessible
       shapes.forEach(function (shape, i) {
         shape.addEventListener('mouseenter', function () { activate(i); });
-        shape.addEventListener('click', function () { activate(i); });
+        shape.addEventListener('click',      function () { activate(i); });
         shape.addEventListener('keydown', function (e) {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(i); }
         });
       });
 
-      // Hit zones: expand hover/click area beyond the thin stroke
       hitZones.forEach(function (hz) {
         var i = parseInt(hz.dataset.venueIndex, 10);
         hz.addEventListener('mouseenter', function () { activate(i); });
-        hz.addEventListener('click', function () { activate(i); });
+        hz.addEventListener('click',      function () { activate(i); });
       });
 
-      // Pre-activate initial slot set in the data attribute
       var panel   = layout.querySelector('.venueHirePanel');
       var initIdx = panel ? (parseInt(panel.dataset.activeIdx, 10) || 0) : 0;
       activate(initIdx);
