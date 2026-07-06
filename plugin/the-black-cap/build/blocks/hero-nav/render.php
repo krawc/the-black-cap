@@ -73,6 +73,17 @@ $flame_url = esc_url( TBC_PLUGIN_URL . '/assets/svg/simple_flame_animated.svg' )
 		<?php endif; ?>
 	</div>
 
+	<button
+		class="menuCue"
+		type="button"
+		id="tbc-menu-cue"
+		aria-label="<?php esc_attr_e( 'Open menu', 'the-black-cap' ); ?>"
+	>
+		<svg class="menuCue__chevron" viewBox="0 0 22 13" fill="none" aria-hidden="true"><polyline points="1,12 11,1 21,12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+		<span class="menuCue__label"><?php esc_html_e( 'tap for menu', 'the-black-cap' ); ?></span>
+		<svg class="menuCue__chevron" viewBox="0 0 22 13" fill="none" aria-hidden="true"><polyline points="1,12 11,1 21,12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+	</button>
+
 	<div class="venueInfo" aria-label="<?php esc_attr_e( 'Venue details', 'the-black-cap' ); ?>">
 		<a href="https://maps.google.com/?q=<?php echo rawurlencode( $address ); ?>">
 			<?php echo esc_html( $address ); ?>

@@ -4,16 +4,23 @@
 (function () {
   const orbit = document.getElementById('tbc-logo-orbit');
   const btn   = document.getElementById('tbc-logo-btn');
+  const cue   = document.getElementById('tbc-menu-cue');
   if (!orbit || !btn) return;
 
-  btn.addEventListener('click', function (e) {
+  var openedAt = 0;
+
+  function toggleOrbit(e) {
     e.stopPropagation();
     const open = orbit.classList.toggle('isOpen');
     btn.setAttribute('aria-expanded', String(open));
-  });
+    if (open) openedAt = Date.now();
+  }
+
+  btn.addEventListener('click', toggleOrbit);
+  if (cue) cue.addEventListener('click', toggleOrbit);
 
   document.addEventListener('click', function (e) {
-    if (!orbit.contains(e.target)) {
+    if (!orbit.contains(e.target) && e.target !== cue) {
       orbit.classList.remove('isOpen');
       btn.setAttribute('aria-expanded', 'false');
     }
@@ -21,6 +28,12 @@
 
   orbit.querySelectorAll('.rainbowItem').forEach(function (el) {
     el.addEventListener('click', function (e) {
+      // Ignore clicks that land within 380 ms of the menu opening —
+      // they're the same touch gesture that opened it.
+      if (Date.now() - openedAt < 380) {
+        e.preventDefault();
+        return;
+      }
       const href = el.getAttribute('href') || '';
       if (href.startsWith('#')) {
         e.preventDefault();

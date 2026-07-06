@@ -167,7 +167,7 @@ h1 {
     0 0 1rem color-mix(in srgb, var(--item-color), transparent 42%),
     inset 0 0 1.2rem color-mix(in srgb, var(--item-color), transparent 72%);
   opacity: 0;
-  pointer-events: auto;
+  pointer-events: none;
   cursor: pointer;
   font-size: 0.88rem;
   font-weight: 400;
@@ -190,6 +190,7 @@ h1 {
     translate(var(--item-x), var(--item-y))
     scale(1);
   opacity: 1;
+  pointer-events: auto;
   transition-delay: calc(var(--item-index) * 58ms), calc(var(--item-index) * 58ms), 0ms, 0ms, 0ms;
 }
 
@@ -202,6 +203,44 @@ h1 {
     inset 0 0 1.1rem rgba(255, 255, 255, 0.42);
   outline: none;
   transition-delay: 0ms;
+}
+
+/* ── Menu cue (below flame, "tap for menu" hint) ─────────────────── */
+.menuCue {
+  align-self: start;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+margin-top: -0.6rem;
+    margin-bottom: 1.6rem;
+  padding: 0.5rem 0.9rem;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(0.6rem, 1.4vw, 0.7rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 220ms ease, opacity 280ms ease;
+}
+
+.menuCue__chevron {
+  width: 1.1em;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.menuCue:hover,
+.menuCue:focus-visible {
+  color: rgba(255, 255, 255, 0.75);
+  outline: none;
+}
+
+#tbc-logo-orbit.isOpen + .menuCue {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .venueInfo {
@@ -908,6 +947,8 @@ h2 {
 }
 
 .roomsHeadline {
+  align-self: flex-start;
+  text-align: left;
   margin: 0;
   font-size: clamp(3rem, 10vw, 7rem);
   line-height: 0.88;
@@ -1152,7 +1193,8 @@ h2 {
 /* ── Mobile room slider ─────────────────────────────────────────── */
 .roomsSlider {
   display: none;
-  width: 100%;
+  width: calc(100% + 2 * clamp(1.15rem, 4vw, 4rem));
+  margin-left: calc(-1 * clamp(1.15rem, 4vw, 4rem));
 }
 
 .roomSlideCard {
@@ -1354,7 +1396,7 @@ h2 {
   .menuRight {
     width: 100%;
     padding-top: 0;
-    margin-top: -2rem;
+    margin-top: 1.5rem;
   }
 }
 
@@ -1451,7 +1493,7 @@ h2 {
 }
 
 .timelineIntro p {
-  /* font-size: clamp(1rem, 2.2vw, 1.2rem); */
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.8);
   margin: 0;
@@ -1517,6 +1559,7 @@ h2 {
   flex-direction: column;
   align-items: flex-start;
   scroll-snap-align: start;
+  padding-bottom: 0.5em;
 }
 
 /* Dark circle sitting on the line at the top of each item */
@@ -1556,13 +1599,13 @@ h2 {
 .timelineItem__title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+  font-size: clamp(1rem, 2vw, 1.2rem);
   margin: 0 0 0.85rem;
   color: #fff;
 }
 
 .timelineItem__desc {
-  font-size: clamp(0.8rem, 1.3vw, 0.875rem);
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
   line-height: 1.65;
   color: rgba(255, 255, 255, 0.68);
   margin: 0;
