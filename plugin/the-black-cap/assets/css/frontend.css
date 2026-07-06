@@ -1431,10 +1431,6 @@ h2 {
 }
 
 @media (max-width: 860px) {
-  .hero {
-    min-height: 96vh;
-  }
-
   .logoOrbit {
     width: min(92vmin, 33rem);
   }
@@ -1459,6 +1455,10 @@ h2 {
     min-height: 2.9rem;
     padding: 0.25rem 0.65rem;
     font-size: 0.74rem;
+  }
+
+  .photoPlaceholder {
+    --photo-h: clamp(8rem, 19vh, 13rem);
   }
 }
 
@@ -1486,6 +1486,7 @@ h2 {
 
 @media (max-width: 560px) {
   .hero {
+    min-height: 96vh;
     grid-template-rows: auto auto auto;
     align-content: center;
   }

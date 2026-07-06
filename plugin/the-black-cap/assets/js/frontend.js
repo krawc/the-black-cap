@@ -76,11 +76,14 @@
     function update() {
       var rect     = row.getBoundingClientRect();
       var progress = (window.innerHeight / 2 - (rect.top + rect.height / 2)) / window.innerHeight;
-      var mobile   = window.innerWidth <= 700;
+      var w        = window.innerWidth;
+      var mobile   = w <= 560;
+      var tablet   = !mobile && w <= 860;
+      var scale    = mobile ? 0.12 : tablet ? 0.5 : 1.0;
       photos.forEach(function (p) {
         p.el.style.transform = mobile
-          ? 'translateX(' + (p.driftX * progress * 0.12) + 'rem)'
-          : 'translate(' + (p.driftX * progress) + 'rem, ' + (p.driftY * progress) + 'rem)';
+          ? 'translateX(' + (p.driftX * progress * scale) + 'rem)'
+          : 'translate(' + (p.driftX * progress * scale) + 'rem, ' + (p.driftY * progress * scale) + 'rem)';
       });
     }
 
