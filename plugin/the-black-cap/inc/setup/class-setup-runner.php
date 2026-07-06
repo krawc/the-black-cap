@@ -293,9 +293,6 @@ class TBC_Setup_Runner {
 		$this->log( "→ Setting up {$label}…" );
 
 		try {
-			$tl_mapping = (array) get_option( 'tbc_timeline_images', [] );
-			$tl_id     = static fn( int $s ): int => isset( $tl_mapping[ $s ] ) ? (int) $tl_mapping[ $s ] : 0;
-
 			$room_ids  = $this->get_cpt_post_ids( 'tbc_room',  $this->room_definitions(),  'room' );
 			$venue_ids = $this->get_cpt_post_ids( 'tbc_venue', $this->venue_definitions(), 'venue' );
 
@@ -303,14 +300,14 @@ class TBC_Setup_Runner {
 			$venue_id = static fn( int $s ): int => $venue_ids[ $s ] ?? 0;
 
 			$frames = [
-				[ 'svgFile' => 'Frame 1.svg', 'roomId' => $room_id(1), 'wide' => false ],
+				[ 'svgFile' => 'Frame 1.svg', 'roomId' => $room_id(1), 'wide' => false ], // Adrella's
 				[ 'svgFile' => 'Frame 2.svg', 'roomId' => $room_id(2), 'wide' => false ],
 				[ 'svgFile' => 'Frame 3.svg', 'roomId' => $room_id(3), 'wide' => false ],
 				[ 'svgFile' => 'Frame 4.svg', 'roomId' => $room_id(4), 'wide' => false ],
-				[ 'svgFile' => 'Frame 5.svg', 'roomId' => $room_id(5), 'wide' => false ],
-				[ 'svgFile' => 'Frame 6.svg', 'roomId' => $room_id(6), 'wide' => true  ],
-				[ 'svgFile' => 'Frame 7.svg', 'roomId' => $room_id(7), 'wide' => false ],
-				[ 'svgFile' => 'Frame 8.svg', 'roomId' => $room_id(1), 'wide' => true  ],
+				[ 'svgFile' => 'Frame 7.svg', 'roomId' => $room_id(5), 'wide' => false ], // Frame 5↔7 swap
+				[ 'svgFile' => 'Frame 6.svg', 'roomId' => $room_id(1), 'wide' => true  ], // Adrella's
+				[ 'svgFile' => 'Frame 5.svg', 'roomId' => $room_id(7), 'wide' => false ], // Frame 7↔5 swap
+				[ 'svgFile' => 'Frame 8.svg', 'roomId' => $room_id(6), 'wide' => true  ], // Imperial Suite wide
 			];
 
 			$venue_slots = [
@@ -319,8 +316,7 @@ class TBC_Setup_Runner {
 				[ 'venueId' => $venue_id(1) ], // index 2 (top)    → Regina Fong Terrace
 			];
 
-			$timeline_attrs = $this->timeline_attributes( $tl_id );
-			$story_img      = static fn( int $n ): string => TBC_PLUGIN_URL . "/assets/img/story/{$n}.webp";
+			$story_img = static fn( int $n ): string => TBC_PLUGIN_URL . "/assets/img/story/{$n}.webp";
 
 			$b = static function ( string $name, array $attrs ): string {
 				return '<!-- wp:the-black-cap/' . $name . ' '
@@ -331,7 +327,7 @@ class TBC_Setup_Runner {
 			// Full block content — identical for both modes.
 			$full_content = implode( "\n\n", [
 				$b( 'hero-nav', [
-					'menuSlug' => 'primary',
+					'menuSlug' => 'tbc-nav',
 					'address'  => '171 Camden High Street, London NW1 7JY',
 					'phone'    => '020 7428 2721',
 					'email'    => 'Sassy@blackcapcamden.co.uk',
@@ -347,7 +343,7 @@ class TBC_Setup_Runner {
 						[ 'url' => $story_img(2), 'scale' => 1.1,  'driftX' => -11.6, 'driftY' =>  14.5 ],
 					],
 				] ),
-				$b( 'timeline', $timeline_attrs ),
+				'<!-- wp:the-black-cap/timeline /-->',
 				$b( 'highlights', [
 					'videoIds' => '7644927884900961558,7642689026490912003,7640829274840190240,7640504644887776544,7640442725908712737,7640087100393606433,7639762417546824992,7639360399963360545',
 					'limit'    => 8,
@@ -358,9 +354,9 @@ class TBC_Setup_Runner {
 			] );
 
 			if ( $this->mode === 'staging' ) {
-				$this->apply_staging_page( $full_content, $frames, $venue_slots, $timeline_attrs, $b );
+				$this->apply_staging_page( $full_content, $b );
 			} else {
-				$this->apply_production_page( $full_content, $frames, $venue_slots, $timeline_attrs, $b );
+				$this->apply_production_page( $full_content );
 			}
 
 		} catch ( Throwable $e ) {
@@ -372,68 +368,16 @@ class TBC_Setup_Runner {
 
 	/**
 	 * Production mode: create or update the WordPress front page.
-	 * Sets show_on_front + page_on_front; patches existing content surgically.
+	 * Always writes the full canonical content — no surgical patching.
 	 */
-	private function apply_production_page( string $full_content, array $frames, array $venue_slots, array $timeline_attrs, callable $b ): void {
+	private function apply_production_page( string $full_content ): void {
 		$front_page_id = (int) get_option( 'page_on_front' );
 		$front_page    = $front_page_id ? get_post( $front_page_id ) : null;
 
 		if ( $front_page && 'page' === $front_page->post_type ) {
-			$blocks         = parse_blocks( $front_page->post_content );
-			$patched        = false;
-			$has_timeline   = false;
-			$has_venue_hire = false;
-
-			foreach ( $blocks as &$block ) {
-				if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/our-rooms' ) {
-					$block['attrs']['frames'] = $frames;
-					$patched = true;
-				}
-				if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/timeline' ) {
-					$has_timeline   = true;
-					$block['attrs'] = $timeline_attrs;
-					$patched        = true;
-				}
-				if ( ( $block['blockName'] ?? '' ) === 'the-black-cap/venue-hire' ) {
-					$has_venue_hire          = true;
-					$block['attrs']['slots'] = $venue_slots;
-					$patched                 = true;
-				}
-			}
-			unset( $block );
-
-			if ( ! $has_timeline ) {
-				$story_pos = null;
-				foreach ( $blocks as $idx => $blk ) {
-					if ( ( $blk['blockName'] ?? '' ) === 'the-black-cap/story' ) { $story_pos = $idx; break; }
-				}
-				$tl_parsed = parse_blocks( $b( 'timeline', $timeline_attrs ) );
-				if ( ! empty( $tl_parsed[0] ) ) {
-					array_splice( $blocks, $story_pos !== null ? $story_pos + 1 : count( $blocks ), 0, [ $tl_parsed[0] ] );
-					$patched = true;
-					$this->log( '  [ok] Inserted Timeline block.' );
-				}
-			}
-
-			if ( ! $has_venue_hire ) {
-				$rooms_pos = null;
-				foreach ( $blocks as $idx => $blk ) {
-					if ( ( $blk['blockName'] ?? '' ) === 'the-black-cap/our-rooms' ) { $rooms_pos = $idx; break; }
-				}
-				$vh_parsed = parse_blocks( $b( 'venue-hire', [ 'slots' => $venue_slots ] ) );
-				if ( ! empty( $vh_parsed[0] ) ) {
-					array_splice( $blocks, $rooms_pos !== null ? $rooms_pos + 1 : count( $blocks ), 0, [ $vh_parsed[0] ] );
-					$patched = true;
-					$this->log( '  [ok] Inserted Venue Hire block.' );
-				}
-			}
-
-			if ( $patched ) {
-				wp_update_post( [ 'ID' => $front_page_id, 'post_content' => serialize_blocks( $blocks ) ] );
-				$this->log( "  [ok] Updated front page (ID {$front_page_id})." );
-			} else {
-				$this->log( "  Front page (ID {$front_page_id}) already up to date." );
-			}
+			wp_update_post( [ 'ID' => $front_page_id, 'post_content' => $full_content ] );
+			update_post_meta( $front_page_id, '_wp_page_template', 'tbc-fullscreen' );
+			$this->log( "  [ok] Updated front page (ID {$front_page_id}) with fresh content." );
 		} else {
 			$page_id = wp_insert_post( [
 				'post_title'     => 'Home',
@@ -449,12 +393,12 @@ class TBC_Setup_Runner {
 				throw new \RuntimeException( 'Could not create page: ' . $page_id->get_error_message() );
 			}
 
+			update_post_meta( $page_id, '_wp_page_template', 'tbc-fullscreen' );
 			update_option( 'show_on_front', 'page' );
 			update_option( 'page_on_front', $page_id );
 			$this->log( "  [ok] Created front page (ID {$page_id}) and set as static homepage." );
 		}
 
-		// Ensure show_on_front is always correct.
 		update_option( 'show_on_front', 'page' );
 		if ( ! (int) get_option( 'page_on_front' ) ) {
 			$p = get_page_by_path( 'home' );
@@ -467,7 +411,7 @@ class TBC_Setup_Runner {
 	 * Never touches show_on_front / page_on_front.
 	 * Sets $this->page_url so the UI can show a direct link.
 	 */
-	private function apply_staging_page( string $full_content, array $frames, array $venue_slots, array $timeline_attrs, callable $b ): void {
+	private function apply_staging_page( string $full_content, callable $b ): void {
 		$staging_id = (int) get_option( 'tbc_staging_page_id' );
 		$existing   = $staging_id ? get_post( $staging_id ) : null;
 
@@ -480,6 +424,7 @@ class TBC_Setup_Runner {
 		if ( $existing ) {
 			// Update the existing staging page with fresh block content.
 			wp_update_post( [ 'ID' => $existing->ID, 'post_content' => $full_content ] );
+			update_post_meta( $existing->ID, '_wp_page_template', 'tbc-fullscreen' );
 			update_option( 'tbc_staging_page_id', $existing->ID );
 			$this->page_url = get_permalink( $existing->ID );
 			$this->log( "  [ok] Updated staging page (ID {$existing->ID})." );
@@ -498,6 +443,7 @@ class TBC_Setup_Runner {
 				throw new \RuntimeException( 'Could not create staging page: ' . $page_id->get_error_message() );
 			}
 
+			update_post_meta( $page_id, '_wp_page_template', 'tbc-fullscreen' );
 			update_option( 'tbc_staging_page_id', $page_id );
 			$this->page_url = get_permalink( $page_id );
 			$this->log( "  [ok] Created staging page (ID {$page_id})." );
@@ -542,12 +488,12 @@ class TBC_Setup_Runner {
 			}
 		};
 
-		$setup_menu( 'Primary Navigation', 'primary', [
-			[ 'The Cap Story', '#story'    ],
-			[ "What's On",     '#whats-on' ],
-			[ 'Menu',          '#menu'     ],
-			[ 'Our Rooms',     '#our-rooms'],
-			[ 'Book a Table',  '#'         ],
+		$setup_menu( 'TBC Nav', 'tbc-nav', [
+			[ 'The Cap Story', '#story'      ],
+			[ "What's On",     '#whats-on'   ],
+			[ 'Menu',          '#menu'        ],
+			[ 'Our Rooms',     '#our-rooms'   ],
+			[ 'Venue Hire',    '#venue-hire'  ],
 		] );
 
 		$setup_menu( 'Footer Links', 'footer', [
@@ -692,64 +638,6 @@ class TBC_Setup_Runner {
 				'name' => "Lily's Bar",
 				'desc' => 'The ground-floor main showroom, performance stage, dance floor, and primary social hub, named in honor of Lily Savage.',
 				'img'  => "{$img_dir}/lilys.webp",
-			],
-		];
-	}
-
-	private function timeline_attributes( callable $tl_id ): array {
-		$paras = static fn( string ...$ps ): string => implode( "\n\n", $ps );
-
-		return [
-			'introText' => "For more than 250 years, The Black Cap has been at the heart of Camden. Known as one of London's most historic pubs and a cornerstone of LGBTQ+ culture, it has hosted legendary performers, launched careers and offered generations a safe and celebratory space.\n\nNow, at long last, the Cap is OPEN once more. It's been saved not just by law, but by love, by the thousands who stood up for it, sang for it, and believed in it. The Cap has always been more than bricks and mortar. It's drag and glitter, it's protest and power, it's the place where outsiders became insiders.",
-			'timestamps' => [
-				[
-					'id'          => 'ts-1',
-					'years'       => '1751–1960',
-					'title'       => 'WITCHES & THE START OF SOMETHING SPECIAL',
-					'description' => $paras( "The Black Cap's story begins way back in 1751, when it first opened as the Mother Black Cap. Local Camden folklore says it was named after a witch – \"Mother Damnable\" – who was said to curse anyone who crossed her. By 1781, the pub had moved to its current spot on Camden High Street, and in 1889 it was rebuilt into the Victorian building you see today. If you look up, you'll spot her: a stone bust of Mother Black Cap, still watching over the door like she has for over a century." ),
-					'imageIds'    => array_values( array_filter( [ $tl_id(1) ] ) ),
-				],
-				[
-					'id'          => 'ts-2',
-					'years'       => '1960s',
-					'title'       => 'FROM LOCAL TO QUEER HEAVEN',
-					'description' => $paras(
-						"In the 1960s, long before it was legal to be openly gay in this country, the Black Cap became something more than a pub. It became a safe meeting place. By the mid-60s it had already built a reputation as one of London's very first \"gay pubs\" and by the 70s it had a new title too: the Palladium of Drag.",
-						"Legends of British drag like Danny La Rue, Hinge & Bracket, and above all Mrs Shufflewick made this their stage. Shufflewick's Sunday shows were infamous – packed with everyone from local regulars to big names like Barry Humphries."
-					),
-					'imageIds'    => array_values( array_filter( [ $tl_id(2) ] ) ),
-				],
-				[
-					'id'          => 'ts-3',
-					'years'       => '1970s–1980s',
-					'title'       => 'THE GOLDEN YEARS',
-					'description' => $paras(
-						"Through the 70s and 80s the Cap wasn't just a pub – it was a lifeline. You came here to laugh with a drag queen tearing the house down, to flirt, to dance, to cry on someone's shoulder. For many, it was the first place they truly felt at home.",
-						"Acts like Regina Fong brought the house down night after night, with a fanbase who called themselves the \"Fongettes.\" The Cap also gave space to community groups: from trans support meetups to London Gay Symphonic Winds rehearsals. It wasn't just entertainment, it was solidarity.",
-						"By the 2000s, the Cap was still buzzing, with nights like The Meth Lab mixing drag, cabaret and surreal performance. Stars of RuPaul's Drag Race – Bianca Del Rio, Trixie Mattel, Raja, Adore Delano – all performed on the stage."
-					),
-					'imageIds'    => array_values( array_filter( [ $tl_id(3) ] ) ),
-				],
-				[
-					'id'          => 'ts-4',
-					'years'       => '1990s–2010s',
-					'title'       => 'A VENUE WITH COMMUNITY WEIGHT',
-					'description' => $paras(
-						"The Black Cap's importance has never been limited to nightlife. For many, it represented something rare: a public place where being openly LGBTQ+ felt normal, safe, and shared. Former staff and regulars have described it as a welcoming, mixed crowd across ages – a place to meet, talk, laugh, and feel part of something bigger than a night out. That community role was formally recognised when Camden Council granted Asset of Community Value (ACV) status – a protection designed to acknowledge places that contribute to local social and cultural life.",
-						"In more recent years, community work and campaigning continued beyond the building itself. Partnerships and grassroots groups helped keep the spirit of The Black Cap alive through organised meet-ups and advocacy driven by the belief that London needs queer spaces that aren't disposable."
-					),
-					'imageIds'    => array_values( array_filter( [ $tl_id(4) ] ) ),
-				],
-				[
-					'id'          => 'ts-5',
-					'years'       => '2020s',
-					'title'       => 'A NEW CHAPTER',
-					'description' => $paras(
-						"Now, at long last, the Cap is reopening. It's been saved not just by law, but by love – by the thousands who stood up for it, sang for it, and believed in it.",
-						"The Black Cap returns with the same rebellious spirit, inclusive heart, and unforgettable nights that made it a cornerstone of queer culture in London. Join us as we celebrate our past, and raise a glass to the future."
-					),
-					'imageIds'    => array_values( array_filter( [ $tl_id(5) ] ) ),
-				],
 			],
 		];
 	}

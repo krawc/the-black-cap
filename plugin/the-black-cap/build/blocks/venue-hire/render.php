@@ -63,7 +63,7 @@ if ( $svg_raw ) {
 	$svg_raw = str_replace( '</svg>', $hit_zones . "\n</svg>", $svg_raw );
 }
 ?>
-<section class="venueHireSection">
+<section class="venueHireSection" id="venue-hire">
 	<div class="venueHireInner">
 		<h2 class="menuHeadline venueHireTitle">Venue Hire</h2>
 		<div class="venueHireLayout"

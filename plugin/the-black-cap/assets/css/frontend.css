@@ -12,6 +12,22 @@
   box-sizing: border-box;
 }
 
+/* Story and timeline overflow on mobile — clip both axes */
+#story,
+.timelineSection {
+  max-width: 100%;
+  overflow: clip;
+}
+
+/* WordPress inline emoji images */
+img.emoji {
+  display: inline;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.1em;
+  margin: 0;
+}
+
 html {
   min-height: 100%;
   background: #000;

@@ -23,6 +23,23 @@ require_once TBC_PLUGIN_DIR . 'inc/setup/class-setup-runner.php';
 require_once TBC_PLUGIN_DIR . 'inc/setup/admin-page.php';
 require_once TBC_PLUGIN_DIR . 'inc/setup/ajax-handlers.php';
 
+/* ── Fullscreen page template ─────────────────────────────────────────── */
+
+// Expose "Black Cap – Fullscreen" in the Page Attributes template dropdown.
+add_filter( 'theme_page_templates', function ( array $templates ): array {
+	$templates['tbc-fullscreen'] = __( 'Black Cap – Fullscreen', 'the-black-cap' );
+	return $templates;
+} );
+
+// Serve the plugin's own template file when that template is selected.
+add_filter( 'template_include', function ( string $template ): string {
+	if ( ! is_singular( 'page' ) ) return $template;
+	if ( get_page_template_slug() !== 'tbc-fullscreen' ) return $template;
+
+	$plugin_tpl = TBC_PLUGIN_DIR . 'templates/tbc-fullscreen.php';
+	return file_exists( $plugin_tpl ) ? $plugin_tpl : $template;
+} );
+
 /* ── Block registration ───────────────────────────────────────────────── */
 add_action( 'init', function () {
 	foreach ( glob( TBC_PLUGIN_DIR . 'build/blocks/*/block.json' ) as $block_json ) {
