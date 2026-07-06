@@ -114,5 +114,6 @@ add_action( 'wp_ajax_tbc_clear_cache', function () {
 	check_ajax_referer( 'tbc_clear_cache' );
 	delete_transient( 'tbc_eventbrite_events' );
 	delete_transient( 'tbc_tiktok_videos' );
+	delete_transient( 'tbc_tiktok_access_token_cache' );
 	wp_send_json_success( __( 'Cache cleared.', 'the-black-cap' ) );
 } );

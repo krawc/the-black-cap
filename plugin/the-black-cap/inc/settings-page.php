@@ -12,9 +12,11 @@ add_action( 'admin_menu', function () {
 } );
 
 add_action( 'admin_init', function () {
-	register_setting( 'tbc_settings', 'tbc_eventbrite_token',    [ 'sanitize_callback' => 'sanitize_text_field' ] );
-	register_setting( 'tbc_settings', 'tbc_eventbrite_org_id',   [ 'sanitize_callback' => 'sanitize_text_field' ] );
-	register_setting( 'tbc_settings', 'tbc_tiktok_access_token', [ 'sanitize_callback' => 'sanitize_text_field' ] );
+	register_setting( 'tbc_settings', 'tbc_eventbrite_token',      [ 'sanitize_callback' => 'sanitize_text_field' ] );
+	register_setting( 'tbc_settings', 'tbc_eventbrite_org_id',     [ 'sanitize_callback' => 'sanitize_text_field' ] );
+	register_setting( 'tbc_settings', 'tbc_tiktok_client_key',     [ 'sanitize_callback' => 'sanitize_text_field' ] );
+	register_setting( 'tbc_settings', 'tbc_tiktok_client_secret',  [ 'sanitize_callback' => 'sanitize_text_field' ] );
+	register_setting( 'tbc_settings', 'tbc_tiktok_refresh_token',  [ 'sanitize_callback' => 'sanitize_text_field' ] );
 } );
 
 function tbc_render_settings_page() {
@@ -49,13 +51,35 @@ function tbc_render_settings_page() {
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'TikTok Access Token', 'the-black-cap' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'TikTok Client Key', 'the-black-cap' ); ?></th>
 					<td>
-						<input type="text" name="tbc_tiktok_access_token"
-							value="<?php echo esc_attr( get_option( 'tbc_tiktok_access_token' ) ); ?>"
+						<input type="text" name="tbc_tiktok_client_key"
+							value="<?php echo esc_attr( get_option( 'tbc_tiktok_client_key' ) ); ?>"
 							class="regular-text" autocomplete="off" />
 						<p class="description">
-							<?php esc_html_e( 'OAuth access token from developers.tiktok.com (Display API).', 'the-black-cap' ); ?>
+							<?php esc_html_e( 'App Key from developers.tiktok.com → your app → App info.', 'the-black-cap' ); ?>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'TikTok Client Secret', 'the-black-cap' ); ?></th>
+					<td>
+						<input type="password" name="tbc_tiktok_client_secret"
+							value="<?php echo esc_attr( get_option( 'tbc_tiktok_client_secret' ) ); ?>"
+							class="regular-text" autocomplete="off" />
+						<p class="description">
+							<?php esc_html_e( 'App Secret from the same page. Keep this private.', 'the-black-cap' ); ?>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'TikTok Refresh Token', 'the-black-cap' ); ?></th>
+					<td>
+						<input type="text" name="tbc_tiktok_refresh_token"
+							value="<?php echo esc_attr( get_option( 'tbc_tiktok_refresh_token' ) ); ?>"
+							class="regular-text" autocomplete="off" />
+						<p class="description">
+							<?php esc_html_e( 'Refresh token from the initial OAuth flow (valid 365 days; auto-rotated on each use).', 'the-black-cap' ); ?>
 						</p>
 					</td>
 				</tr>
@@ -104,9 +128,11 @@ function tbc_render_settings_page() {
 
 		<h3><?php esc_html_e( 'TikTok (Display API)', 'the-black-cap' ); ?></h3>
 		<ol>
-			<li><?php esc_html_e( 'Go to developers.tiktok.com → Manage Apps → Create App.', 'the-black-cap' ); ?></li>
-			<li><?php esc_html_e( 'Enable the "Video List" scope under the Display API product.', 'the-black-cap' ); ?></li>
-			<li><?php esc_html_e( 'Complete the OAuth flow for your TikTok account to get an access token.', 'the-black-cap' ); ?></li>
+			<li><?php esc_html_e( 'Go to developers.tiktok.com → Manage Apps → Create App (web app).', 'the-black-cap' ); ?></li>
+			<li><?php esc_html_e( 'Under Products, add "Display API" and enable the video.list scope.', 'the-black-cap' ); ?></li>
+			<li><?php esc_html_e( 'Copy the Client Key and Client Secret from App info and paste them above.', 'the-black-cap' ); ?></li>
+			<li><?php esc_html_e( 'Do the one-time OAuth authorisation flow to obtain the initial refresh token: redirect the TikTok account owner to the authorise URL, exchange the returned code at /v2/oauth/token/ (grant_type=authorization_code), and paste the refresh_token value above.', 'the-black-cap' ); ?></li>
+			<li><?php esc_html_e( 'The plugin will automatically exchange the refresh token for a short-lived access token and rotate the refresh token on every use — no manual updates needed after the initial setup.', 'the-black-cap' ); ?></li>
 		</ol>
 	</div>
 	<?php

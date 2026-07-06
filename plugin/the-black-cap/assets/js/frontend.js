@@ -92,7 +92,6 @@
 /* ── FrameGallery + Room lightbox ───────────────────────────────── */
 (function () {
   var RED_SELECTOR = '[fill="#FF0000"],[fill="#ff0000"],[fill="#f00"],[fill="red"]';
-  var MEWS_ID      = '8a6e6542-af3c-4a36-b19e-b36b00a8c958';
 
   /* ── Cursor tooltip ─────────────────────────────────────────────── */
   var tooltip = document.createElement('div');
@@ -227,16 +226,8 @@
     cta.textContent = 'View Availability';
     cta.addEventListener('click', function () {
       closeRoomLightbox();
-      if (window.MewsApi && window.MewsApi.open) {
-        window.MewsApi.open();
-      } else if (window.Mews && window.Mews.D) {
-        // Site snippet initialised Mews without a callback, so capture the
-        // API now and open. window.MewsApi is cached for subsequent clicks.
-        Mews.D(['8a6e6542-af3c-4a36-b19e-b36b00a8c958'], function (api) {
-          window.MewsApi = api;
-          api.open();
-        });
-      }
+      var trigger = document.getElementById('tbc-mews-trigger');
+      if (trigger) trigger.click();
     });
     info.appendChild(cta);
 

@@ -100,5 +100,8 @@ foreach ( $frames as $frame ) {
 
 	<?php endif; ?>
 
-	<a href="#book" class="neonButton"><?php esc_html_e( 'See Availability', 'the-black-cap' ); ?></a>
+	<a href="#" class="neonButton distributor"><?php esc_html_e( 'See Availability', 'the-black-cap' ); ?></a>
+
+	<?php /* Hidden anchor — Mews auto-binds click handlers to .distributor at init time */ ?>
+	<a id="tbc-mews-trigger" class="distributor" href="#" aria-hidden="true" tabindex="-1" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" ></a>
 </section>

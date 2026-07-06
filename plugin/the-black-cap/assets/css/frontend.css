@@ -805,7 +805,8 @@ h2 {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding: 0 clamp(1.15rem, 4vw, 4rem);
+  /* scroll-padding-left keeps snap points aligned with the visual left edge */
+  scroll-padding-left: clamp(1.15rem, 4vw, 4rem);
 }
 
 .highlightSlider::-webkit-scrollbar {
@@ -815,6 +816,8 @@ h2 {
 .highlightTrack {
   display: flex;
   gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  /* left padding here (not on the scroll container) is more reliable cross-browser */
+  padding-left: clamp(1.15rem, 4vw, 4rem);
   padding-right: clamp(1.15rem, 4vw, 4rem);
 }
 
@@ -828,24 +831,91 @@ h2 {
   background: rgba(255, 255, 255, 0.04);
 }
 
+/* shared slide shell */
 .tiktokSlide {
   flex: 0 0 auto;
-  width: clamp(20rem, 46vmin, 28rem);
-  aspect-ratio: 9/19;
+  width: clamp(10rem, 38vmin, 20rem);
   scroll-snap-align: start;
   border-radius: 0.6rem;
   overflow: hidden;
   position: relative;
-  background: #000;
+  background: #111;
+}
+
+/* ── Thumbnail mode ─────────────────────────────────────────────── */
+.tiktokSlide--thumb {
+  display: block;
+  text-decoration: none;
+  aspect-ratio: 9/16;
+}
+
+.tiktokSlide__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+.tiktokSlide__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.tiktokSlide__play svg {
+  width: clamp(2.5rem, 8vmin, 3.5rem);
+  height: clamp(2.5rem, 8vmin, 3.5rem);
+  filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.6));
+  opacity: 0.9;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.tiktokSlide--thumb:hover .tiktokSlide__play svg,
+.tiktokSlide--thumb:focus-visible .tiktokSlide__play svg {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ── Embed mode ─────────────────────────────────────────────────── */
+.tiktokSlide--embed {
+  /* TikTok embed/v2 renders at ~325×740 */
+  aspect-ratio: 325/740;
 }
 
 .tiktokEmbed {
-  margin-top: 4em;
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   border: none;
+  background: #111;
+  color-scheme: dark;
+}
+
+/* ── Highlights profile link ────────────────────────────────────── */
+.highlightsProfile {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+}
+
+.highlightsProfileBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.highlightsProfileBtn__icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
 }
 
 /* ── Menu ───────────────────────────────────────────────────────── */
