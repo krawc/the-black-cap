@@ -84,16 +84,12 @@ add_action( 'wp_head', function () {
 	global $post;
 	if ( ! is_singular() || ! $post instanceof WP_Post ) return;
 	if ( strpos( $post->post_content, '<!-- wp:the-black-cap/' ) === false ) return;
-	// Train One is self-hosted (see frontend.css @font-face + preload below).
-	// Google Fonts only needs to serve Montserrat now.
-	$montserrat_url = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap';
-	$train_one_url  = TBC_PLUGIN_URL . '/assets/fonts/train-one-v16-latin.woff2';
+	$url = 'https://fonts.googleapis.com/css2?family=Train+One&family=Montserrat:wght@400;700;800;900&display=swap';
 	?>
-<link rel="preload" as="font" type="font/woff2" crossorigin href="<?php echo esc_url( $train_one_url ); ?>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" media="print" onload="this.media='all'" href="<?php echo esc_url( $montserrat_url ); ?>">
-<noscript><link rel="stylesheet" href="<?php echo esc_url( $montserrat_url ); ?>"></noscript>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="<?php echo esc_url( $url ); ?>">
+<noscript><link rel="stylesheet" href="<?php echo esc_url( $url ); ?>"></noscript>
 	<?php
 }, 1 );
 
