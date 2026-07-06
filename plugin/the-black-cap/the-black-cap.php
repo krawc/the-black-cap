@@ -56,12 +56,6 @@ add_action( 'wp_enqueue_scripts', function () {
 	if ( strpos( $post->post_content, '<!-- wp:the-black-cap/' ) === false ) return;
 
 	wp_enqueue_style(
-		'tbc-google-fonts',
-		'https://fonts.googleapis.com/css2?family=Train+One&family=Montserrat:wght@400;700;800;900&display=swap',
-		[],
-		null
-	);
-	wp_enqueue_style(
 		'tbc-frontend',
 		TBC_PLUGIN_URL . '/assets/css/frontend.css',
 		[],
@@ -82,6 +76,26 @@ add_action( 'wp_enqueue_scripts', function () {
 		true
 	);
 } );
+
+// Google Fonts loaded non-blocking (media="print" swap trick) to avoid
+// render-blocking the LCP. preconnect hints go out at priority 1 so the
+// TCP+TLS handshake starts as early as possible.
+add_action( 'wp_head', function () {
+	global $post;
+	if ( ! is_singular() || ! $post instanceof WP_Post ) return;
+	if ( strpos( $post->post_content, '<!-- wp:the-black-cap/' ) === false ) return;
+	// Train One is self-hosted (see frontend.css @font-face + preload below).
+	// Google Fonts only needs to serve Montserrat now.
+	$montserrat_url = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap';
+	$train_one_url  = TBC_PLUGIN_URL . '/assets/fonts/train-one-v16-latin.woff2';
+	?>
+<link rel="preload" as="font" type="font/woff2" crossorigin href="<?php echo esc_url( $train_one_url ); ?>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="<?php echo esc_url( $montserrat_url ); ?>">
+<noscript><link rel="stylesheet" href="<?php echo esc_url( $montserrat_url ); ?>"></noscript>
+	<?php
+}, 1 );
 
 /* ── Editor assets ────────────────────────────────────────────────────── */
 add_action( 'enqueue_block_editor_assets', function () {
