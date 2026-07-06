@@ -4,19 +4,7 @@
  *
  * Desktop: SVG frame grid with hover tooltip + room lightbox on click.
  * Mobile:  Plain image slider (one card per unique room, same lightbox on tap).
- *
- * The Mews Booking Engine is injected into wp_footer once per page load.
  */
-
-static $mews_enqueued = false;
-if ( ! $mews_enqueued ) {
-	$mews_enqueued = true;
-	add_action( 'wp_footer', static function (): void {
-		?>
-<script>(function(m,e,w,s){c=m.createElement(e);c.onload=function(){Mews.D(s[0],function(api){window.MewsApi=api;})};c.async=1;c.src=w;t=m.getElementsByTagName(e)[0];t.parentNode.insertBefore(c,t)})(document,'script','https://app.mews.com/distributor/distributor.min.js',[['8a6e6542-af3c-4a36-b19e-b36b00a8c958']]);</script>
-		<?php
-	}, 20 );
-}
 
 $frames   = $attributes['frames'] ?? [];
 $base_url = TBC_PLUGIN_URL . '/assets/svg/frames/';

@@ -230,7 +230,12 @@
       if (window.MewsApi && window.MewsApi.open) {
         window.MewsApi.open();
       } else if (window.Mews && window.Mews.D) {
-        try { window.Mews.D([MEWS_ID]); } catch (_) {}
+        // Site snippet initialised Mews without a callback, so capture the
+        // API now and open. window.MewsApi is cached for subsequent clicks.
+        Mews.D(['8a6e6542-af3c-4a36-b19e-b36b00a8c958'], function (api) {
+          window.MewsApi = api;
+          api.open();
+        });
       }
     });
     info.appendChild(cta);
