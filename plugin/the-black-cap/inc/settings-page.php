@@ -17,6 +17,9 @@ add_action( 'admin_init', function () {
 	register_setting( 'tbc_settings', 'tbc_tiktok_client_key',     [ 'sanitize_callback' => 'sanitize_text_field' ] );
 	register_setting( 'tbc_settings', 'tbc_tiktok_client_secret',  [ 'sanitize_callback' => 'sanitize_text_field' ] );
 	register_setting( 'tbc_settings', 'tbc_tiktok_refresh_token',  [ 'sanitize_callback' => 'sanitize_text_field' ] );
+	register_setting( 'tbc_settings', 'tbc_social_tiktok',         [ 'sanitize_callback' => 'esc_url_raw' ] );
+	register_setting( 'tbc_settings', 'tbc_social_instagram',      [ 'sanitize_callback' => 'esc_url_raw' ] );
+	register_setting( 'tbc_settings', 'tbc_social_facebook',       [ 'sanitize_callback' => 'esc_url_raw' ] );
 } );
 
 function tbc_render_settings_page() {
@@ -81,6 +84,30 @@ function tbc_render_settings_page() {
 						<p class="description">
 							<?php esc_html_e( 'Refresh token from the initial OAuth flow (valid 365 days; auto-rotated on each use).', 'the-black-cap' ); ?>
 						</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'TikTok Profile URL', 'the-black-cap' ); ?></th>
+					<td>
+						<input type="url" name="tbc_social_tiktok"
+							value="<?php echo esc_attr( get_option( 'tbc_social_tiktok' ) ); ?>"
+							class="regular-text" placeholder="https://www.tiktok.com/@theblackcapcamden" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Instagram Profile URL', 'the-black-cap' ); ?></th>
+					<td>
+						<input type="url" name="tbc_social_instagram"
+							value="<?php echo esc_attr( get_option( 'tbc_social_instagram' ) ); ?>"
+							class="regular-text" placeholder="https://www.instagram.com/theblackcapcamden" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Facebook Page URL', 'the-black-cap' ); ?></th>
+					<td>
+						<input type="url" name="tbc_social_facebook"
+							value="<?php echo esc_attr( get_option( 'tbc_social_facebook' ) ); ?>"
+							class="regular-text" placeholder="https://www.facebook.com/theblackcapcamden" />
 					</td>
 				</tr>
 			</table>

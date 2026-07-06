@@ -267,6 +267,14 @@ margin-top: -0.6rem;
   outline: none;
 }
 
+.heroSocial {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+  margin-top: 1.8rem;
+  margin-left: -0.3em;
+}
+
 /* ── Story / Legendary ──────────────────────────────────────────── */
 .content {
   position: relative;
