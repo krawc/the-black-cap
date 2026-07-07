@@ -411,9 +411,14 @@
 
     var dateEl = modal.querySelector('.eventModal__date');
     if ( isRecurring && allDates.length ) {
-      dateEl.innerHTML = allDates
+      var shown = allDates.slice(0, 3);
+      var extra = allDates.length - shown.length;
+      dateEl.innerHTML = shown
         .map( function (d) { return '<span class="eventModal__dates-item">' + d + '</span>'; } )
         .join('');
+      if (extra > 0) {
+        dateEl.innerHTML += '<span class="eventModal__dates-more">+' + extra + ' more</span>';
+      }
       dateEl.hidden = false;
     } else {
       dateEl.textContent = date;
@@ -715,6 +720,11 @@
 
     lb.querySelector('.tlLightbox__prev').hidden = single;
     lb.querySelector('.tlLightbox__next').hidden = single;
+
+    var infoEl  = lb.querySelector('.tlLightbox__info');
+    var panelEl = lb.querySelector('.tlLightbox__panel');
+    if (infoEl)  infoEl.scrollTop  = 0;
+    if (panelEl) panelEl.scrollTop = 0;
   }
 
   function openAt(data, idx) {

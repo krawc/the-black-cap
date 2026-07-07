@@ -177,11 +177,11 @@ $events = array_slice( $collapsed, 0, $limit );
 
 					<?php if ( $is_recurring && $all_dates ) : ?>
 					<div class="eventCard__dates">
-						<?php foreach ( array_slice( $all_dates, 0, 3 ) as $d ) : ?>
+						<?php foreach ( array_slice( $all_dates, 0, 1 ) as $d ) : ?>
 						<span class="eventCard__dates-item"><?php echo esc_html( $d ); ?></span>
 						<?php endforeach; ?>
-						<?php if ( count( $all_dates ) > 3 ) : ?>
-						<span class="eventCard__dates-more">+<?php echo count( $all_dates ) - 3; ?> more</span>
+						<?php if ( count( $all_dates ) > 1 ) : ?>
+						<span class="eventCard__dates-more">+<?php echo count( $all_dates ) - 1; ?> more</span>
 						<?php endif; ?>
 					</div>
 					<?php elseif ( $date ) : ?>

@@ -50,7 +50,7 @@ endif;
 
 $mode          = $attributes['mode']          ?? 'thumbnail';
 $limit         = max( 1, (int) ( $attributes['limit'] ?? 8 ) );
-$profile_url   = esc_url( $attributes['profileUrl']   ?? '' );
+$profile_url   = esc_url( $attributes['profileUrl'] ?: get_option( 'tbc_social_tiktok', '' ) );
 $profile_label = esc_html( $attributes['profileLabel'] ?? __( 'View Profile', 'the-black-cap' ) );
 
 /* ── Fetch video data ─────────────────────────────────────────────── */
@@ -102,7 +102,7 @@ $videos = array_slice( $videos, 0, $limit );
 ?>
 <section class="highlights" id="highlights">
 	<div class="highlightsInner">
-		<h2 class="highlightsTitle">The Highlights</h2>
+		<h2 class="highlightsTitle">Highlights</h2>
 	</div>
 
 	<?php if ( $videos ) : ?>

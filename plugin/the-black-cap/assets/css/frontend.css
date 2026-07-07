@@ -689,6 +689,15 @@ h2 {
   line-height: 1.9;
 }
 
+.eventModal__dates-more {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
 .eventModal__title {
   margin: 0;
   font-weight: 700;
@@ -1272,7 +1281,6 @@ h2 {
 .roomsSlider {
   display: none;
   width: calc(100% + 2 * clamp(1.15rem, 4vw, 4rem));
-  margin-left: calc(-1 * clamp(1.15rem, 4vw, 4rem));
 }
 
 .roomSlideCard {
@@ -1468,13 +1476,29 @@ h2 {
   }
 
   .menuSvgBlock {
-    width: clamp(7rem, 36vw, 12rem);
+    width: clamp(4.5rem, 22vw, 7rem);
   }
 
   .menuRight {
     width: 100%;
     padding-top: 0;
-    margin-top: 1.5rem;
+    margin-top: 0.75rem;
+    gap: 0;
+  }
+
+  /* Normalize all section heading sizes to match What's On on mobile */
+  .menuHeadline,
+  .highlightsTitle,
+  .roomsHeadline {
+    font-size: clamp(3rem, 10vw, 7rem);
+  }
+
+  /* Consistent gap below each section heading before its content */
+  .whatsOnTitle,
+  .menuHeadline,
+  .highlightsTitle,
+  .roomsHeadline {
+    margin-bottom: clamp(1.25rem, 3vw, 2rem);
   }
 }
 
@@ -1486,7 +1510,7 @@ h2 {
 
 @media (max-width: 560px) {
   .hero {
-    min-height: 96vh;
+    min-height: max(96vh, 50rem);
     grid-template-rows: auto auto auto;
     align-content: center;
   }

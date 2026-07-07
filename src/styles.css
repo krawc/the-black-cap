@@ -607,7 +607,7 @@ h2 {
 
 @media (max-width: 860px) {
   .hero {
-    min-height: 96vh;
+    min-height: max(96vh, 50rem);
   }
 
   .logoOrbit {
