@@ -229,8 +229,11 @@
     cta.textContent = 'View Availability';
     cta.addEventListener('click', function () {
       closeRoomLightbox();
-      var trigger = document.getElementById('tbc-mews-trigger');
-      if (trigger) trigger.click();
+      // Defer one tick so Mews' internal state settles after the lightbox DOM is removed.
+      setTimeout(function () {
+        var trigger = document.getElementById('tbc-mews-trigger');
+        if (trigger) trigger.click();
+      }, 0);
     });
     info.appendChild(cta);
 
