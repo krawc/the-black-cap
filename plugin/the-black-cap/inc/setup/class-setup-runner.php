@@ -630,7 +630,7 @@ class TBC_Setup_Runner {
 				'img'  => "{$img_dir}/terrace.webp",
 			],
 			2 => [
-				'name' => 'Ms Shufflewick Bar',
+				'name' => 'Shufflewick Bar',
 				'desc' => 'The first-floor bar area with seating booths, named after the pioneering 1950s drag performer.',
 				'img'  => "{$img_dir}/shufflewick.webp",
 			],
