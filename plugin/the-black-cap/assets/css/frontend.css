@@ -2000,10 +2000,32 @@ h2 {
 }
 
 .venueHireSvg {
+  position: relative;
   flex: 0 0 auto;
   width: clamp(14rem, 36vw, 26rem);
   max-height: 70vh;
   overflow: visible;
+}
+
+.venueTapCue {
+  position: absolute;
+  bottom: -0.75rem;
+  left: -0.5rem;
+  width: clamp(2rem, 5vw, 2.75rem);
+  height: auto;
+  opacity: 0.55;
+  pointer-events: none;
+  animation: tapPulse 2.2s ease-in-out infinite;
+  transition: opacity 0.5s ease;
+}
+
+.venueTapCue.is-gone {
+  opacity: 0;
+}
+
+@keyframes tapPulse {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 0.12; }
 }
 
 .venueHireSvg svg {

@@ -627,18 +627,26 @@
         renderThumbs(v.photos || []);
       }
 
+      var tapCue = layout.closest('.venueHireSection')
+        ? layout.closest('.venueHireSection').querySelector('.venueTapCue')
+        : null;
+
+      function dismissTapCue() {
+        if (tapCue) tapCue.classList.add('is-gone');
+      }
+
       shapes.forEach(function (shape, i) {
         shape.addEventListener('mouseenter', function () { activate(i); });
-        shape.addEventListener('click',      function () { activate(i); });
+        shape.addEventListener('click',      function () { activate(i); dismissTapCue(); });
         shape.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(i); }
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(i); dismissTapCue(); }
         });
       });
 
       hitZones.forEach(function (hz) {
         var i = parseInt(hz.dataset.venueIndex, 10);
         hz.addEventListener('mouseenter', function () { activate(i); });
-        hz.addEventListener('click',      function () { activate(i); });
+        hz.addEventListener('click',      function () { activate(i); dismissTapCue(); });
       });
 
       var panel   = layout.querySelector('.venueHirePanel');
