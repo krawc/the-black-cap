@@ -1010,13 +1010,41 @@ h2 {
 .menuItem {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 0.55rem 0;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.menuItemThumb {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.06);
+  transition: opacity 0.2s ease;
+}
+
+.menuItemThumb:hover,
+.menuItemThumb:focus-visible {
+  opacity: 0.75;
+  outline: 2px solid rgba(100, 244, 255, 0.55);
+  outline-offset: 2px;
+}
+
+.menuItemThumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .menuItemName {
+  flex: 1;
   color: rgba(255, 255, 255, 0.88);
   font-size: 0.95rem;
 }
@@ -1026,6 +1054,53 @@ h2 {
   color: #64f4ff;
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+/* ── Menu image lightbox ─────────────────────────────────────────── */
+.menuImgLb {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.menuImgLb[hidden] {
+  display: none;
+}
+
+.menuImgLb__img {
+  max-width: min(90vw, 60rem);
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 0.5rem;
+}
+
+.menuImgLb__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.menuImgLb__close:hover,
+.menuImgLb__close:focus-visible {
+  border-color: rgba(255, 255, 255, 0.8);
+  outline: none;
 }
 
 /* ── Our Rooms ──────────────────────────────────────────────────── */

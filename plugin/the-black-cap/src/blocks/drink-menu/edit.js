@@ -1,6 +1,65 @@
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls, MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
 import { PanelBody, Button, TextControl } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
+
+function ItemImagePicker( { imageId, onChange } ) {
+	const mediaUrl = useSelect(
+		( select ) => {
+			if ( ! imageId ) return null;
+			const media = select( 'core' ).getMedia( imageId );
+			return media?.source_url ?? null;
+		},
+		[ imageId ]
+	);
+
+	return (
+		<MediaUploadCheck>
+			<MediaUpload
+				onSelect={ ( media ) => onChange( media.id ) }
+				allowedTypes={ [ 'image' ] }
+				value={ imageId || 0 }
+				render={ ( { open } ) => (
+					<div style={ { display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center' } }>
+						<button
+							type="button"
+							onClick={ open }
+							title={ __( 'Set photo', 'the-black-cap' ) }
+							style={ {
+								width: '2.4rem',
+								height: '2.4rem',
+								padding: 0,
+								border: '1px dashed #aaa',
+								borderRadius: '3px',
+								background: 'transparent',
+								cursor: 'pointer',
+								overflow: 'hidden',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								fontSize: '1rem',
+								color: '#aaa',
+								flexShrink: 0,
+							} }
+						>
+							{ mediaUrl
+								? <img src={ mediaUrl } alt="" style={ { width: '100%', height: '100%', objectFit: 'cover' } } />
+								: '📷' }
+						</button>
+						{ imageId ? (
+							<button
+								type="button"
+								onClick={ () => onChange( 0 ) }
+								style={ { background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.6rem', color: '#cc0000', padding: 0, lineHeight: 1 } }
+								aria-label={ __( 'Remove photo', 'the-black-cap' ) }
+							>✕</button>
+						) : null }
+					</div>
+				) }
+			/>
+		</MediaUploadCheck>
+	);
+}
 
 export default function Edit( { attributes, setAttributes } ) {
 	const { sections } = attributes;
@@ -46,7 +105,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	function addItem( si ) {
 		setAttributes( {
 			sections: sections.map( ( sec, i ) =>
-				i !== si ? sec : { ...sec, items: [ ...sec.items, { name: '', price: '' } ] }
+				i !== si ? sec : { ...sec, items: [ ...sec.items, { name: '', price: '', imageId: 0 } ] }
 			),
 		} );
 	}
@@ -69,7 +128,14 @@ export default function Edit( { attributes, setAttributes } ) {
 								onChange={ ( v ) => updateSection( si, 'category', v ) }
 							/>
 							{ sec.items.map( ( item, ii ) => (
-								<div key={ ii } style={ { display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '0.4rem', alignItems: 'end', marginBottom: '0.25rem' } }>
+								<div key={ ii } style={ { display: 'grid', gridTemplateColumns: '2.4rem 1fr 1fr auto', gap: '0.4rem', alignItems: 'end', marginBottom: '0.4rem' } }>
+									<div style={ { paddingBottom: '4px' } }>
+										{ ii === 0 && <div style={ { fontSize: '0.65rem', fontWeight: 600, marginBottom: '4px', color: '#444' } }>{ __( 'Photo', 'the-black-cap' ) }</div> }
+										<ItemImagePicker
+											imageId={ item.imageId || 0 }
+											onChange={ ( id ) => updateItem( si, ii, 'imageId', id ) }
+										/>
+									</div>
 									<TextControl
 										label={ ii === 0 ? __( 'Item', 'the-black-cap' ) : undefined }
 										hideLabelFromVision={ ii !== 0 }

@@ -33,6 +33,10 @@
                 "price": {
                   "type": "string",
                   "default": ""
+                },
+                "imageId": {
+                  "type": "integer",
+                  "default": 0
                 }
               }
             }

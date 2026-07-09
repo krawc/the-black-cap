@@ -25,11 +25,21 @@ $menu_svg = esc_url( TBC_PLUGIN_URL . '/assets/svg/neon-menu.svg' );
 					<p class="menuCategoryName"><?php echo $category; ?></p>
 					<?php endif; ?>
 					<?php foreach ( $items as $item ) :
-						$name  = esc_html( $item['name']  ?? '' );
-						$price = esc_html( $item['price'] ?? '' );
+						$name     = esc_html( $item['name']    ?? '' );
+						$price    = esc_html( $item['price']   ?? '' );
+						$image_id = (int) ( $item['imageId']   ?? 0 );
 						if ( ! $name ) continue;
+						$thumb_url = $image_id ? ( wp_get_attachment_image_url( $image_id, 'thumbnail' ) ?: wp_get_attachment_image_url( $image_id, 'full' ) ) : '';
+						$full_url  = $image_id ? ( wp_get_attachment_image_url( $image_id, 'large' ) ?: wp_get_attachment_image_url( $image_id, 'full' ) ) : '';
 					?>
-					<div class="menuItem">
+					<div class="menuItem<?php echo $thumb_url ? ' menuItem--hasPhoto' : ''; ?>">
+						<?php if ( $thumb_url ) : ?>
+						<button class="menuItemThumb" type="button"
+							data-full="<?php echo esc_url( $full_url ); ?>"
+							data-alt="<?php echo esc_attr( $item['name'] ?? '' ); ?>"
+							aria-label="<?php echo esc_attr( sprintf( __( 'View photo of %s', 'the-black-cap' ), $item['name'] ?? '' ) ); ?>"
+						><img src="<?php echo esc_url( $thumb_url ); ?>" alt="" loading="lazy"></button>
+						<?php endif; ?>
 						<span class="menuItemName"><?php echo $name; ?></span>
 						<?php if ( $price ) : ?>
 						<span class="menuItemPrice"><?php echo $price; ?></span>
