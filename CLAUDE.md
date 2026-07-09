@@ -82,4 +82,4 @@ If new runner scripts are added, list them here and keep them all updated togeth
 
 ### Fonts
 
-`Train One` (headings) and `Figtree` (body) loaded from Google Fonts in `index.html`. The neon glow aesthetic uses `text-shadow` with the brand palette: `#D65CFF` (purple), `#3F7CFF` (blue), `#64F4FF` (cyan), `#79FF5A` (green), `#FFF84A` (yellow).
+`Train One` (headings) and `Montserrat` (body) loaded from Google Fonts in `index.html`. The neon glow aesthetic uses `text-shadow` with the brand palette: `#D65CFF` (purple), `#3F7CFF` (blue), `#64F4FF` (cyan), `#79FF5A` (green), `#FFF84A` (yellow).

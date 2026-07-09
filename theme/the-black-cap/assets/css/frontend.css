@@ -2,7 +2,7 @@
   color: #fff;
   background: #000;
   font-family:
-    Figtree, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    Montserrat, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: geometricPrecision;
@@ -423,7 +423,7 @@ h2 {
 }
 
 .eventCard__date {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -435,7 +435,7 @@ h2 {
   font-size: clamp(0.9rem, 1.4vw, 1.05rem);
   line-height: 1.2;
   color: #fff;
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -446,7 +446,7 @@ h2 {
   font-size: 0.78rem;
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.55);
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   flex: 1;
 }
 
@@ -455,7 +455,7 @@ h2 {
   display: inline-block;
   align-self: flex-start;
   padding: 0.42rem 1.1rem;
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.09em;
@@ -494,7 +494,7 @@ h2 {
 }
 
 .eventCard__dates-item {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -502,7 +502,7 @@ h2 {
 }
 
 .eventCard__dates-more {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.65rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -614,7 +614,7 @@ h2 {
 }
 
 .eventModal__date {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -641,7 +641,7 @@ h2 {
   font-size: 0.88rem;
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.72);
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   flex: 1;
 }
 
@@ -655,7 +655,7 @@ h2 {
 .eventModal__tickets {
   display: inline-block;
   padding: 0.65rem 2rem;
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -960,7 +960,7 @@ h2 {
   z-index: 8500;
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -1171,7 +1171,7 @@ h2 {
 
 .roomSlideCard__label {
   padding: 0.75rem 1rem;
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
   color: #fff;
@@ -1538,7 +1538,7 @@ h2 {
 }
 
 .timelineItem__title {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: clamp(0.9rem, 1.8vw, 1.05rem);
   margin: 0 0 0.85rem;
@@ -1725,7 +1725,7 @@ h2 {
 }
 
 .tlLightbox__title {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: clamp(0.95rem, 2vw, 1.2rem);
   color: #fff;
@@ -1896,7 +1896,7 @@ h2 {
 }
 
 .venueHirePanel__name {
-  font-family: 'Figtree', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.2rem, 2.8vw, 2rem);
   font-weight: 800;
   color: #fff;
