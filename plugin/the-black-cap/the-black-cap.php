@@ -84,7 +84,7 @@ add_action( 'wp_head', function () {
 	global $post;
 	if ( ! is_singular() || ! $post instanceof WP_Post ) return;
 	if ( strpos( $post->post_content, '<!-- wp:the-black-cap/' ) === false ) return;
-	$url = 'https://fonts.googleapis.com/css2?family=Train+One&family=Montserrat:wght@400;700;800;900&display=swap';
+	$url = 'https://fonts.googleapis.com/css2?family=Train+One&family=Figtree:wght@400;700;800;900&display=swap';
 	?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,7 +97,7 @@ add_action( 'wp_head', function () {
 add_action( 'enqueue_block_editor_assets', function () {
 	wp_enqueue_style(
 		'tbc-google-fonts-editor',
-		'https://fonts.googleapis.com/css2?family=Train+One&family=Montserrat:wght@400;700;800;900&display=swap',
+		'https://fonts.googleapis.com/css2?family=Train+One&family=Figtree:wght@400;700;800;900&display=swap',
 		[],
 		null
 	);
