@@ -417,7 +417,10 @@ h2 {
   display: flex;
   gap: 1rem;
   padding-left: clamp(1.15rem, 4vw, 4rem);
-  padding-right: 2rem;
+}
+
+.posterTrack > *:last-child {
+  margin-right: clamp(1.15rem, 4vw, 4rem);
 }
 
 .posterCard {
@@ -835,7 +838,10 @@ h2 {
   gap: clamp(0.75rem, 1.5vw, 1.25rem);
   /* left padding here (not on the scroll container) is more reliable cross-browser */
   padding-left: clamp(1.15rem, 4vw, 4rem);
-  padding-right: clamp(1.15rem, 4vw, 4rem);
+}
+
+.highlightTrack > *:last-child {
+  margin-right: clamp(1.15rem, 4vw, 4rem);
 }
 
 .highlightCard {
