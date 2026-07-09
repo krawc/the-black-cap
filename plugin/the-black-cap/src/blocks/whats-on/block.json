@@ -3,17 +3,26 @@
   "apiVersion": 3,
   "name": "the-black-cap/whats-on",
   "title": "What's On (Eventbrite)",
-  "description": "Horizontal scroll slider of upcoming events fetched from Eventbrite. Credentials are configured in Settings → Black Cap.",
+  "description": "Horizontal scroll slider of upcoming events fetched from Eventbrite. Credentials are configured in Settings \u2192 Black Cap.",
   "category": "theme",
   "icon": "calendar",
-  "supports": { "html": false },
+  "supports": {
+    "html": false
+  },
   "attributes": {
+    "heading": {
+      "type": "string",
+      "default": "What's On"
+    },
     "eventIds": {
       "type": "string",
       "default": "",
       "description": "Comma-separated Eventbrite event IDs used as fallback when no API token is configured."
     },
-    "limit": { "type": "integer", "default": 10 }
+    "limit": {
+      "type": "integer",
+      "default": 10
+    }
   },
   "editorScript": "file:./index.js",
   "render": "file:./render.php"

@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, Button, SelectControl, ToggleControl } from '@wordpress/components';
+import { PanelBody, Button, SelectControl, ToggleControl, TextControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 
@@ -16,7 +16,7 @@ const SVG_OPTIONS = [
 ];
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { frames } = attributes;
+	const { heading, frames } = attributes;
 	const blockProps = useBlockProps( {
 		style: { background: '#000', color: '#fff', padding: '2rem', textAlign: 'center' },
 	} );
@@ -56,7 +56,14 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Frames', 'the-black-cap' ) } initialOpen>
+				<PanelBody title={ __( 'Section Heading', 'the-black-cap' ) } initialOpen>
+					<TextControl
+						label={ __( 'Heading text', 'the-black-cap' ) }
+						value={ heading }
+						onChange={ ( v ) => setAttributes( { heading: v } ) }
+					/>
+				</PanelBody>
+				<PanelBody title={ __( 'Frames', 'the-black-cap' ) } initialOpen={ false }>
 					{ frames.map( ( frame, idx ) => {
 						const room     = rooms.find( ( r ) => r.id === frame.roomId );
 						const imgCount = room?.meta?.tbc_room_image_ids?.length ?? 0;

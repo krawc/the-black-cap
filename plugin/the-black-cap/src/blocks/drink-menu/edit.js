@@ -62,7 +62,7 @@ function ItemImagePicker( { imageId, onChange } ) {
 }
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { sections } = attributes;
+	const { heading, sections } = attributes;
 	const blockProps = useBlockProps( { style: { background: '#000', color: '#fff', padding: '2rem 2rem 4rem' } } );
 
 	function updateSection( si, key, val ) {
@@ -113,7 +113,14 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Menu Sections', 'the-black-cap' ) } initialOpen>
+				<PanelBody title={ __( 'Section Heading', 'the-black-cap' ) } initialOpen>
+					<TextControl
+						label={ __( 'Heading text', 'the-black-cap' ) }
+						value={ heading }
+						onChange={ ( v ) => setAttributes( { heading: v } ) }
+					/>
+				</PanelBody>
+				<PanelBody title={ __( 'Menu Sections', 'the-black-cap' ) } initialOpen={ false }>
 					{ sections.map( ( sec, si ) => (
 						<div key={ si } style={ { marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid #e0e0e0' } }>
 							<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' } }>
@@ -173,7 +180,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<section { ...blockProps }>
-				<h2 className="menuHeadline">{ __( 'The Menu', 'the-black-cap' ) }</h2>
+				<h2 className="menuHeadline">{ heading }</h2>
 				{ sections.length === 0 ? (
 					<p style={ { color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem' } }>
 						{ __( 'Add sections in the sidebar →', 'the-black-cap' ) }

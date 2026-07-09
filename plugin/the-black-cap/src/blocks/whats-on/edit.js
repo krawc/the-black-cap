@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextareaControl, RangeControl, Notice } from '@wordpress/components';
+import { PanelBody, TextareaControl, RangeControl, TextControl, Notice } from '@wordpress/components';
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { eventIds, limit } = attributes;
+	const { heading, eventIds, limit } = attributes;
 	const blockProps = useBlockProps( { style: { background: '#000', color: '#fff', padding: '2rem' } } );
 
 	const eventCount = eventIds
@@ -13,7 +13,14 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Eventbrite Settings', 'the-black-cap' ) } initialOpen>
+				<PanelBody title={ __( 'Section Heading', 'the-black-cap' ) } initialOpen>
+					<TextControl
+						label={ __( 'Heading text', 'the-black-cap' ) }
+						value={ heading }
+						onChange={ ( v ) => setAttributes( { heading: v } ) }
+					/>
+				</PanelBody>
+				<PanelBody title={ __( 'Eventbrite Settings', 'the-black-cap' ) } initialOpen={ false }>
 					<Notice status="info" isDismissible={ false }>
 						{ __( 'Your Eventbrite API token and Organisation ID are configured in Settings → Black Cap. When set, upcoming events are fetched automatically. The fallback IDs below are only used when the API is unavailable.', 'the-black-cap' ) }
 					</Notice>
@@ -36,7 +43,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 			<section { ...blockProps }>
 				<div style={ { marginBottom: '1.5rem' } }>
-					<h2 className="whatsOnTitle">{ __( "What's On", 'the-black-cap' ) }</h2>
+					<h2 className="whatsOnTitle">{ heading }</h2>
 				</div>
 				<p style={ { color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', margin: 0 } }>
 					{ eventCount > 0

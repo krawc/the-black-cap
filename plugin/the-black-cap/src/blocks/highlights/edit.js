@@ -3,7 +3,7 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, TextareaControl, RangeControl, TextControl, Notice, RadioControl } from '@wordpress/components';
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { mode, videoIds, limit, profileUrl, profileLabel } = attributes;
+	const { heading, mode, videoIds, limit, profileUrl, profileLabel } = attributes;
 	const blockProps = useBlockProps( { style: { background: '#000', color: '#fff', padding: '2rem' } } );
 
 	const idCount = videoIds
@@ -13,7 +13,14 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'TikTok Settings', 'the-black-cap' ) } initialOpen>
+				<PanelBody title={ __( 'Section Heading', 'the-black-cap' ) } initialOpen>
+					<TextControl
+						label={ __( 'Heading text', 'the-black-cap' ) }
+						value={ heading }
+						onChange={ ( v ) => setAttributes( { heading: v } ) }
+					/>
+				</PanelBody>
+				<PanelBody title={ __( 'TikTok Settings', 'the-black-cap' ) } initialOpen={ false }>
 					<RadioControl
 						label={ __( 'Display mode', 'the-black-cap' ) }
 						selected={ mode }
@@ -58,7 +65,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 			<section { ...blockProps }>
 				<div style={ { marginBottom: '1.5rem' } }>
-					<h2 className="highlightsTitle">{ __( 'The Highlights', 'the-black-cap' ) }</h2>
+					<h2 className="highlightsTitle">{ heading }</h2>
 				</div>
 				<p style={ { color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', margin: 0 } }>
 					{ idCount > 0

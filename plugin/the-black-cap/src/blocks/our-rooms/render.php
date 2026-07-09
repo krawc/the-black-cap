@@ -50,7 +50,7 @@ foreach ( $frames as $frame ) {
 }
 ?>
 <section class="roomsSection" id="our-rooms">
-	<h2 class="roomsHeadline">Our Rooms</h2>
+	<h2 class="roomsHeadline"><?php echo esc_html( $attributes['heading'] ?? 'Our Rooms' ); ?></h2>
 
 	<?php if ( $frame_data ) : ?>
 

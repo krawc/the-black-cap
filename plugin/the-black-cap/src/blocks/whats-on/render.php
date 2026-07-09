@@ -124,7 +124,7 @@ $events = array_slice( $collapsed, 0, $limit );
 ?>
 <section class="whatsOn" id="whats-on">
 	<div class="whatsOnInner">
-		<h2 class="whatsOnTitle">What&rsquo;s On</h2>
+		<h2 class="whatsOnTitle"><?php echo esc_html( $attributes['heading'] ?? "What's On" ); ?></h2>
 	</div>
 	<div class="posterSlider">
 		<div class="posterTrack">

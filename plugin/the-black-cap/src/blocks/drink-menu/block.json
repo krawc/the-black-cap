@@ -6,24 +6,42 @@
   "description": "Drinks menu with collapsible category sections, each containing item name and price pairs.",
   "category": "theme",
   "icon": "beer",
-  "supports": { "html": false },
+  "supports": {
+    "html": false
+  },
   "attributes": {
+    "heading": {
+      "type": "string",
+      "default": "The Menu"
+    },
     "sections": {
       "type": "array",
       "default": [],
       "items": {
         "type": "object",
         "properties": {
-          "category": { "type": "string", "default": "" },
+          "category": {
+            "type": "string",
+            "default": ""
+          },
           "items": {
             "type": "array",
             "default": [],
             "items": {
               "type": "object",
               "properties": {
-                "name":    { "type": "string",  "default": "" },
-                "price":   { "type": "string",  "default": "" },
-                "imageId": { "type": "integer", "default": 0  }
+                "name": {
+                  "type": "string",
+                  "default": ""
+                },
+                "price": {
+                  "type": "string",
+                  "default": ""
+                },
+                "imageId": {
+                  "type": "integer",
+                  "default": 0
+                }
               }
             }
           }

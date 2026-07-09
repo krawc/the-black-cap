@@ -102,7 +102,7 @@ $videos = array_slice( $videos, 0, $limit );
 ?>
 <section class="highlights" id="highlights">
 	<div class="highlightsInner">
-		<h2 class="highlightsTitle">Highlights</h2>
+		<h2 class="highlightsTitle"><?php echo esc_html( $attributes['heading'] ?? 'Highlights' ); ?></h2>
 	</div>
 
 	<?php if ( $videos ) : ?>

@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, SelectControl } from '@wordpress/components';
+import { PanelBody, SelectControl, TextControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 
@@ -11,7 +11,7 @@ const SPACE_LABELS = [
 ];
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { slots } = attributes;
+	const { heading, slots } = attributes;
 
 	const blockProps = useBlockProps( {
 		style: { background: '#000', color: '#fff', padding: '2rem' },
@@ -42,7 +42,14 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Venue Mapping', 'the-black-cap' ) } initialOpen>
+				<PanelBody title={ __( 'Section Heading', 'the-black-cap' ) } initialOpen>
+					<TextControl
+						label={ __( 'Heading text', 'the-black-cap' ) }
+						value={ heading }
+						onChange={ ( v ) => setAttributes( { heading: v } ) }
+					/>
+				</PanelBody>
+				<PanelBody title={ __( 'Venue Mapping', 'the-black-cap' ) } initialOpen={ false }>
 					{ slots.map( ( slot, idx ) => (
 						<SelectControl
 							key={ idx }

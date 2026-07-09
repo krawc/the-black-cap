@@ -12,7 +12,7 @@ $menu_svg = esc_url( TBC_PLUGIN_URL . '/assets/svg/neon-menu.svg' );
 			<img src="<?php echo $menu_svg; ?>" class="menuSvg" alt="" />
 		</div>
 		<div class="menuRight">
-			<h2 class="menuHeadline">The Menu</h2>
+			<h2 class="menuHeadline"><?php echo esc_html( $attributes['heading'] ?? 'The Menu' ); ?></h2>
 			<?php if ( $sections ) : ?>
 			<div class="menuList">
 				<?php foreach ( $sections as $section ) :

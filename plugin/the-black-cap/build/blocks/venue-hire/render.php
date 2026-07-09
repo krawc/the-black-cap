@@ -65,7 +65,7 @@ if ( $svg_raw ) {
 ?>
 <section class="venueHireSection" id="venue-hire">
 	<div class="venueHireInner">
-		<h2 class="menuHeadline venueHireTitle">Venue Hire</h2>
+		<h2 class="menuHeadline venueHireTitle"><?php echo esc_html( $attributes['heading'] ?? 'Venue Hire' ); ?></h2>
 		<div class="venueHireLayout"
 			data-venues="<?php echo esc_attr( wp_json_encode( $venue_data ) ); ?>"
 		>

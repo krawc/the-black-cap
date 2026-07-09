@@ -6,19 +6,34 @@
   "description": "Interactive venue floor plan with hover-reveal info panels.",
   "category": "theme",
   "icon": "location-alt",
-  "supports": { "html": false },
+  "supports": {
+    "html": false
+  },
   "attributes": {
+    "heading": {
+      "type": "string",
+      "default": "Venue Hire"
+    },
     "slots": {
       "type": "array",
       "default": [
-        { "venueId": 0 },
-        { "venueId": 0 },
-        { "venueId": 0 }
+        {
+          "venueId": 0
+        },
+        {
+          "venueId": 0
+        },
+        {
+          "venueId": 0
+        }
       ],
       "items": {
         "type": "object",
         "properties": {
-          "venueId": { "type": "integer", "default": 0 }
+          "venueId": {
+            "type": "integer",
+            "default": 0
+          }
         }
       }
     }

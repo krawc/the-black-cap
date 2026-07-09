@@ -14,7 +14,7 @@ The plugin lives in [plugin/the-black-cap/](plugin/the-black-cap/). Key files:
 - [plugin/the-black-cap/inc/](plugin/the-black-cap/inc/) — CPTs, settings page, block patterns
 - [plugin/the-black-cap/inc/setup/](plugin/the-black-cap/inc/setup/) — dashboard-based import runner (`class-setup-runner.php`, `admin-page.php`, `ajax-handlers.php`)
 - [plugin/the-black-cap/build/blocks/](plugin/the-black-cap/build/blocks/) — compiled block output (registered at runtime)
-- [plugin/the-black-cap/src/blocks/](plugin/the-black-cap/src/blocks/) — block source (JS/edit side); rebuild with `npm run build` from `plugin/the-black-cap/`
+- [plugin/the-black-cap/src/blocks/](plugin/the-black-cap/src/blocks/) — block source (JS/edit side); rebuild with `npm run build:blocks` from the repo root
 - [plugin/the-black-cap/assets/](plugin/the-black-cap/assets/) — CSS, JS, SVGs, images
 
 All paths inside render.php files use `TBC_PLUGIN_DIR` (filesystem) or `TBC_PLUGIN_URL` (web URL) — never `get_template_directory()`.
@@ -25,13 +25,21 @@ A legacy theme lives in [theme/the-black-cap/](theme/the-black-cap/). It is the 
 
 ## Commands
 
+All commands run from the **repo root**:
+
 ```bash
-npm run dev        # start Vite dev server
-npm run build      # production build → dist/
-npm run preview    # serve the production build locally
+npm run dev           # start Vite dev server (React site)
+npm run build         # production build → dist/ (React site)
+npm run preview       # serve the production build locally
+
+npm run build:blocks  # compile WordPress block editor JS → plugin/the-black-cap/build/blocks/
+npm run start:blocks  # watch mode for block JS
 
 node scripts/gen-curves.js   # regenerate public/flame-curves/*.json from scripts/raw/
 ```
+
+`node_modules` lives at the repo root only — the plugin folder contains no `node_modules`.
+To zip the plugin for deployment, zip `plugin/the-black-cap/` directly — no exclusions needed.
 
 ## Architecture
 
