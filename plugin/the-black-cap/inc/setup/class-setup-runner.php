@@ -318,10 +318,15 @@ class TBC_Setup_Runner {
 
 			$story_img = static fn( int $n ): string => TBC_PLUGIN_URL . "/assets/img/story/{$n}.webp";
 
+			// Use WordPress's own serializer so block grammar + JSON encoding are
+			// identical to what the block editor produces. serialize_block_attributes()
+			// also sanitises -->  and < sequences that would break HTML comment parsing.
 			$b = static function ( string $name, array $attrs ): string {
-				return '<!-- wp:the-black-cap/' . $name . ' '
-					. json_encode( $attrs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES )
-					. ' /-->';
+				return serialize_block( [
+					'blockName'    => 'the-black-cap/' . $name,
+					'attrs'        => $attrs,
+					'innerContent' => [],
+				] );
 			};
 
 			// Timeline images were uploaded in step_timeline_images(); read the mapping now.
@@ -415,20 +420,27 @@ class TBC_Setup_Runner {
 	/**
 	 * Production mode: create or update the WordPress front page.
 	 * Always writes the full canonical content — no surgical patching.
+	 *
+	 * post_content is written via $wpdb->update() rather than wp_update_post()
+	 * so that content_save_pre filters (KSES, balanceTags, etc.) cannot mangle
+	 * the JSON inside block comment attributes.
 	 */
 	private function apply_production_page( string $full_content ): void {
+		global $wpdb;
+
 		$front_page_id = (int) get_option( 'page_on_front' );
 		$front_page    = $front_page_id ? get_post( $front_page_id ) : null;
 
 		if ( $front_page && 'page' === $front_page->post_type ) {
-			wp_update_post( [ 'ID' => $front_page_id, 'post_content' => $full_content ] );
+			$wpdb->update( $wpdb->posts, [ 'post_content' => $full_content ], [ 'ID' => $front_page_id ] );
+			clean_post_cache( $front_page_id );
 			update_post_meta( $front_page_id, '_wp_page_template', 'tbc-fullscreen' );
 			$this->log( "  [ok] Updated front page (ID {$front_page_id}) with fresh content." );
 		} else {
 			$page_id = wp_insert_post( [
 				'post_title'     => 'Home',
 				'post_name'      => 'home',
-				'post_content'   => $full_content,
+				'post_content'   => '',
 				'post_status'    => 'publish',
 				'post_type'      => 'page',
 				'comment_status' => 'closed',
@@ -439,6 +451,8 @@ class TBC_Setup_Runner {
 				throw new \RuntimeException( 'Could not create page: ' . $page_id->get_error_message() );
 			}
 
+			$wpdb->update( $wpdb->posts, [ 'post_content' => $full_content ], [ 'ID' => $page_id ] );
+			clean_post_cache( $page_id );
 			update_post_meta( $page_id, '_wp_page_template', 'tbc-fullscreen' );
 			update_option( 'show_on_front', 'page' );
 			update_option( 'page_on_front', $page_id );
@@ -458,6 +472,8 @@ class TBC_Setup_Runner {
 	 * Sets $this->page_url so the UI can show a direct link.
 	 */
 	private function apply_staging_page( string $full_content, callable $b ): void {
+		global $wpdb;
+
 		$staging_id = (int) get_option( 'tbc_staging_page_id' );
 		$existing   = $staging_id ? get_post( $staging_id ) : null;
 
@@ -468,8 +484,9 @@ class TBC_Setup_Runner {
 		}
 
 		if ( $existing ) {
-			// Update the existing staging page with fresh block content.
-			wp_update_post( [ 'ID' => $existing->ID, 'post_content' => $full_content ] );
+			// Direct DB write — same reason as apply_production_page().
+			$wpdb->update( $wpdb->posts, [ 'post_content' => $full_content ], [ 'ID' => $existing->ID ] );
+			clean_post_cache( $existing->ID );
 			update_post_meta( $existing->ID, '_wp_page_template', 'tbc-fullscreen' );
 			update_option( 'tbc_staging_page_id', $existing->ID );
 			$this->page_url = get_permalink( $existing->ID );
@@ -478,7 +495,7 @@ class TBC_Setup_Runner {
 			$page_id = wp_insert_post( [
 				'post_title'     => 'Black Cap — Staging',
 				'post_name'      => 'tbc-staging',
-				'post_content'   => $full_content,
+				'post_content'   => '',
 				'post_status'    => 'publish',
 				'post_type'      => 'page',
 				'comment_status' => 'closed',
@@ -489,6 +506,8 @@ class TBC_Setup_Runner {
 				throw new \RuntimeException( 'Could not create staging page: ' . $page_id->get_error_message() );
 			}
 
+			$wpdb->update( $wpdb->posts, [ 'post_content' => $full_content ], [ 'ID' => $page_id ] );
+			clean_post_cache( $page_id );
 			update_post_meta( $page_id, '_wp_page_template', 'tbc-fullscreen' );
 			update_option( 'tbc_staging_page_id', $page_id );
 			$this->page_url = get_permalink( $page_id );
