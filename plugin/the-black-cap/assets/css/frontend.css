@@ -2009,9 +2009,9 @@ h2 {
 
 .venueTapCue {
   position: absolute;
-  bottom: -0.75rem;
-  left: -0.5rem;
-  width: clamp(2rem, 5vw, 2.75rem);
+  bottom: -2rem;
+  left: -2rem;
+  width: clamp(3rem, 5vw, 2.75rem);
   height: auto;
   opacity: 0.55;
   pointer-events: none;
@@ -2020,12 +2020,12 @@ h2 {
 }
 
 .venueTapCue.is-gone {
-  opacity: 0;
+  opacity: 0!important;
 }
 
 @keyframes tapPulse {
-  0%, 100% { opacity: 0.55; }
-  50%       { opacity: 0.12; }
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
 }
 
 .venueHireSvg svg {

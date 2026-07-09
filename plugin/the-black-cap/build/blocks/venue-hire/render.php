@@ -71,7 +71,7 @@ if ( $svg_raw ) {
 		>
 			<div class="venueHireSvg">
 				<?php echo $svg_raw; // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				<img class="venueTapCue" src="<?php echo esc_url( TBC_PLUGIN_URL . 'assets/svg/tap.svg' ); ?>" alt="" aria-hidden="true" width="44" height="44">
+				<img class="venueTapCue" src="<?php echo esc_url( TBC_PLUGIN_URL . '/assets/svg/tap.svg' ); ?>" alt="" aria-hidden="true" width="44" height="44">
 			</div>
 			<div class="venueHirePanel" data-active-idx="<?php echo esc_attr( $initial_idx ); ?>">
 				<h3 class="venueHirePanel__name"><?php echo esc_html( $initial['title'] ); ?></h3>
