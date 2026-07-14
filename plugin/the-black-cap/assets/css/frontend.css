@@ -2083,6 +2083,7 @@ h2 {
 }
 
 .venueTapCue {
+  display: none;
   position: absolute;
   bottom: -2rem;
   left: -2rem;
@@ -2091,11 +2092,14 @@ h2 {
   opacity: 0.55;
   pointer-events: none;
   animation: tapPulse 2.2s ease-in-out infinite;
-  transition: opacity 0.5s ease;
+}
+
+@media (max-width: 860px) {
+  .venueTapCue { display: block; }
 }
 
 .venueTapCue.is-gone {
-  opacity: 0!important;
+  display: none;
 }
 
 @keyframes tapPulse {
