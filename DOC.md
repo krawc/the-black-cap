@@ -33,7 +33,7 @@ This guide explains how to install the website and how to edit every section. No
 3. Click **Upload Plugin** (top of page).
 4. Click **Choose File**, select the `the-black-cap.zip` file you were given, then click **Install Now**.
 
-![Upload Plugin screen with the file picker open](plugin/the-black-cap/assets/img/tutorial/1.png)
+![Upload Plugin screen with the file picker open](plugin/the-black-cap/assets/img/tutorial/1.webp)
 
 5. Once installed, click **Activate Plugin**.
 
@@ -51,7 +51,7 @@ The import wizard populates the page with all its content automatically: room ph
 
 In the WordPress left-hand menu, go to **The Black Cap → Setup**.
 
-![Left-hand WordPress menu with "The Black Cap" expanded showing "Setup"](plugin/the-black-cap/assets/img/tutorial/2.png)
+![Left-hand WordPress menu with "The Black Cap" expanded showing "Setup"](plugin/the-black-cap/assets/img/tutorial/2.webp)
 
 ### Step 2 — Choose a mode
 
@@ -75,7 +75,7 @@ Click **Run Setup**. A progress log will appear showing each step as it complete
 | Navigation | Sets up the top navigation menu |
 | API defaults | Seeds the Eventbrite organisation ID |
 
-![Setup page with the progress log showing green ok lines](plugin/the-black-cap/assets/img/tutorial/3.png)
+![Setup page with the progress log showing green ok lines](plugin/the-black-cap/assets/img/tutorial/3.webp)
 
 When it finishes you will see **Done** at the bottom of the log. If you used Staging mode, a link to the preview page appears — click it to check the result.
 
@@ -85,7 +85,7 @@ When it finishes you will see **Done** at the bottom of the log. If you used Sta
 
 These settings connect the site to live event and video feeds. Go to **Settings → Black Cap** in the left-hand menu.
 
-![Settings → Black Cap page](plugin/the-black-cap/assets/img/tutorial/4.png)
+![Settings → Black Cap page](plugin/the-black-cap/assets/img/tutorial/4.webp)
 
 ### Eventbrite (What's On section)
 
@@ -123,9 +123,9 @@ Also on this page you can set the **Instagram** and **Facebook** profile URLs th
 2. Click on the page called **Home**.
 3. The block editor opens. You will see the page made up of sections stacked vertically.
 
-![WordPress Pages list with "Home" highlighted](plugin/the-black-cap/assets/img/tutorial/5.png)
+![WordPress Pages list with "Home" highlighted](plugin/the-black-cap/assets/img/tutorial/5.webp)
 
-![Block editor with all the blocks visible in the editor canvas](plugin/the-black-cap/assets/img/tutorial/6.png)
+![Block editor with all the blocks visible in the editor canvas](plugin/the-black-cap/assets/img/tutorial/6.webp)
 
 ### How the editor works — a quick orientation
 
@@ -135,7 +135,7 @@ Each section of the page is a **block**. To edit a block:
 2. Look at the **right-hand panel** — this is where all the settings appear. If the panel is hidden, click the **Settings** icon (gear icon) in the top-right corner of the screen.
 3. Make your changes in the right-hand panel, then click the blue **Save** button at the top right.
 
-![Block selected in the canvas with the right-hand panel open showing settings](plugin/the-black-cap/assets/img/tutorial/7.png)
+![Block selected in the canvas with the right-hand panel open showing settings](plugin/the-black-cap/assets/img/tutorial/7.webp)
 
 **Important:** Most sections do not have visible controls on the canvas itself — everything is in the right-hand panel. Don't be surprised if a section looks minimal in the editor; it will render fully on the front end.
 
@@ -155,7 +155,7 @@ This section shows upcoming events from Eventbrite.
 2. **Max events to show** — drag the slider to set how many events appear.
 3. **Fallback event IDs** — these are used only if the Eventbrite API is unavailable. Paste comma-separated numeric event IDs (the number at the end of any Eventbrite event URL). Leave this blank if you have API credentials set.
 
-![What's On block selected, right-hand panel showing Eventbrite Settings](plugin/the-black-cap/assets/img/tutorial/8.png)
+![What's On block selected, right-hand panel showing Eventbrite Settings](plugin/the-black-cap/assets/img/tutorial/8.webp)
 
 ---
 
@@ -166,7 +166,7 @@ The Story section has a large heading, a paragraph of text, and floating photos.
 **To edit the heading and text:**
 Click directly on the heading or paragraph text in the canvas — they are editable in place.
 
-![Story block with the heading text selected and cursor visible](plugin/the-black-cap/assets/img/tutorial/9.png)
+![Story block with the heading text selected and cursor visible](plugin/the-black-cap/assets/img/tutorial/9.webp)
 
 **To change the photos:**
 1. Click the Story block.
@@ -181,7 +181,7 @@ Click directly on the heading or paragraph text in the canvas — they are edita
 **To turn off the floating effect:**
 In the right-hand panel, open **Animation** and toggle **Floating parallax** off. Photos will fade in on scroll instead of drifting.
 
-![Story block right-hand panel showing Photos & Parallax with sliders](plugin/the-black-cap/assets/img/tutorial/10.png)
+![Story block right-hand panel showing Photos & Parallax with sliders](plugin/the-black-cap/assets/img/tutorial/10.webp)
 
 ---
 
@@ -209,7 +209,7 @@ Click the **+ Add Entry** button at the bottom of the block.
 **To remove an entry:**
 Click the rubbish-bin icon on the entry.
 
-![Timeline block in the editor showing the intro field and two expanded entries](plugin/the-black-cap/assets/img/tutorial/11.png)
+![Timeline block in the editor showing the intro field and two expanded entries](plugin/the-black-cap/assets/img/tutorial/11.webp)
 
 ---
 
@@ -230,7 +230,7 @@ This section shows a horizontal scrolling row of TikTok videos.
 **To change the "Follow us on TikTok" link:**
 In the right-hand panel, open **Profile Link** and update the URL and button label.
 
-![Highlights block right-hand panel showing TikTok Settings](plugin/the-black-cap/assets/img/tutorial/12.png)
+![Highlights block right-hand panel showing TikTok Settings](plugin/the-black-cap/assets/img/tutorial/12.webp)
 
 ---
 
@@ -245,7 +245,7 @@ The menu is organised into categories (e.g. Draught, Wine, Cocktails), each with
 **To manage categories and items:**
 1. In the right-hand panel, open **Menu Sections**.
 
-![Drinks Menu right-hand panel showing Menu Sections expanded with two categories visible](plugin/the-black-cap/assets/img/tutorial/13.png)
+![Drinks Menu right-hand panel showing Menu Sections expanded with two categories visible](plugin/the-black-cap/assets/img/tutorial/13.webp)
 
 **Adding a category:**
 Click **+ Add section** at the bottom. A new category appears. Type its name in the **Category name** field.
@@ -264,7 +264,7 @@ Each item has a small camera icon (📷) to its left. Click it to open the media
 
 To remove a photo from an item, click the small red **✕** that appears below the thumbnail.
 
-![Menu item row showing camera icon, name field, price field, and remove button](plugin/the-black-cap/assets/img/tutorial/14.png)
+![Menu item row showing camera icon, name field, price field, and remove button](plugin/the-black-cap/assets/img/tutorial/14.webp)
 
 ---
 
@@ -290,7 +290,7 @@ Click **+ Add frame** at the bottom.
 **Removing a frame:**
 Click **Remove** on the frame you want to delete.
 
-![Our Rooms right-hand panel showing a frame expanded with Frame shape, Room dropdown, and Wide toggle](plugin/the-black-cap/assets/img/tutorial/15.png)
+![Our Rooms right-hand panel showing a frame expanded with Frame shape, Room dropdown, and Wide toggle](plugin/the-black-cap/assets/img/tutorial/15.webp)
 
 The actual room content (name, description, photos) is edited separately — see [Editing rooms and venues in detail](#5-editing-rooms-and-venues-in-detail).
 
@@ -312,7 +312,7 @@ This section shows the hireable spaces with an interactive floor-plan diagram.
    - **Space 3 (top of plan)** — typically Regina Fong Terrace (rooftop)
 3. Choose a venue from each dropdown.
 
-![Venue Hire right-hand panel showing the three Venue Mapping dropdowns](plugin/the-black-cap/assets/img/tutorial/16.png)
+![Venue Hire right-hand panel showing the three Venue Mapping dropdowns](plugin/the-black-cap/assets/img/tutorial/16.webp)
 
 The actual venue content (name, description, photo) is edited separately — see [Editing rooms and venues in detail](#5-editing-rooms-and-venues-in-detail) below.
 
@@ -327,7 +327,7 @@ Rooms and venues are managed as separate entries in WordPress, not directly insi
 1. In the left-hand menu, go to **Rooms** (listed under the main menu).
 2. Click on the room you want to edit.
 
-![Rooms list in the WordPress admin](plugin/the-black-cap/assets/img/tutorial/17.png)
+![Rooms list in the WordPress admin](plugin/the-black-cap/assets/img/tutorial/17.webp)
 
 Each room entry has:
 - **Title** — the room name as shown on the website (e.g. "Adrella's Dressing Room").
@@ -336,7 +336,7 @@ Each room entry has:
 
 To change photos, click **Select Images** and choose from the media library. You can select multiple images.
 
-![Room edit screen showing Title, Description, and Photos fields](plugin/the-black-cap/assets/img/tutorial/18.png)
+![Room edit screen showing Title, Description, and Photos fields](plugin/the-black-cap/assets/img/tutorial/18.webp)
 
 After editing, click **Update** (top right) to save.
 
@@ -350,7 +350,7 @@ Each venue entry has:
 - **Description** — the text shown when a visitor taps the space on the floor plan.
 - **Photo** — a single image shown alongside the description.
 
-![Venue edit screen showing Title, Description, and Photo fields](plugin/the-black-cap/assets/img/tutorial/19.png)
+![Venue edit screen showing Title, Description, and Photo fields](plugin/the-black-cap/assets/img/tutorial/19.webp)
 
 Click **Update** to save changes.
 
@@ -372,7 +372,7 @@ Events (Eventbrite) and videos (TikTok) are cached for one hour to keep the page
 2. Scroll to the bottom and click **Clear API cache**.
 3. A green confirmation message appears. The next page load will fetch fresh content.
 
-![Clear API cache button and the green confirmation message](plugin/the-black-cap/assets/img/tutorial/20.png)
+![Clear API cache button and the green confirmation message](plugin/the-black-cap/assets/img/tutorial/20.webp)
 
 ---
 
