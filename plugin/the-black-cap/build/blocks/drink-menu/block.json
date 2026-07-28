@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "the-black-cap/drink-menu",
   "title": "Drink Menu",
-  "description": "Drinks menu with collapsible category sections, each containing item name and price pairs.",
+  "description": "Drinks menu with Drinks and Wines tabs, each with collapsible subcategory accordions.",
   "category": "theme",
   "icon": "beer",
   "supports": {
@@ -14,39 +14,9 @@
       "type": "string",
       "default": "The Menu"
     },
-    "sections": {
+    "tabs": {
       "type": "array",
-      "default": [],
-      "items": {
-        "type": "object",
-        "properties": {
-          "category": {
-            "type": "string",
-            "default": ""
-          },
-          "items": {
-            "type": "array",
-            "default": [],
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "default": ""
-                },
-                "price": {
-                  "type": "string",
-                  "default": ""
-                },
-                "imageId": {
-                  "type": "integer",
-                  "default": 0
-                }
-              }
-            }
-          }
-        }
-      }
+      "default": []
     }
   },
   "editorScript": "file:./index.js",

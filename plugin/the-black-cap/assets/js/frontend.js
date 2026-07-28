@@ -872,3 +872,40 @@
     if (e.key === 'Escape') closeAll();
   });
 })();
+
+/* ── Menu tabs + accordion ──────────────────────────────────────── */
+(function () {
+  var menu = document.querySelector('#menu');
+  if (!menu) return;
+
+  // Tab switching
+  menu.querySelectorAll('[role="tab"]').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var tabId = tab.dataset.tab;
+
+      menu.querySelectorAll('[role="tab"]').forEach(function (t) {
+        t.setAttribute('aria-selected', 'false');
+        t.classList.remove('menuTab--active');
+      });
+      menu.querySelectorAll('.menuPanel').forEach(function (p) {
+        p.hidden = true;
+      });
+
+      tab.setAttribute('aria-selected', 'true');
+      tab.classList.add('menuTab--active');
+      var panel = document.getElementById('menuPanel-' + tabId);
+      if (panel) panel.hidden = false;
+    });
+  });
+
+  // Accordion
+  menu.querySelectorAll('.menuAccordion__trigger').forEach(function (trigger) {
+    trigger.addEventListener('click', function () {
+      var expanded = trigger.getAttribute('aria-expanded') === 'true';
+      var bodyId   = trigger.getAttribute('aria-controls');
+      var body     = bodyId ? document.getElementById(bodyId) : null;
+      trigger.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      if (body) body.hidden = expanded;
+    });
+  });
+})();

@@ -438,7 +438,7 @@ class TBC_Setup_Runner {
 					'videoIds' => '7644927884900961558,7642689026490912003,7640829274840190240,7640504644887776544,7640442725908712737,7640087100393606433,7639762417546824992,7639360399963360545',
 					'limit'    => 8,
 				] ),
-				$b( 'drink-menu', [ 'sections' => $this->drink_menu_sections() ] ),
+				$b( 'drink-menu', [ 'heading' => 'The Menu', 'tabs' => $this->drink_menu_tabs() ] ),
 				$b( 'our-rooms',  [ 'frames'   => $frames ] ),
 				$b( 'venue-hire', [ 'slots'    => $venue_slots ] ),
 			] );
@@ -746,34 +746,435 @@ class TBC_Setup_Runner {
 		];
 	}
 
-	private function drink_menu_sections(): array {
+	private function drink_menu_tabs(): array {
 		return [
-			[ 'category' => 'Draught', 'items' => [
-				[ 'name' => 'Guinness',              'price' => '£6.50' ],
-				[ 'name' => 'Camden Hells Lager',    'price' => '£6.00' ],
-				[ 'name' => 'Camden Pale Ale',       'price' => '£6.20' ],
-				[ 'name' => 'Meantime London Lager', 'price' => '£6.20' ],
-			] ],
-			[ 'category' => 'Wine', 'items' => [
-				[ 'name' => 'House glass',  'price' => '£7.00'  ],
-				[ 'name' => 'House carafe', 'price' => '£22.00' ],
-				[ 'name' => 'Prosecco',     'price' => '£9.00'  ],
-			] ],
-			[ 'category' => 'Cocktails', 'items' => [
-				[ 'name' => 'Negroni',          'price' => '£12.00' ],
-				[ 'name' => 'Aperol Spritz',    'price' => '£11.00' ],
-				[ 'name' => 'Espresso Martini', 'price' => '£12.00' ],
-				[ 'name' => 'Pornstar Martini', 'price' => '£12.00' ],
-			] ],
-			[ 'category' => 'Spirits & Mixers', 'items' => [
-				[ 'name' => 'Single & mixer', 'price' => 'from £8'  ],
-				[ 'name' => 'Double & mixer', 'price' => 'from £11' ],
-				[ 'name' => 'Shot',           'price' => 'from £4'  ],
-			] ],
-			[ 'category' => 'Soft Drinks & Low/No', 'items' => [
-				[ 'name' => 'Soft drinks',      'price' => 'from £3.50' ],
-				[ 'name' => 'Low & no-alcohol', 'price' => 'from £4.50' ],
-			] ],
+			/* ── Drinks ─────────────────────────────────────────────── */
+			[
+				'id'       => 'drinks',
+				'label'    => 'Drinks',
+				'sections' => [
+					[
+						'category' => 'House Spirits',
+						'note'     => 'All spirits served with draft mixer · Double up on any spirit for £3.50',
+						'items'    => [
+							[ 'name' => 'Flor de Caña 4yo Extra Dry Rum', 'price' => '£6.50' ],
+							[ 'name' => 'Portobello Road No.171 Gin 42%', 'price' => '£6.50' ],
+							[ 'name' => 'Stoli Red Label 40%',            'price' => '£6.50' ],
+							[ 'name' => 'El Tequileno Blanco 38%',        'price' => '£6.50' ],
+							[ 'name' => 'Haig Clubman 40%',               'price' => '£6.50' ],
+						],
+					],
+					[
+						'category' => 'Gin',
+						'items'    => [
+							[ 'name' => 'Bombay Sapphire',                       'price' => '£7.00' ],
+							[ 'name' => 'Gordons Premium Pink 35%',              'price' => '£7.00' ],
+							[ 'name' => "Hendrick's Gin 41.4%",                  'price' => '£8.00' ],
+							[ 'name' => 'Plymouth Premium Dry Gin 41.2%',        'price' => '£7.00' ],
+							[ 'name' => 'Puerto de Indias Strawberry Gin',       'price' => '£7.50' ],
+							[ 'name' => 'Tanqueray Gin 41.3%',                   'price' => '£7.00' ],
+							[ 'name' => 'Tanqueray Ten Gin 47.3%',               'price' => '£8.00' ],
+							[ 'name' => 'Tanqueray Flor de Sevilla',             'price' => '£8.00' ],
+							[ 'name' => 'Tanqueray Alcohol Free 70cl',           'price' => '£6.00' ],
+							[ 'name' => 'Mermaid Zest Gin 40%',                  'price' => '£9.00' ],
+							[ 'name' => 'Mermaid Pink Gin 38%',                  'price' => '£9.00' ],
+							[ 'name' => 'Mermaid Gin 42%',                       'price' => '£9.00' ],
+							[ 'name' => 'Edinburgh Rhubarb & Ginger Gin 40%',    'price' => '£7.50' ],
+						],
+					],
+					[
+						'category' => 'Rum',
+						'items'    => [
+							[ 'name' => 'Appleton White Classic',                        'price' => '£7.00'  ],
+							[ 'name' => 'Flor de Caña 7yo Grand Reserve Rum 40%',        'price' => '£7.50'  ],
+							[ 'name' => 'Havana Club 3yo 37.5%',                         'price' => '£7.00'  ],
+							[ 'name' => 'Havana Club 7yo 40%',                           'price' => '£7.50'  ],
+							[ 'name' => 'Koko Kanu Rum 37.5%',                           'price' => '£7.00'  ],
+							[ 'name' => 'Mount Gay Black Barrel Rum 43%',                'price' => '£10.00' ],
+							[ 'name' => 'Mount Gay Eclipse Rum 37.5%',                   'price' => '£7.00'  ],
+							[ 'name' => 'Sailor Jerry Spiced Dark Rum 40%',              'price' => '£7.00'  ],
+							[ 'name' => 'The Kraken Black Spiced Rum 40%',               'price' => '£7.50'  ],
+							[ 'name' => 'Diplomatico Mantuano Rum 40%',                  'price' => '£7.50'  ],
+							[ 'name' => 'Don Papa 40%',                                  'price' => '£8.50'  ],
+							[ 'name' => 'Baila Oaked Island Blend Spiced Dark Rum 40%',  'price' => '£7.50'  ],
+							[ 'name' => 'Baila Tropical Island Blend Exotic Rum 40%',    'price' => '£7.50'  ],
+							[ 'name' => 'Wray & Nephew Overproof 63%',                   'price' => '£8.00'  ],
+						],
+					],
+					[
+						'category' => 'Brandy',
+						'items'    => [
+							[ 'name' => 'Remy Martin 1738',             'price' => '£11.00' ],
+							[ 'name' => 'Remy Martin VSOP Mature Cask', 'price' => '£8.50'  ],
+							[ 'name' => 'Remy Martin XO 40%',           'price' => '£20.00' ],
+						],
+					],
+					[
+						'category' => 'Tequila',
+						'items'    => [
+							[ 'name' => 'El Jimador Añejo 38%',        'price' => '£6.50', 'deal' => '3 for £16' ],
+							[ 'name' => 'El Jimador Blanco 38%',       'price' => '£6.50', 'deal' => '3 for £16' ],
+							[ 'name' => 'El Jimador Reposado 38%',     'price' => '£6.50', 'deal' => '3 for £16' ],
+							[ 'name' => 'Patron Silver 40%',           'price' => '£8.50' ],
+							[ 'name' => 'Patron XO Cafe Liqueur 35%',  'price' => '£8.50' ],
+						],
+					],
+					[
+						'category' => 'Liqueur',
+						'items'    => [
+							[ 'name' => 'Amaretto 28%',                    'price' => '£6.50' ],
+							[ 'name' => 'Aperol 11%',                      'price' => '£6.50' ],
+							[ 'name' => 'Archers 18%',                     'price' => '£6.50' ],
+							[ 'name' => 'Baileys Irish Cream 17%',         'price' => '£6.50' ],
+							[ 'name' => 'Campari',                         'price' => '£7.50' ],
+							[ 'name' => 'Chambord',                        'price' => '£6.50' ],
+							[ 'name' => 'Cointreau 40%',                   'price' => '£6.50' ],
+							[ 'name' => 'Drambuie',                        'price' => '£6.50' ],
+							[ 'name' => 'Jägermeister',                    'price' => '£5.00' ],
+							[ 'name' => 'Kahlúa Coffee Liqueur 16%',       'price' => '£5.00' ],
+							[ 'name' => 'Limoncello Luxardo',              'price' => '£5.00' ],
+							[ 'name' => 'Malibu 18%',                      'price' => '£6.50' ],
+							[ 'name' => 'Passoa Passion Fruit 17%',        'price' => '£5.00' ],
+							[ 'name' => "Pimm's",                          'price' => '£9.00' ],
+							[ 'name' => 'Southern Comfort 35%',            'price' => '£7.00' ],
+							[ 'name' => 'Tia Maria 20%',                   'price' => '£7.00' ],
+							[ 'name' => 'Martini Extra Dry Vermouth 15%',  'price' => '£6.50' ],
+							[ 'name' => 'Martini Rosso Vermouth 15%',      'price' => '£6.50' ],
+							[ 'name' => 'Everleaf Mountain Non-Alcoholic', 'price' => '£6.50' ],
+						],
+					],
+					[
+						'category' => 'Vodka',
+						'items'    => [
+							[ 'name' => 'Absolut Citron 40%',            'price' => '£7.00' ],
+							[ 'name' => 'Absolut Raspberri 38%',         'price' => '£7.00' ],
+							[ 'name' => 'Absolut Vanilia 38%',           'price' => '£7.00' ],
+							[ 'name' => 'Absolut Blue 40%',              'price' => '£7.00' ],
+							[ 'name' => 'Grey Goose 40%',                'price' => '£9.00' ],
+							[ 'name' => 'East London Vodka 40%',         'price' => '£7.00' ],
+							[ 'name' => 'Black Cow Pure Milk Vodka 40%', 'price' => '£7.50' ],
+							[ 'name' => 'Haku Vodka 40%',                'price' => '£7.50' ],
+						],
+					],
+					[
+						'category' => 'Whisky',
+						'items'    => [
+							[ 'name' => 'Glenfiddich 12yo 40%',                'price' => '£7.50' ],
+							[ 'name' => 'Buffalo Trace 40%',                   'price' => '£7.00' ],
+							[ 'name' => 'Bulleit Bourbon 45%',                 'price' => '£7.50' ],
+							[ 'name' => 'Bulleit Rye 45%',                     'price' => '£7.50' ],
+							[ 'name' => "Jack Daniel's 40%",                   'price' => '£7.00' ],
+							[ 'name' => 'Jameson 40%',                         'price' => '£7.00' ],
+							[ 'name' => 'Johnnie Walker Black Label 12yo 40%', 'price' => '£7.50' ],
+							[ 'name' => 'Knob Creek Small Batch Bourbon',      'price' => '£8.50' ],
+							[ 'name' => "Maker's Mark 45%",                    'price' => '£8.50' ],
+							[ 'name' => 'Wild Turkey Straight Rye Whiskey',    'price' => '£8.00' ],
+							[ 'name' => 'Suntory Toki Whisky 43%',             'price' => '£7.50' ],
+							[ 'name' => 'Ardbeg Wee Beastie 47.4%',           'price' => '£7.50' ],
+							[ 'name' => 'Glenlivet Founders Reserve 40%',      'price' => '£7.50' ],
+						],
+					],
+					[
+						'category' => 'Shooters',
+						'items'    => [
+							[ 'name' => 'Antica Black Sambuca',    'price' => '£6.50', 'deal' => '3 for £16' ],
+							[ 'name' => 'Antica Classic Sambuca',  'price' => '£6.50', 'deal' => '3 for £16' ],
+							[ 'name' => 'Cazcabel Coffee 34%',     'price' => '£6.50', 'deal' => '3 for £16' ],
+							[ 'name' => 'Cazcabel Honey 34%',      'price' => '£6.50', 'deal' => '3 for £16' ],
+							[ 'name' => 'Tequila Rose Liqueur',    'price' => '£6.50', 'deal' => '3 for £16' ],
+							[ 'name' => 'Jega Bomb',               'price' => '£6.50', 'deal' => '3 for £16' ],
+							[ 'name' => 'Corky\'s — All Flavours', 'price' => '£3.50', 'deal' => '6 for £16' ],
+						],
+					],
+					[
+						'category' => 'Draught',
+						'items'    => [
+							[ 'name' => 'Guinness 4.2%',             'price' => '£7.50' ],
+							[ 'name' => 'Level Head IPA 4%',         'price' => '£7.00' ],
+							[ 'name' => 'Queer Tiny Dots 4.5%',      'price' => '£7.00' ],
+							[ 'name' => 'Queer Body Shift Pale Ale',  'price' => '£7.00' ],
+							[ 'name' => 'Pravha 4%',                 'price' => '£7.00' ],
+							[ 'name' => 'Staropramen 5%',            'price' => '£7.50' ],
+							[ 'name' => 'Estrella Galicia 5%',       'price' => '£7.20' ],
+							[ 'name' => 'Coors Light 4.2%',          'price' => '£6.90' ],
+							[ 'name' => 'Rekorderlig Fruit Cider',   'price' => '£6.70' ],
+							[ 'name' => 'Aspall Cyder',              'price' => '£6.70' ],
+						],
+					],
+					[
+						'category' => 'Cocktails',
+						'items'    => [
+							[ 'name' => 'Passionfruit Martini — Miss Behave',    'price' => '£12.00' ],
+							[ 'name' => 'Strawberry Daiquiri — Disco Diva',      'price' => '£12.00' ],
+							[ 'name' => 'Tropical Rum Punch — Club Tropicana',   'price' => '£12.00' ],
+							[ 'name' => 'Espresso Martini — Lip Sinc Assassin',  'price' => '£12.00' ],
+							[ 'name' => 'Frozen Margarita — Lily Margarita',     'price' => '£12.00' ],
+						],
+					],
+					[
+						'category' => 'Spritz',
+						'items'    => [
+							[ 'name' => 'Aperol Spritz',     'price' => '£10.00', 'deal' => '2 for £16' ],
+							[ 'name' => 'Campari Spritz',    'price' => '£10.00', 'deal' => '2 for £16' ],
+							[ 'name' => 'Limoncello Spritz', 'price' => '£10.00', 'deal' => '2 for £16' ],
+							[ 'name' => 'Pink Gin Spritz',   'price' => '£10.00', 'deal' => '2 for £16' ],
+						],
+					],
+					[
+						'category' => 'Bottled & Cans',
+						'items'    => [
+							[ 'name' => 'Guinness 0% Can',                         'price' => '£6.50' ],
+							[ 'name' => 'Heineken Beer 0%',                        'price' => '£4.50' ],
+							[ 'name' => 'Estrella Galicia GF 5.5%',                'price' => '£6.50' ],
+							[ 'name' => 'Corona 4.5%',                             'price' => '£6.50' ],
+							[ 'name' => 'Peroni 5%',                               'price' => '£6.50' ],
+							[ 'name' => 'Desperados 5.9%',                         'price' => '£6.50' ],
+							[ 'name' => 'VK — All Flavours 3.4%',                  'price' => '£5.50', 'deal' => '3 for £12' ],
+							[ 'name' => 'Rekorderlig Mango & Raspberry 4.0%',      'price' => '£6.50' ],
+							[ 'name' => 'Rekorderlig Peach & Raspberry 3.4%',      'price' => '£6.50' ],
+							[ 'name' => 'Rekorderlig Watermelon-Citrus',           'price' => '£6.50' ],
+							[ 'name' => 'Queer Bold AF Pale Ale 0.5%',             'price' => '£7.00' ],
+							[ 'name' => 'Queer Existence as a Radical Act GF 5%',  'price' => '£7.00' ],
+							[ 'name' => 'Queer Burst into Bright Hazy IPA 6%',     'price' => '£7.00' ],
+							[ 'name' => 'Queer Flowers Belgian Witbier 4%',        'price' => '£7.00' ],
+						],
+					],
+					[
+						'category' => 'Soft & Mixers',
+						'items'    => [
+							[ 'name' => 'Fever-Tree Ginger Beer',             'price' => '£2.20' ],
+							[ 'name' => 'Fever-Tree Elderflower Tonic',       'price' => '£2.20' ],
+							[ 'name' => 'Fever-Tree Ginger Ale',              'price' => '£2.20' ],
+							[ 'name' => 'Fever-Tree Tonic Water',             'price' => '£2.20' ],
+							[ 'name' => 'Fever-Tree Light Tonic',             'price' => '£2.20' ],
+							[ 'name' => 'Fever-Tree Cucumber Tonic',          'price' => '£2.20' ],
+							[ 'name' => 'Fever-Tree Italian Blood Orange',    'price' => '£2.20' ],
+							[ 'name' => 'Fever-Tree Rhubarb & Raspberry',     'price' => '£2.20' ],
+							[ 'name' => 'J2O Orange & Passionfruit',          'price' => '£2.90' ],
+							[ 'name' => 'J2O Apple & Raspberry',              'price' => '£2.90' ],
+							[ 'name' => 'Red Bull — All Flavours',            'price' => '£3.50' ],
+							[ 'name' => 'Draft Soft Drinks 250ml',            'price' => '£2.50' ],
+							[ 'name' => 'Draft Soft Drinks (spirit mixer)',   'price' => 'FOC'   ],
+							[ 'name' => 'Harrogate Water Sparkling',          'price' => '£2.80' ],
+							[ 'name' => 'Harrogate Water Still',              'price' => '£2.80' ],
+							[ 'name' => 'Orange Juice',                       'price' => '£2.80' ],
+							[ 'name' => 'Cranberry Juice',                    'price' => '£2.50' ],
+							[ 'name' => 'Apple Juice',                        'price' => '£2.80' ],
+							[ 'name' => 'Pineapple Juice',                    'price' => '£2.80' ],
+							[ 'name' => 'Tomato Juice',                       'price' => '£2.80' ],
+							[ 'name' => 'Goodrays Raspberry & Guava CBD',     'price' => '£4.00' ],
+							[ 'name' => 'Goodrays Elderflower & Yuzu CBD',    'price' => '£4.00' ],
+							[ 'name' => 'Goodrays Passionfruit & Pomelo CBD', 'price' => '£4.00' ],
+							[ 'name' => 'Coke',                               'price' => '£3.20' ],
+							[ 'name' => 'Coke Zero',                          'price' => '£3.20' ],
+							[ 'name' => 'Fanta Orange Sugar Free',            'price' => '£3.20' ],
+							[ 'name' => 'Appletizer',                         'price' => '£3.20' ],
+							[ 'name' => 'Sprite Sugar Free',                  'price' => '£3.20' ],
+							[ 'name' => 'Big Tom Spicy Tomato Juice',         'price' => '£4.20' ],
+						],
+					],
+				],
+			],
+			/* ── Wines ──────────────────────────────────────────────── */
+			[
+				'id'       => 'wines',
+				'label'    => 'Wines',
+				'sections' => [
+					[
+						'category' => 'White Wine',
+						'items'    => [
+							[
+								'name'        => 'Pinot Grigio Venezie, Sartori — Italy, Veneto',
+								'description' => 'Fresh and fruity, with pears, peaches and nuts, and the scent of fresh flowers — 11%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£26.00' ],
+									[ 'label' => '175ml',  'value' => '£6.95'  ],
+									[ 'label' => '250ml',  'value' => '£9.50'  ],
+								],
+							],
+							[
+								'name'        => 'Reserve Chardonnay, Tooma River — Australia',
+								'description' => 'Sun-drenched Riverland Chardonnay; fruit-driven and satisfying — 12.5%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£28.00' ],
+									[ 'label' => '175ml',  'value' => '£7.50'  ],
+									[ 'label' => '250ml',  'value' => '£10.00' ],
+								],
+							],
+							[
+								'name'        => 'Sauvignon Blanc, Frost Pocket — New Zealand, Marlborough',
+								'description' => 'Green and fresh with lime and gooseberry, gentled by tropical fruit — 12.5%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£33.00' ],
+									[ 'label' => '175ml',  'value' => '£8.40'  ],
+									[ 'label' => '250ml',  'value' => '£11.50' ],
+								],
+							],
+							[
+								'name'        => 'Picpoul de Pinet, La Roquemolière — France, Languedoc',
+								'description' => 'Soft, floral and dry; acacia, hawthorn blossom and citronella — 12%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£34.00' ],
+									[ 'label' => '175ml',  'value' => '£8.60'  ],
+									[ 'label' => '250ml',  'value' => '£12.00' ],
+								],
+							],
+							[
+								'name'        => 'Hills and Valleys Riesling, Pikes — Australia',
+								'description' => 'Stonefruit and sweet limes with honeysuckle and lavender complexity — 10.5%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£36.00' ],
+									[ 'label' => '175ml',  'value' => '£9.20'  ],
+									[ 'label' => '250ml',  'value' => '£12.50' ],
+								],
+							],
+						],
+					],
+					[
+						'category' => 'Rosé Wine',
+						'items'    => [
+							[
+								'name'        => 'Pinot Grigio Blush, Il Sospiro — Italy, Veneto',
+								'description' => 'Easy-drinking rosé exhaling cranberry, citrus and red berries — 11%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£27.00' ],
+									[ 'label' => '175ml',  'value' => '£7.50'  ],
+									[ 'label' => '250ml',  'value' => '£10.00' ],
+								],
+							],
+							[
+								'name'        => "Not Your Grandma's Rosé, Chaffey Bros — Australia",
+								'description' => 'Juicy strawberries and raspberries with musk and Turkish Delight — 11.5%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£41.00' ],
+									[ 'label' => '175ml',  'value' => '£11.00' ],
+									[ 'label' => '250ml',  'value' => '£15.00' ],
+								],
+							],
+							[
+								'name'        => "Whispering Angel Rosé, Château d'Esclans — France, Provence",
+								'description' => 'Pale pink; redcurrant, dried flowers and spices with a firm herbal finish — 13%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£55.00' ],
+									[ 'label' => '175ml',  'value' => '£12.50' ],
+									[ 'label' => '250ml',  'value' => '£17.50' ],
+								],
+							],
+						],
+					],
+					[
+						'category' => 'Red Wine',
+						'items'    => [
+							[
+								'name'        => 'Merlot, Lanya — Chile, Central Valley',
+								'description' => 'Currants, ripe plums and cherries with a vanilla sweetness — 13.5%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£26.00' ],
+									[ 'label' => '175ml',  'value' => '£6.95'  ],
+									[ 'label' => '250ml',  'value' => '£9.50'  ],
+								],
+							],
+							[
+								'name'        => 'Artolas Red, Vidigal — Portugal, Lisboa',
+								'description' => 'Spicy red, brimming with cherries and earthy floral notes — 13%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£28.00' ],
+									[ 'label' => '175ml',  'value' => '£7.50'  ],
+									[ 'label' => '250ml',  'value' => '£10.00' ],
+								],
+							],
+							[
+								'name'        => 'Project Malbec — Argentina, Mendoza',
+								'description' => 'Blackberries, blueberries and a hint of cocoa; full-bodied with firm tannins — 13%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£29.00' ],
+									[ 'label' => '175ml',  'value' => '£7.95'  ],
+									[ 'label' => '250ml',  'value' => '£11.00' ],
+								],
+							],
+							[
+								'name'        => 'XIII Lunas Tinto Rioja, Viña Salceda — Spain',
+								'description' => 'Blackberries and raspberries; round in the mouth with a long fruity finish — 14%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£31.00' ],
+									[ 'label' => '175ml',  'value' => '£8.40'  ],
+									[ 'label' => '250ml',  'value' => '£11.50' ],
+								],
+							],
+							[
+								'name'        => "Old Bean Truck Cab Shiraz, d'Arenberg — Australia",
+								'description' => 'Cassis, eucalypt and mint; concentrated character with chalky tannins — 14.5%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£35.00' ],
+									[ 'label' => '175ml',  'value' => '£9.00'  ],
+									[ 'label' => '250ml',  'value' => '£12.50' ],
+								],
+							],
+						],
+					],
+					[
+						'category' => 'Sparkling Wine',
+						'items'    => [
+							[
+								'name'        => 'Prosecco, Via Vai — Italy, Veneto',
+								'description' => 'Fragrant white flowers with a delicate lemon and lime tang — 10.5%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£34.00' ],
+									[ 'label' => '200ml',  'value' => '£10.00' ],
+								],
+							],
+							[
+								'name'        => 'Prosecco Rosé DOC, Via Vai — Italy, Veneto',
+								'description' => 'Light sparkling rosé with red berries, a creamy mousse and crisp finish — 11%',
+								'prices'      => [
+									[ 'label' => 'Bottle', 'value' => '£36.00' ],
+									[ 'label' => '200ml',  'value' => '£10.00' ],
+								],
+							],
+						],
+					],
+					[
+						'category' => 'Champagne',
+						'items'    => [
+							[
+								'name'        => 'Brut Mosaïque, Jacquart',
+								'description' => 'Pear and fresh bread, deepening to gingerbread on the palate — 12.5% · Decanter 2023 Gold',
+								'prices'      => [ [ 'label' => 'Bottle', 'value' => '£65.00' ] ],
+							],
+							[
+								'name'        => 'Signature Rosé, Jacquart',
+								'description' => 'Pink fizz with ripe redcurrants, cherries, wild strawberries and plums — 12.5%',
+								'prices'      => [ [ 'label' => 'Bottle', 'value' => '£80.00' ] ],
+							],
+							[
+								'name'        => 'Cuvée Dom Pérignon',
+								'description' => 'Prestige vintage Champagne; white flowers, citrus and brioche with a long mineral finish — 12.5%',
+								'prices'      => [ [ 'label' => 'Bottle', 'value' => '£350.00' ] ],
+							],
+							[
+								'name'        => 'Laurent-Perrier Rosé',
+								'description' => 'Glorious sparkling rosé with fine acidity and fragrant red fruit — 12%',
+								'prices'      => [ [ 'label' => 'Bottle', 'value' => '£180.00' ] ],
+							],
+							[
+								'name'        => 'Veuve Clicquot Yellow Label Brut',
+								'description' => 'Apples, pears and hawthorn flowers enlivened by fine bubbles — 12.5%',
+								'prices'      => [ [ 'label' => 'Bottle', 'value' => '£150.00' ] ],
+							],
+							[
+								'name'        => 'Veuve Clicquot Rosé',
+								'description' => 'Gorgeous red fruit, dried fruit and Viennese pastries — 12.5%',
+								'prices'      => [ [ 'label' => 'Bottle', 'value' => '£175.00' ] ],
+							],
+							[
+								'name'        => 'Laurent-Perrier La Cuvée Magnum',
+								'description' => 'High-Chardonnay blend; lemon biscuit nose with a sherbet finish — 12.5%',
+								'prices'      => [ [ 'label' => 'Bottle', 'value' => '£250.00' ] ],
+							],
+						],
+					],
+				],
+			],
 		];
 	}
 

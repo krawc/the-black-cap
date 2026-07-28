@@ -3,7 +3,8 @@
  * Drink Menu block — server-side render.
  */
 
-$sections = $attributes['sections'] ?? [];
+$heading  = $attributes['heading'] ?? 'The Menu';
+$tabs     = $attributes['tabs']    ?? [];
 $menu_svg = esc_url( TBC_PLUGIN_URL . '/assets/svg/neon-menu.svg' );
 ?>
 <section class="menuSection" id="menu">
@@ -12,44 +13,105 @@ $menu_svg = esc_url( TBC_PLUGIN_URL . '/assets/svg/neon-menu.svg' );
 			<img src="<?php echo $menu_svg; ?>" class="menuSvg" alt="" />
 		</div>
 		<div class="menuRight">
-			<h2 class="menuHeadline"><?php echo esc_html( $attributes['heading'] ?? 'The Menu' ); ?></h2>
-			<?php if ( $sections ) : ?>
-			<div class="menuList">
-				<?php foreach ( $sections as $section ) :
-					$category = esc_html( $section['category'] ?? '' );
-					$items    = $section['items'] ?? [];
-					if ( ! $category && ! $items ) continue;
+			<h2 class="menuHeadline"><?php echo esc_html( $heading ); ?></h2>
+
+			<?php if ( count( $tabs ) > 1 ) : ?>
+			<div class="menuTabs" role="tablist">
+				<?php foreach ( $tabs as $t_idx => $tab ) :
+					$tab_id    = esc_attr( $tab['id']    ?? ( 'tab-' . $t_idx ) );
+					$tab_label = esc_html( $tab['label'] ?? '' );
 				?>
-				<div class="menuCategory">
-					<?php if ( $category ) : ?>
-					<p class="menuCategoryName"><?php echo $category; ?></p>
-					<?php endif; ?>
-					<?php foreach ( $items as $item ) :
-						$name     = esc_html( $item['name']    ?? '' );
-						$price    = esc_html( $item['price']   ?? '' );
-						$image_id = (int) ( $item['imageId']   ?? 0 );
-						if ( ! $name ) continue;
-						$thumb_url = $image_id ? ( wp_get_attachment_image_url( $image_id, 'thumbnail' ) ?: wp_get_attachment_image_url( $image_id, 'full' ) ) : '';
-						$full_url  = $image_id ? ( wp_get_attachment_image_url( $image_id, 'large' ) ?: wp_get_attachment_image_url( $image_id, 'full' ) ) : '';
-					?>
-					<div class="menuItem<?php echo $thumb_url ? ' menuItem--hasPhoto' : ''; ?>">
-						<?php if ( $thumb_url ) : ?>
-						<button class="menuItemThumb" type="button"
-							data-full="<?php echo esc_url( $full_url ); ?>"
-							data-alt="<?php echo esc_attr( $item['name'] ?? '' ); ?>"
-							aria-label="<?php echo esc_attr( sprintf( __( 'View photo of %s', 'the-black-cap' ), $item['name'] ?? '' ) ); ?>"
-						><img src="<?php echo esc_url( $thumb_url ); ?>" alt="" loading="lazy"></button>
-						<?php endif; ?>
-						<span class="menuItemName"><?php echo $name; ?></span>
-						<?php if ( $price ) : ?>
-						<span class="menuItemPrice"><?php echo $price; ?></span>
-						<?php endif; ?>
-					</div>
-					<?php endforeach; ?>
-				</div>
+				<button
+					class="menuTab<?php echo $t_idx === 0 ? ' menuTab--active' : ''; ?>"
+					role="tab"
+					aria-selected="<?php echo $t_idx === 0 ? 'true' : 'false'; ?>"
+					aria-controls="menuPanel-<?php echo $tab_id; ?>"
+					data-tab="<?php echo $tab_id; ?>"
+				><?php echo $tab_label; ?></button>
 				<?php endforeach; ?>
 			</div>
 			<?php endif; ?>
+
+			<?php foreach ( $tabs as $t_idx => $tab ) :
+				$tab_id   = esc_attr( $tab['id'] ?? ( 'tab-' . $t_idx ) );
+				$sections = $tab['sections'] ?? [];
+			?>
+			<div
+				class="menuPanel"
+				id="menuPanel-<?php echo $tab_id; ?>"
+				role="tabpanel"
+				<?php echo $t_idx > 0 ? 'hidden' : ''; ?>
+			>
+				<?php foreach ( $sections as $s_idx => $section ) :
+					$category = esc_html( $section['category'] ?? '' );
+					$note     = $section['note'] ?? '';
+					$items    = $section['items'] ?? [];
+					if ( ! $category && ! $items ) continue;
+
+					$first   = reset( $items );
+					$is_wine = $first && ! empty( $first['prices'] );
+					$price_headers = [];
+					if ( $is_wine ) {
+						$price_headers = array_column( $first['prices'], 'label' );
+					}
+					$col_count = max( 1, count( $price_headers ) );
+
+					$acc_id = 'menuAcc-' . $t_idx . '-' . $s_idx;
+				?>
+				<div class="menuAccordion">
+					<button
+						class="menuAccordion__trigger"
+						type="button"
+						aria-expanded="false"
+						aria-controls="<?php echo $acc_id; ?>"
+					><?php echo $category; ?><span class="menuAccordion__icon" aria-hidden="true"></span></button>
+					<div class="menuAccordion__body" id="<?php echo $acc_id; ?>" hidden>
+
+						<?php if ( $note ) : ?>
+						<p class="menuCategoryNote"><?php echo esc_html( $note ); ?></p>
+						<?php endif; ?>
+
+						<?php if ( $is_wine ) : ?>
+						<div class="menuWineGrid" style="--wine-cols:<?php echo $col_count; ?>">
+							<span class="menuWineGrid__hname" aria-hidden="true"></span>
+							<?php foreach ( $price_headers as $h ) : ?>
+							<span class="menuWineGrid__hprice" aria-hidden="true"><?php echo esc_html( $h ); ?></span>
+							<?php endforeach; ?>
+							<?php foreach ( $items as $item ) : ?>
+							<div class="menuWineItem__info">
+								<span class="menuWineItem__name"><?php echo esc_html( $item['name'] ?? '' ); ?></span>
+								<?php if ( ! empty( $item['description'] ) ) : ?>
+								<p class="menuWineItem__desc"><?php echo esc_html( $item['description'] ); ?></p>
+								<?php endif; ?>
+							</div>
+							<?php foreach ( $item['prices'] ?? [] as $p ) : ?>
+							<span class="menuWineItem__price"><?php echo esc_html( $p['value'] ?? '' ); ?></span>
+							<?php endforeach; ?>
+							<?php endforeach; ?>
+						</div>
+						<?php else : ?>
+						<?php foreach ( $items as $item ) :
+							$name  = esc_html( $item['name']  ?? '' );
+							$price = esc_html( $item['price'] ?? '' );
+							$deal  = esc_html( $item['deal']  ?? '' );
+							if ( ! $name ) continue;
+						?>
+						<div class="menuItem">
+							<span class="menuItemName"><?php echo $name; ?></span>
+							<span class="menuItemPrice">
+								<?php echo $price; ?>
+								<?php if ( $deal ) : ?><span class="menuItemDeal"><?php echo $deal; ?></span><?php endif; ?>
+							</span>
+						</div>
+						<?php endforeach; ?>
+						<?php endif; ?>
+
+					</div>
+				</div>
+				<?php endforeach; ?>
+			</div>
+			<?php endforeach; ?>
+
 		</div>
 	</div>
 </section>
