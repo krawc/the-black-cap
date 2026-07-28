@@ -104,20 +104,32 @@ foreach ( $by_series as $sid => $occurrences ) {
 		}
 	}
 
-	$rep['_recurring']   = true;
-	$rep['_all_starts']  = array_map(
-		static fn( array $o ): string => $o['start']['local'] ?? '',
-		$occurrences
-	);
+	$rep_local = $rep['start']['local'] ?? '';
+
+	// Other future occurrences (excluding the representative) — shown in the popup.
+	$future_other = [];
+	foreach ( $occurrences as $occ ) {
+		$local = $occ['start']['local'] ?? '';
+		$ts    = $local ? ( strtotime( $local ) ?: 0 ) : 0;
+		if ( $ts >= $now && $local !== $rep_local ) {
+			$future_other[] = $local;
+		}
+	}
+
+	$rep['_recurring']     = true;
+	$rep['_future_starts'] = $future_other;
 
 	$collapsed[] = $rep;
 }
 
-// Re-sort: newest first.
-usort( $collapsed, static function ( $a, $b ) {
+// Sort: soonest upcoming first, then past events most-recent-first.
+usort( $collapsed, static function ( $a, $b ) use ( $now ) {
 	$ta = strtotime( $a['start']['local'] ?? '' ) ?: 0;
 	$tb = strtotime( $b['start']['local'] ?? '' ) ?: 0;
-	return $tb <=> $ta;
+	$af = $ta && $ta >= $now;
+	$bf = $tb && $tb >= $now;
+	if ( $af !== $bf ) return $af ? -1 : 1;
+	return $af ? ( $ta <=> $tb ) : ( $tb <=> $ta );
 } );
 
 $events = array_slice( $collapsed, 0, $limit );
@@ -139,12 +151,12 @@ $events = array_slice( $collapsed, 0, $limit );
 					$short_desc   = substr( $full_desc, 0, 600 );
 					$is_recurring = ! empty( $ev['_recurring'] );
 
-					// Formatted dates for recurring events.
-					$all_dates = [];
+					// Other future dates for the popup.
+					$future_dates = [];
 					if ( $is_recurring ) {
-						foreach ( $ev['_all_starts'] ?? [] as $local ) {
+						foreach ( $ev['_future_starts'] ?? [] as $local ) {
 							$fmt = tbc_format_event_date( $local );
-							if ( $fmt ) $all_dates[] = $fmt;
+							if ( $fmt ) $future_dates[] = $fmt;
 						}
 					}
 
@@ -175,13 +187,16 @@ $events = array_slice( $collapsed, 0, $limit );
 				</div>
 				<div class="eventCard__body">
 
-					<?php if ( $is_recurring && $all_dates ) : ?>
+					<?php if ( $is_recurring ) : ?>
 					<div class="eventCard__dates">
-						<?php foreach ( array_slice( $all_dates, 0, 1 ) as $d ) : ?>
-						<span class="eventCard__dates-item"><?php echo esc_html( $d ); ?></span>
-						<?php endforeach; ?>
-						<?php if ( count( $all_dates ) > 1 ) : ?>
-						<span class="eventCard__dates-more">+<?php echo count( $all_dates ) - 1; ?> more</span>
+						<span class="eventCard__dates-item"><?php echo esc_html( $date ); ?></span>
+						<?php if ( $future_dates ) : ?>
+						<button class="eventCard__dates-more" type="button" aria-expanded="false">+<?php echo count( $future_dates ); ?> more</button>
+						<div class="eventCard__dates-bubble" hidden>
+							<?php foreach ( $future_dates as $fd ) : ?>
+							<span><?php echo esc_html( $fd ); ?></span>
+							<?php endforeach; ?>
+						</div>
 						<?php endif; ?>
 					</div>
 					<?php elseif ( $date ) : ?>

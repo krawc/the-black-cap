@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "the-black-cap/showcase",
+  "title": "Photo Showcase",
+  "description": "Infinite auto-scrolling photo strip from the media library.",
+  "category": "theme",
+  "icon": "images-alt2",
+  "supports": { "html": false },
+  "attributes": {
+    "imageIds": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "integer" }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}

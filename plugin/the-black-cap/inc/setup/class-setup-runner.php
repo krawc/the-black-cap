@@ -13,6 +13,7 @@ class TBC_Setup_Runner {
 		'room_cdn_images',
 		'room_cpt_posts',
 		'timeline_images',
+		'showcase_images',
 		'venue_images',
 		'venue_cpt_posts',
 		'front_page',
@@ -208,7 +209,49 @@ class TBC_Setup_Runner {
 		$this->log( '  Done.' );
 	}
 
-	/** §4  Upload venue images from plugin assets */
+	/** §4  Upload showcase images from plugin assets */
+	private function step_showcase_images(): void {
+		$img_dir = TBC_PLUGIN_DIR . 'assets/img/showcase';
+		$mapping = (array) get_option( 'tbc_showcase_images', [] );
+		$changed = false;
+
+		$this->log( '→ Ensuring showcase images are in media library…' );
+
+		$files = glob( "{$img_dir}/*.webp" );
+		if ( ! $files ) {
+			$this->log( '  [warn] No .webp files found in showcase directory.' );
+			return;
+		}
+
+		foreach ( $files as $src ) {
+			$slug = 'showcase-' . sanitize_title( pathinfo( $src, PATHINFO_FILENAME ) );
+
+			if ( isset( $mapping[ $slug ] ) ) {
+				$prev_id = (int) $mapping[ $slug ];
+				$post    = $prev_id ? get_post( $prev_id ) : null;
+				if ( $post && 'attachment' === $post->post_type ) {
+					$this->log( "  Already uploaded: {$slug} (ID {$prev_id})" );
+					continue;
+				}
+			}
+
+			try {
+				$new_id           = $this->upload_image( $src, 'tbc-showcase', $slug, 'Showcase — ' . pathinfo( $src, PATHINFO_FILENAME ) );
+				$mapping[ $slug ] = $new_id;
+				$changed          = true;
+				$this->log( "  [ok] Uploaded {$slug} → ID {$new_id}" );
+			} catch ( Throwable $e ) {
+				$this->log( "  [warn] {$slug}: " . $e->getMessage() );
+			}
+		}
+
+		if ( $changed ) {
+			update_option( 'tbc_showcase_images', $mapping );
+		}
+		$this->log( '  Done.' );
+	}
+
+	/** §5  Upload venue images from plugin assets */
 	private function step_venue_images(): void {
 		$venue_defs = $this->venue_definitions();
 		$mapping    = (array) get_option( 'tbc_venue_images', [] );
@@ -316,7 +359,8 @@ class TBC_Setup_Runner {
 				[ 'venueId' => $venue_id(1) ], // index 2 (top)    → Regina Fong Terrace
 			];
 
-			$story_img = static fn( int $n ): string => TBC_PLUGIN_URL . "/assets/img/story/{$n}.webp";
+			$showcase_map = (array) get_option( 'tbc_showcase_images', [] );
+			$showcase_ids = array_values( array_filter( array_map( 'intval', $showcase_map ) ) );
 
 			// Use WordPress's own serializer so block grammar + JSON encoding are
 			// identical to what the block editor produces. serialize_block_attributes()
@@ -387,13 +431,8 @@ class TBC_Setup_Runner {
 				$b( 'story', [
 					'title' => 'Legendary',
 					'copy'  => "The Black Cap isn't just a venue with a famous name - it's a building, a stage, and a community landmark. From its historic façade on Camden High Street to the performance room that helped shape London cabaret, The Black Cap has long been a place where talent breaks through, audiences gather and queer culture is celebrated.",
-					'photos' => [
-						[ 'url' => $story_img(1), 'scale' => 1.3,  'driftX' =>  1.2,  'driftY' => -12.5 ],
-						[ 'url' => $story_img(3), 'scale' => 2.2,  'driftX' =>  11.0, 'driftY' =>   3.0 ],
-						[ 'url' => $story_img(4), 'scale' => 2.45, 'driftX' =>  -5.4, 'driftY' =>  -9.0 ],
-						[ 'url' => $story_img(2), 'scale' => 1.1,  'driftX' => -11.6, 'driftY' =>  14.5 ],
-					],
 				] ),
+				$b( 'showcase', [ 'imageIds' => $showcase_ids ] ),
 				$b( 'timeline', $timeline_attrs ),
 				$b( 'highlights', [
 					'videoIds' => '7644927884900961558,7642689026490912003,7640829274840190240,7640504644887776544,7640442725908712737,7640087100393606433,7639762417546824992,7639360399963360545',

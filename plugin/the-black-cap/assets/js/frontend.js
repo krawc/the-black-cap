@@ -844,3 +844,31 @@
     initMenuLightbox();
   }
 })();
+
+/* ── Recurring event dates popup ────────────────────────────────── */
+(function () {
+  function closeAll() {
+    document.querySelectorAll('.eventCard__dates-bubble:not([hidden])').forEach(function (bubble) {
+      bubble.hidden = true;
+      bubble.previousElementSibling.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.eventCard__dates-more');
+    if (!btn) { closeAll(); return; }
+    e.stopPropagation();
+    var bubble = btn.nextElementSibling;
+    if (!bubble || !bubble.classList.contains('eventCard__dates-bubble')) return;
+    var wasOpen = !bubble.hidden;
+    closeAll();
+    if (!wasOpen) {
+      bubble.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeAll();
+  });
+})();

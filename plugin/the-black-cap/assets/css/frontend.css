@@ -377,6 +377,42 @@ h2 {
   letter-spacing: 0;
 }
 
+/* ── Photo Showcase carousel ────────────────────────────────────── */
+.showcase {
+  overflow: hidden;
+  background: #000;
+  padding: clamp(2rem, 4vw, 3.5rem) 0;
+}
+
+.showcaseTrack {
+  overflow: hidden;
+}
+
+.showcaseInner {
+  display: flex;
+  gap: clamp(0.5rem, 1vw, 1rem);
+  width: max-content;
+  animation: showcaseScroll 50s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showcaseInner { animation: none; }
+}
+
+@keyframes showcaseScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.showcaseImg {
+  height: clamp(200px, 30vh, 400px);
+  width: auto;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 0.35rem;
+  display: block;
+}
+
 /* ── What's On ──────────────────────────────────────────────────── */
 .whatsOn {
   padding-top: clamp(3rem, 6vw, 5rem);
@@ -555,9 +591,12 @@ h2 {
 
 
 .eventCard__dates {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 0.18rem;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
 
 .eventCard__dates-item {
@@ -570,10 +609,49 @@ h2 {
 
 .eventCard__dates-more {
   font-family: var(--font-body);
-  font-size: 0.65rem;
-  letter-spacing: 0.05em;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  cursor: pointer;
+  line-height: 1.6;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.eventCard__dates-more:hover,
+.eventCard__dates-more[aria-expanded="true"] {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+}
+
+.eventCard__dates-bubble {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  z-index: 200;
+  background: #1c1c1c;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 13rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+}
+
+.eventCard__dates-bubble span {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64F4FF;
+  white-space: nowrap;
 }
 
 /* ── Event detail modal ──────────────────────────────────────────── */

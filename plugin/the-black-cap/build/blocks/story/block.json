@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "the-black-cap/story",
   "title": "Story",
-  "description": "The Cap Story section: headline, body copy, and a parallax photo gallery with per-photo drift controls.",
+  "description": "The Cap Story section: headline and body copy.",
   "category": "theme",
   "icon": "format-image",
   "supports": {
@@ -17,37 +17,6 @@
     "copy": {
       "type": "string",
       "default": ""
-    },
-    "parallax": {
-      "type": "boolean",
-      "default": true
-    },
-    "photos": {
-      "type": "array",
-      "default": [],
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "url": {
-            "type": "string"
-          },
-          "scale": {
-            "type": "number",
-            "default": 1
-          },
-          "driftX": {
-            "type": "number",
-            "default": 0
-          },
-          "driftY": {
-            "type": "number",
-            "default": 0
-          }
-        }
-      }
     }
   },
   "editorScript": "file:./index.js",
