@@ -80,9 +80,6 @@ $menu_svg = esc_url( TBC_PLUGIN_URL . '/assets/svg/neon-menu.svg' );
 							<?php foreach ( $items as $item ) : ?>
 							<div class="menuWineItem__info">
 								<span class="menuWineItem__name"><?php echo esc_html( $item['name'] ?? '' ); ?></span>
-								<?php if ( ! empty( $item['description'] ) ) : ?>
-								<p class="menuWineItem__desc"><?php echo esc_html( $item['description'] ); ?></p>
-								<?php endif; ?>
 							</div>
 							<?php foreach ( $item['prices'] ?? [] as $p ) : ?>
 							<span class="menuWineItem__price"><?php echo esc_html( $p['value'] ?? '' ); ?></span>

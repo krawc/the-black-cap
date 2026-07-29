@@ -5,7 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { menuSlug, address, phone, email } = attributes;
+	const { menuSlug, address, phone, email, subscribeFormId } = attributes;
 	const blockProps = useBlockProps( { style: { background: '#000', color: '#fff' } } );
 
 	const menus = useSelect( ( select ) => {
@@ -49,6 +49,14 @@ export default function Edit( { attributes, setAttributes } ) {
 						label={ __( 'Email', 'the-black-cap' ) }
 						value={ email }
 						onChange={ ( v ) => setAttributes( { email: v } ) }
+					/>
+				</PanelBody>
+				<PanelBody title={ __( 'Subscribe Form', 'the-black-cap' ) }>
+					<TextControl
+						label={ __( 'FluentForms ID', 'the-black-cap' ) }
+						help={ __( 'Set to 0 to hide the Subscribe button.', 'the-black-cap' ) }
+						value={ String( subscribeFormId ) }
+						onChange={ ( v ) => setAttributes( { subscribeFormId: parseInt( v, 10 ) || 0 } ) }
 					/>
 				</PanelBody>
 			</InspectorControls>

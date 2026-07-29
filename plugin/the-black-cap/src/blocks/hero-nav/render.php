@@ -7,10 +7,11 @@
  * @var WP_Block $block    Block instance.
  */
 
-$address          = $attributes['address']  ?? '171 Camden High Street, London NW1 7JY';
-$phone            = $attributes['phone']    ?? '020 7428 2721';
-$email            = $attributes['email']    ?? 'Sassy@blackcapcamden.co.uk';
-$menu_slug        = $attributes['menuSlug'] ?? 'primary';
+$address          = $attributes['address']         ?? '171 Camden High Street, London NW1 7JY';
+$phone            = $attributes['phone']           ?? '020 7428 2721';
+$email            = $attributes['email']           ?? 'Sassy@blackcapcamden.co.uk';
+$menu_slug        = $attributes['menuSlug']        ?? 'primary';
+$subscribe_id     = (int) ( $attributes['subscribeFormId'] ?? 7 );
 $social_tiktok    = esc_url( get_option( 'tbc_social_tiktok',    '' ) );
 $social_instagram = esc_url( get_option( 'tbc_social_instagram', '' ) );
 $social_facebook  = esc_url( get_option( 'tbc_social_facebook',  '' ) );
@@ -99,6 +100,10 @@ $flame_url = esc_url( TBC_PLUGIN_URL . '/assets/svg/simple_flame_animated.svg' )
 		</a>
 	</div>
 
+	<?php
+	$subscribe_form = $subscribe_id ? do_shortcode( '[fluentform id="' . $subscribe_id . '"]' ) : '';
+	?>
+
 	<?php if ( $social_tiktok || $social_instagram || $social_facebook ) : ?>
 	<div class="heroSocial">
 		<?php if ( $social_instagram ) : ?>
@@ -119,4 +124,21 @@ $flame_url = esc_url( TBC_PLUGIN_URL . '/assets/svg/simple_flame_animated.svg' )
 	</div>
 	<?php endif; ?>
 
+	<?php if ( $subscribe_form ) : ?>
+	<button class="heroSubscribe" type="button" data-modal="tbc-subscribe-modal">
+		<?php esc_html_e( 'Subscribe', 'the-black-cap' ); ?>
+	</button>
+	<?php endif; ?>
+
 </section>
+
+<?php if ( $subscribe_form ) : ?>
+<div class="subscribeModal" id="tbc-subscribe-modal" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Subscribe', 'the-black-cap' ); ?>" hidden>
+	<div class="subscribeModal__backdrop"></div>
+	<div class="subscribeModal__box">
+		<button class="subscribeModal__close" type="button" aria-label="<?php esc_attr_e( 'Close', 'the-black-cap' ); ?>">&#x2715;</button>
+		<h2 class="subscribeModal__title"><?php esc_html_e( 'Stay in the loop', 'the-black-cap' ); ?></h2>
+		<div class="subscribeModal__form"><?php echo $subscribe_form; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+	</div>
+</div>
+<?php endif; ?>

@@ -192,7 +192,7 @@ $events = array_slice( $collapsed, 0, $limit );
 						<span class="eventCard__dates-item"><?php echo esc_html( $date ); ?></span>
 						<?php if ( $future_dates ) : ?>
 						<button class="eventCard__dates-more" type="button" aria-expanded="false">+<?php echo count( $future_dates ); ?> more</button>
-						<div class="eventCard__dates-bubble" hidden>
+						<div class="eventCard__dates-bubble">
 							<?php foreach ( $future_dates as $fd ) : ?>
 							<span><?php echo esc_html( $fd ); ?></span>
 							<?php endforeach; ?>

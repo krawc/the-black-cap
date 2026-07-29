@@ -28,6 +28,10 @@
     "email": {
       "type": "string",
       "default": "Sassy@blackcapcamden.co.uk"
+    },
+    "subscribeFormId": {
+      "type": "integer",
+      "default": 7
     }
   },
   "editorScript": "file:./index.js",

@@ -291,8 +291,40 @@ class TBC_Setup_Runner {
 
 	/** §5  Create / update Venue CPT posts */
 	private function step_venue_cpt_posts(): void {
-		$venue_defs  = $this->venue_definitions();
-		$img_mapping = (array) get_option( 'tbc_venue_images', [] );
+		$venue_defs     = $this->venue_definitions();
+		$img_mapping    = (array) get_option( 'tbc_venue_images',   [] );
+		$showcase_map   = (array) get_option( 'tbc_showcase_images', [] );
+
+		// Map showcase filenames → attachment IDs for each venue slot.
+		$sc_slug = static fn( string $name ): string => 'showcase-' . sanitize_title( $name );
+
+		$shufflewick_fnames = [
+			'Forma_BlackCap_Distracted.Media-1',
+			'Forma_BlackCap_Distracted.Media-6',
+			'Forma_BlackCap_Distracted.Media-105',
+			'Forma_BlackCap_Distracted.Media-107',
+		];
+		$shufflewick_extra = [];
+		foreach ( $shufflewick_fnames as $fname ) {
+			$slug = $sc_slug( $fname );
+			if ( isset( $showcase_map[ $slug ] ) ) {
+				$shufflewick_extra[] = (int) $showcase_map[ $slug ];
+			}
+		}
+
+		$shufflewick_slugs = array_map( $sc_slug, $shufflewick_fnames );
+		$lilys_extra = [];
+		foreach ( $showcase_map as $slug => $id ) {
+			if ( ! in_array( $slug, $shufflewick_slugs, true ) ) {
+				$lilys_extra[] = (int) $id;
+			}
+		}
+
+		// venue slot → extra showcase IDs
+		$showcase_extras = [
+			2 => $shufflewick_extra, // Shufflewick Bar
+			3 => $lilys_extra,       // Lily's Bar
+		];
 
 		$this->log( '→ Ensuring Venue posts…' );
 
@@ -320,9 +352,13 @@ class TBC_Setup_Runner {
 					$this->log( "  [ok] Slot {$slot} → created '{$def['name']}' (ID {$pid})" );
 				}
 
-				$att_id = isset( $img_mapping[ $slot ] ) ? (int) $img_mapping[ $slot ] : 0;
+				$att_id    = isset( $img_mapping[ $slot ] ) ? (int) $img_mapping[ $slot ] : 0;
+				$base_ids  = $att_id ? [ $att_id ] : [];
+				$extra_ids = $showcase_extras[ $slot ] ?? [];
+				$all_ids   = array_values( array_unique( array_merge( $base_ids, $extra_ids ) ) );
+
 				update_post_meta( $pid, 'tbc_venue_description', $def['desc'] );
-				update_post_meta( $pid, 'tbc_venue_image_ids', $att_id ? [ $att_id ] : [] );
+				update_post_meta( $pid, 'tbc_venue_image_ids', $all_ids );
 			} catch ( Throwable $e ) {
 				$this->log( "  [warn] Slot {$slot} exception: " . $e->getMessage() );
 			}

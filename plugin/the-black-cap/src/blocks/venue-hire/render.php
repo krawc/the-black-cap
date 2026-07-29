@@ -77,6 +77,7 @@ if ( $svg_raw ) {
 				<h3 class="venueHirePanel__name"><?php echo esc_html( $initial['title'] ); ?></h3>
 				<p class="venueHirePanel__desc"><?php echo esc_html( $initial['desc'] ); ?></p>
 				<div class="venueThumbGrid"></div>
+				<p class="venueHirePanel__contact">For more information, contact us on <a href="mailto:sassy@blackcapcamden.co.uk">sassy@blackcapcamden.co.uk</a></p>
 				<a class="neonButton venueHirePanel__cta"
 					href="mailto:sassy@blackcapcamden.co.uk"
 				>Book the Venue</a>

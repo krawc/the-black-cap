@@ -8,10 +8,11 @@
   "icon": "location",
   "supports": { "html": false, "align": ["full"] },
   "attributes": {
-    "menuSlug": { "type": "string", "default": "primary" },
-    "address":  { "type": "string", "default": "171 Camden High Street, London NW1 7JY" },
-    "phone":    { "type": "string", "default": "020 7428 2721" },
-    "email":    { "type": "string", "default": "Sassy@blackcapcamden.co.uk" }
+    "menuSlug":        { "type": "string",  "default": "primary" },
+    "address":         { "type": "string",  "default": "171 Camden High Street, London NW1 7JY" },
+    "phone":           { "type": "string",  "default": "020 7428 2721" },
+    "email":           { "type": "string",  "default": "Sassy@blackcapcamden.co.uk" },
+    "subscribeFormId": { "type": "integer", "default": 7 }
   },
   "editorScript": "file:./index.js",
   "render": "file:./render.php"

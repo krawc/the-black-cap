@@ -848,9 +848,8 @@
 /* ── Recurring event dates popup ────────────────────────────────── */
 (function () {
   function closeAll() {
-    document.querySelectorAll('.eventCard__dates-bubble:not([hidden])').forEach(function (bubble) {
-      bubble.hidden = true;
-      bubble.previousElementSibling.setAttribute('aria-expanded', 'false');
+    document.querySelectorAll('.eventCard__dates-more[aria-expanded="true"]').forEach(function (btn) {
+      btn.setAttribute('aria-expanded', 'false');
     });
   }
 
@@ -858,14 +857,9 @@
     var btn = e.target.closest('.eventCard__dates-more');
     if (!btn) { closeAll(); return; }
     e.stopPropagation();
-    var bubble = btn.nextElementSibling;
-    if (!bubble || !bubble.classList.contains('eventCard__dates-bubble')) return;
-    var wasOpen = !bubble.hidden;
+    var wasOpen = btn.getAttribute('aria-expanded') === 'true';
     closeAll();
-    if (!wasOpen) {
-      bubble.hidden = false;
-      btn.setAttribute('aria-expanded', 'true');
-    }
+    if (!wasOpen) btn.setAttribute('aria-expanded', 'true');
   });
 
   document.addEventListener('keydown', function (e) {
@@ -907,5 +901,30 @@
       trigger.setAttribute('aria-expanded', expanded ? 'false' : 'true');
       if (body) body.hidden = expanded;
     });
+  });
+})();
+
+// Subscribe modal
+(function () {
+  var modal = document.getElementById('tbc-subscribe-modal');
+  if (!modal) return;
+  var backdrop = modal.querySelector('.subscribeModal__backdrop');
+  var closeBtn = modal.querySelector('.subscribeModal__close');
+  function openModal() {
+    modal.hidden = false;
+    document.documentElement.style.overflow = 'hidden';
+    if (closeBtn) closeBtn.focus();
+  }
+  function closeModal() {
+    modal.hidden = true;
+    document.documentElement.style.overflow = '';
+  }
+  document.querySelectorAll('[data-modal="tbc-subscribe-modal"]').forEach(function (btn) {
+    btn.addEventListener('click', openModal);
+  });
+  if (backdrop) backdrop.addEventListener('click', closeModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !modal.hidden) closeModal();
   });
 })();
