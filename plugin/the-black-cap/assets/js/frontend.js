@@ -406,7 +406,7 @@
     var isRecurring = card.dataset.recurring === '1';
     var allDates    = [];
     if ( isRecurring ) {
-      try { allDates = JSON.parse( card.dataset.dates || '[]' ); } catch (_) {}
+      try { allDates = JSON.parse( card.dataset.dates || '[]' ) || []; } catch (_) {}
     }
 
     modal.querySelector('.eventModal__title').textContent = title;

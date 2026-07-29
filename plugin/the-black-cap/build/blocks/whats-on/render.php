@@ -122,14 +122,17 @@ foreach ( $by_series as $sid => $occurrences ) {
 	$collapsed[] = $rep;
 }
 
-// Sort: soonest upcoming first, then past events most-recent-first.
-usort( $collapsed, static function ( $a, $b ) use ( $now ) {
+// Drop events whose end time is known and already in the past.
+$collapsed = array_values( array_filter( $collapsed, static function ( $ev ) use ( $now ) {
+	$end_utc = $ev['end']['utc'] ?? '';
+	return ! $end_utc || strtotime( $end_utc ) >= $now;
+} ) );
+
+// Sort soonest first.
+usort( $collapsed, static function ( $a, $b ) {
 	$ta = strtotime( $a['start']['local'] ?? '' ) ?: 0;
 	$tb = strtotime( $b['start']['local'] ?? '' ) ?: 0;
-	$af = $ta && $ta >= $now;
-	$bf = $tb && $tb >= $now;
-	if ( $af !== $bf ) return $af ? -1 : 1;
-	return $af ? ( $ta <=> $tb ) : ( $tb <=> $ta );
+	return $ta <=> $tb;
 } );
 
 $events = array_slice( $collapsed, 0, $limit );
@@ -175,7 +178,7 @@ $events = array_slice( $collapsed, 0, $limit );
 				data-date="<?php echo esc_attr( $date ); ?>"
 				data-past="<?php echo $is_past ? '1' : ''; ?>"
 				data-recurring="<?php echo $is_recurring ? '1' : ''; ?>"
-				data-dates="<?php echo $is_recurring ? esc_attr( wp_json_encode( $all_dates ) ) : ''; ?>"
+				data-dates="<?php echo $is_recurring ? esc_attr( wp_json_encode( array_values( array_merge( array_filter( [ $date ] ), $future_dates ) ) ) ) : ''; ?>"
 				tabindex="0"
 				role="button"
 				aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'the-black-cap' ), $title ) ); ?>"
