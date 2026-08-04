@@ -84,6 +84,7 @@ if ( $access_token ) {
 					'id'    => (string) ( $v['id']              ?? '' ),
 					'thumb' => (string) ( $v['cover_image_url'] ?? '' ),
 					'url'   => (string) ( $v['share_url']       ?? '' ),
+					'title' => (string) ( $v['title']           ?? '' ),
 				];
 			}
 			set_transient( 'tbc_tiktok_videos', $videos, HOUR_IN_SECONDS );
@@ -94,7 +95,7 @@ if ( $access_token ) {
 // Fallback: manual IDs (embed mode only — thumbnails need the API).
 if ( empty( $videos ) && ! empty( $attributes['videoIds'] ) ) {
 	foreach ( array_filter( array_map( 'trim', explode( ',', $attributes['videoIds'] ) ) ) as $id ) {
-		$videos[] = [ 'id' => $id, 'thumb' => '', 'url' => '' ];
+		$videos[] = [ 'id' => $id, 'thumb' => '', 'url' => '', 'title' => '' ];
 	}
 }
 
@@ -111,12 +112,17 @@ $videos = array_slice( $videos, 0, $limit );
 
 			<?php if ( 'thumbnail' === $mode ) : ?>
 
-				<?php foreach ( $videos as $v ) :
+				<?php foreach ( $videos as $i => $v ) :
 					if ( empty( $v['thumb'] ) ) continue; // skip if no thumbnail
 					$href  = ! empty( $v['url'] ) ? esc_url( $v['url'] ) : $profile_url;
+					$label = ! empty( $v['title'] )
+						/* translators: %s: TikTok video title */
+						? sprintf( __( 'The Black Cap on TikTok: %s', 'the-black-cap' ), $v['title'] )
+						/* translators: %d: video number in the list */
+						: sprintf( __( 'The Black Cap on TikTok, video %d', 'the-black-cap' ), $i + 1 );
 				?>
 				<a class="tiktokSlide tiktokSlide--thumb" href="<?php echo $href; ?>" target="_blank" rel="noopener noreferrer">
-					<img class="tiktokSlide__img" src="<?php echo esc_url( $v['thumb'] ); ?>" alt="<?php esc_attr_e( 'The Black Cap on TikTok', 'the-black-cap' ); ?>" loading="lazy">
+					<img class="tiktokSlide__img" src="<?php echo esc_url( $v['thumb'] ); ?>" alt="<?php echo esc_attr( $label ); ?>" loading="lazy">
 					<div class="tiktokSlide__play" aria-hidden="true">
 						<svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
 							<polygon points="6,3 20,12 6,21"/>
@@ -127,14 +133,20 @@ $videos = array_slice( $videos, 0, $limit );
 
 			<?php else : // embed mode ?>
 
-				<?php foreach ( $videos as $v ) : ?>
+				<?php foreach ( $videos as $i => $v ) :
+					$label = ! empty( $v['title'] )
+						/* translators: %s: TikTok video title */
+						? sprintf( __( 'The Black Cap on TikTok: %s', 'the-black-cap' ), $v['title'] )
+						/* translators: %d: video number in the list */
+						: sprintf( __( 'The Black Cap on TikTok, video %d', 'the-black-cap' ), $i + 1 );
+				?>
 				<div class="tiktokSlide tiktokSlide--embed">
 					<iframe
 						class="tiktokEmbed"
 						src="https://www.tiktok.com/embed/v2/<?php echo esc_attr( $v['id'] ); ?>?theme=dark&rel=0"
 						allowfullscreen
 						allow="encrypted-media"
-						title="<?php esc_attr_e( 'The Black Cap on TikTok', 'the-black-cap' ); ?>"
+						title="<?php echo esc_attr( $label ); ?>"
 						loading="lazy"
 						scrolling="no"
 					></iframe>

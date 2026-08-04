@@ -910,9 +910,22 @@
   if (!modal) return;
   var backdrop = modal.querySelector('.subscribeModal__backdrop');
   var closeBtn = modal.querySelector('.subscribeModal__close');
+  // Fluent Forms (rendered via shortcode) doesn't always emit a <label for>
+  // for the email field, so a placeholder-only input would have no
+  // accessible name once text is entered. Backfill aria-label defensively.
+  function ensureFieldLabels() {
+    modal.querySelectorAll('input, textarea, select').forEach(function (field) {
+      if (field.getAttribute('aria-label')) return;
+      if (field.id && modal.querySelector('label[for="' + field.id + '"]')) return;
+      var fallback = field.placeholder || field.getAttribute('name') || (field.type === 'email' ? 'Email' : '');
+      if (fallback) field.setAttribute('aria-label', fallback);
+    });
+  }
+  ensureFieldLabels();
   function openModal() {
     modal.hidden = false;
     document.documentElement.style.overflow = 'hidden';
+    ensureFieldLabels();
     if (closeBtn) closeBtn.focus();
   }
   function closeModal() {
