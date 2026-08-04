@@ -106,7 +106,7 @@ foreach ( $timestamps_raw as $ts ) {
 				<div class="timelineItem__card<?php echo $has_images ? ' timelineItem__card--open' : ''; ?>"
 					<?php if ( $has_images ) : ?>
 					data-tl-index="<?php echo $first_lb; ?>"
-					aria-label="<?php esc_attr_e( 'View photos', 'the-black-cap' ); ?>"
+					aria-label="<?php echo esc_attr( sprintf( __( 'View photos: %s', 'the-black-cap' ), $entry['title'] ) ); ?>"
 					role="button"
 					tabindex="0"
 					<?php endif; ?>>

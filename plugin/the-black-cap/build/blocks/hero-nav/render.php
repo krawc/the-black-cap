@@ -34,6 +34,8 @@ $flame_url = esc_url( TBC_PLUGIN_URL . '/assets/svg/simple_flame_animated.svg' )
 ?>
 <section class="hero" aria-labelledby="tbc-hero-title">
 
+	<h1 id="tbc-hero-title" class="tbc-visually-hidden"><?php esc_html_e( 'The Black Cap', 'the-black-cap' ); ?></h1>
+
 	<div class="logoOrbit" id="tbc-logo-orbit">
 		<button
 			class="logoButton"
