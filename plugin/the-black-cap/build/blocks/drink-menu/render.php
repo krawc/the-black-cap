@@ -72,18 +72,22 @@ $menu_svg = esc_url( TBC_PLUGIN_URL . '/assets/svg/neon-menu.svg' );
 						<?php endif; ?>
 
 						<?php if ( $is_wine ) : ?>
-						<div class="menuWineGrid" style="--wine-cols:<?php echo $col_count; ?>">
-							<span class="menuWineGrid__hname" aria-hidden="true"></span>
-							<?php foreach ( $price_headers as $h ) : ?>
-							<span class="menuWineGrid__hprice" aria-hidden="true"><?php echo esc_html( $h ); ?></span>
-							<?php endforeach; ?>
-							<?php foreach ( $items as $item ) : ?>
-							<div class="menuWineItem__info">
-								<span class="menuWineItem__name"><?php echo esc_html( $item['name'] ?? '' ); ?></span>
+						<div class="menuWineGrid" style="--wine-cols:<?php echo $col_count; ?>" role="table" aria-label="<?php echo esc_attr( $category ); ?>">
+							<div class="menuWineGrid__row" role="row">
+								<span class="menuWineGrid__hname" role="columnheader"><span class="tbc-visually-hidden"><?php esc_html_e( 'Wine', 'the-black-cap' ); ?></span></span>
+								<?php foreach ( $price_headers as $h ) : ?>
+								<span class="menuWineGrid__hprice" role="columnheader"><?php echo esc_html( $h ); ?></span>
+								<?php endforeach; ?>
 							</div>
-							<?php foreach ( $item['prices'] ?? [] as $p ) : ?>
-							<span class="menuWineItem__price"><?php echo esc_html( $p['value'] ?? '' ); ?></span>
-							<?php endforeach; ?>
+							<?php foreach ( $items as $item ) : ?>
+							<div class="menuWineGrid__row" role="row">
+								<div class="menuWineItem__info" role="rowheader">
+									<span class="menuWineItem__name"><?php echo esc_html( $item['name'] ?? '' ); ?></span>
+								</div>
+								<?php foreach ( $item['prices'] ?? [] as $p ) : ?>
+								<span class="menuWineItem__price" role="cell"><?php echo esc_html( $p['value'] ?? '' ); ?></span>
+								<?php endforeach; ?>
+							</div>
 							<?php endforeach; ?>
 						</div>
 						<?php else : ?>
