@@ -1,8 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, Button, SelectControl, ToggleControl, TextControl } from '@wordpress/components';
+import { PanelBody, Button, SelectControl, ToggleControl, TextControl, Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
+import ServerSideRender from '@wordpress/server-side-render';
 
 const SVG_OPTIONS = [
 	{ label: 'Frame 1', value: 'Frame 1.svg' },
@@ -17,9 +18,7 @@ const SVG_OPTIONS = [
 
 export default function Edit( { attributes, setAttributes } ) {
 	const { heading, frames } = attributes;
-	const blockProps = useBlockProps( {
-		style: { background: '#000', color: '#fff', padding: '2rem', textAlign: 'center' },
-	} );
+	const blockProps = useBlockProps();
 
 	const rooms = useSelect( ( select ) => {
 		return select( coreStore ).getEntityRecords( 'postType', 'tbc_room', {
@@ -117,14 +116,15 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 			</InspectorControls>
 
-			<section { ...blockProps }>
-				<h2 className="roomsHeadline">{ __( 'Our Rooms', 'the-black-cap' ) }</h2>
-				<p style={ { color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', margin: '0.5rem 0 0' } }>
-					{ frames.length === 0
-						? __( 'Add frames in the sidebar →', 'the-black-cap' )
-						: `${ frames.length } ${ __( 'frame(s) configured', 'the-black-cap' ) }` }
-				</p>
-			</section>
+			<div { ...blockProps }>
+				<Notice status="info" isDismissible={ false } className="tbc-editor-notice">
+					{ __( 'Frame photos are clipped into shape by frontend JS, which only runs on the live site — frames below will appear empty here. Preview the page to see photos.', 'the-black-cap' ) }
+				</Notice>
+				<ServerSideRender
+					block="the-black-cap/our-rooms"
+					attributes={ attributes }
+				/>
+			</div>
 		</>
 	);
 }

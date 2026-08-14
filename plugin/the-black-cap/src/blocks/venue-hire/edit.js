@@ -1,8 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, SelectControl, TextControl } from '@wordpress/components';
+import { PanelBody, SelectControl, TextControl, Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
+import ServerSideRender from '@wordpress/server-side-render';
 
 const SPACE_LABELS = [
 	__( 'Space 1 (bottom of plan)', 'the-black-cap' ),
@@ -12,10 +13,7 @@ const SPACE_LABELS = [
 
 export default function Edit( { attributes, setAttributes } ) {
 	const { heading, slots } = attributes;
-
-	const blockProps = useBlockProps( {
-		style: { background: '#000', color: '#fff', padding: '2rem' },
-	} );
+	const blockProps = useBlockProps();
 
 	const venues = useSelect( ( select ) => {
 		return select( coreStore ).getEntityRecords( 'postType', 'tbc_venue', {
@@ -63,20 +61,13 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<p style={ { margin: 0, opacity: 0.6, fontSize: '0.85rem' } }>
-					{ __( 'Venue Hire — configure via block settings →', 'the-black-cap' ) }
-				</p>
-				<ul style={ { margin: '0.75rem 0 0', paddingLeft: '1.25rem', opacity: 0.85, fontSize: '0.8rem', lineHeight: 1.7 } }>
-					{ slots.map( ( slot, idx ) => {
-						const match = venues.find( ( v ) => v.id === slot.venueId );
-						return (
-							<li key={ idx }>
-								{ SPACE_LABELS[ idx ] }{ ' → ' }
-								{ match ? ( match.title?.rendered || `#${ match.id }` ) : __( '(none)', 'the-black-cap' ) }
-							</li>
-						);
-					} ) }
-				</ul>
+				<Notice status="info" isDismissible={ false } className="tbc-editor-notice">
+					{ __( 'Hover/click switching between spaces is frontend JS and won\'t work here — the floor plan and the first assigned space\'s details are shown below. Preview the page for the interactive version.', 'the-black-cap' ) }
+				</Notice>
+				<ServerSideRender
+					block="the-black-cap/venue-hire"
+					attributes={ attributes }
+				/>
 			</div>
 		</>
 	);

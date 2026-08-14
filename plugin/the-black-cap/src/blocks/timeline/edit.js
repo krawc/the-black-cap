@@ -1,8 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
-import { Button, TextControl, TextareaControl } from '@wordpress/components';
+import { Button, TextControl, TextareaControl, Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
+import ServerSideRender from '@wordpress/server-side-render';
 
 function uid() {
 	return Date.now().toString( 36 ) + Math.random().toString( 36 ).slice( 2, 6 );
@@ -189,6 +190,19 @@ export default function Edit( { attributes, setAttributes } ) {
 				<Button variant="primary" onClick={ addEntry }>
 					{ __( '+ Add Entry', 'the-black-cap' ) }
 				</Button>
+			</div>
+
+			<div className="tl-editor__preview">
+				<p className="tl-editor__preview-label">
+					{ __( 'Live preview', 'the-black-cap' ) }
+				</p>
+				<Notice status="info" isDismissible={ false } className="tbc-editor-notice">
+					{ __( 'Thumbnail switching and the lightbox are frontend JS and won\'t work here — the first image of each entry is shown below.', 'the-black-cap' ) }
+				</Notice>
+				<ServerSideRender
+					block="the-black-cap/timeline"
+					attributes={ attributes }
+				/>
 			</div>
 		</div>
 	);

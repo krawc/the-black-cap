@@ -3,10 +3,11 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, TextControl, Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
+import ServerSideRender from '@wordpress/server-side-render';
 
 export default function Edit( { attributes, setAttributes } ) {
 	const { menuSlug, address } = attributes;
-	const blockProps = useBlockProps( { style: { background: '#000', color: '#fff' } } );
+	const blockProps = useBlockProps();
 
 	const menus = useSelect( ( select ) => {
 		return select( coreStore ).getEntityRecords( 'taxonomy', 'nav_menu', { per_page: -1 } ) || [];
@@ -43,15 +44,12 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 			</InspectorControls>
 
-			<footer { ...blockProps } style={ { ...blockProps.style, padding: '2rem', textAlign: 'center' } }>
-				<p style={ { fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)', margin: '0 0 0.5rem' } }>
-					{ __( 'Site Footer Block', 'the-black-cap' ) }
-				</p>
-				<p style={ { fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', margin: 0 } }>
-					{ __( 'Menu:', 'the-black-cap' ) } <strong>{ menuSlug || __( 'None (fallback links)', 'the-black-cap' ) }</strong>
-					&nbsp;·&nbsp;{ address }
-				</p>
-			</footer>
+			<div { ...blockProps }>
+				<ServerSideRender
+					block="the-black-cap/footer"
+					attributes={ attributes }
+				/>
+			</div>
 		</>
 	);
 }

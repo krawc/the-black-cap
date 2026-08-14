@@ -1,14 +1,11 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, TextareaControl, RangeControl, TextControl, Notice, RadioControl } from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
 
 export default function Edit( { attributes, setAttributes } ) {
 	const { heading, mode, videoIds, limit, profileUrl, profileLabel } = attributes;
-	const blockProps = useBlockProps( { style: { background: '#000', color: '#fff', padding: '2rem' } } );
-
-	const idCount = videoIds
-		? videoIds.split( ',' ).map( ( s ) => s.trim() ).filter( Boolean ).length
-		: 0;
+	const blockProps = useBlockProps();
 
 	return (
 		<>
@@ -63,21 +60,12 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 			</InspectorControls>
 
-			<section { ...blockProps }>
-				<div style={ { marginBottom: '1.5rem' } }>
-					<h2 className="highlightsTitle">{ heading }</h2>
-				</div>
-				<p style={ { color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', margin: 0 } }>
-					{ idCount > 0
-						? `${ idCount } ${ __( 'fallback video ID(s) configured', 'the-black-cap' ) }`
-						: __( 'No fallback IDs — videos will be fetched from the TikTok API.', 'the-black-cap' ) }
-				</p>
-				{ profileUrl && (
-					<p style={ { color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', marginTop: '0.5rem' } }>
-						{ __( 'Profile link:', 'the-black-cap' ) } { profileUrl }
-					</p>
-				) }
-			</section>
+			<div { ...blockProps }>
+				<ServerSideRender
+					block="the-black-cap/highlights"
+					attributes={ attributes }
+				/>
+			</div>
 		</>
 	);
 }
