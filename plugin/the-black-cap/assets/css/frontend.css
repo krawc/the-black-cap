@@ -393,6 +393,10 @@ h2 {
   gap: clamp(0.5rem, 1vw, 1rem);
   width: max-content;
   animation: showcaseScroll 50s linear infinite;
+  /* Promote to its own compositor layer — keeps the animation smooth on
+     mobile Safari, which otherwise repaints this whole (wide) row on every
+     frame instead of just re-positioning a cached layer. */
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {
