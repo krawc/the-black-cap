@@ -41,6 +41,10 @@ add_action( 'init', function () {
 		$b( 'drink-menu', [ 'sections' => [] ] ),
 		$b( 'our-rooms',  [ 'frames'   => [] ] ),
 		$b( 'venue-hire', [ 'slots'    => [ [ 'venueId' => 0 ], [ 'venueId' => 0 ], [ 'venueId' => 0 ] ] ] ),
+		$b( 'footer', [
+			'menuSlug' => 'footer-links',
+			'address'  => '171 Camden High Street, London NW1 7JY',
+		] ),
 	];
 
 	register_block_pattern( 'the-black-cap/front-page', [

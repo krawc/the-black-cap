@@ -477,6 +477,10 @@ class TBC_Setup_Runner {
 				$b( 'drink-menu', [ 'heading' => 'The Menu', 'tabs' => $this->drink_menu_tabs() ] ),
 				$b( 'our-rooms',  [ 'frames'   => $frames ] ),
 				$b( 'venue-hire', [ 'slots'    => $venue_slots ] ),
+				$b( 'footer', [
+					'menuSlug' => 'footer-links',
+					'address'  => '171 Camden High Street, London NW1 7JY',
+				] ),
 			] );
 
 			if ( $this->mode === 'staging' ) {

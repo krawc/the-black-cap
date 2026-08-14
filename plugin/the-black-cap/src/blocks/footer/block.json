@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "the-black-cap/footer",
+  "title": "Site Footer",
+  "description": "Legal/policy links and copyright byline, shown at the bottom of the page.",
+  "category": "theme",
+  "icon": "minus",
+  "supports": { "html": false, "align": ["full"] },
+  "attributes": {
+    "menuSlug": { "type": "string", "default": "footer-links" },
+    "address":  { "type": "string", "default": "171 Camden High Street, London NW1 7JY" }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}
