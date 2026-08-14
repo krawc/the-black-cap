@@ -94,6 +94,24 @@ add_action( 'wp_head', function () {
 }, 1 );
 
 /* ── Editor assets ────────────────────────────────────────────────────── */
+
+// `add_editor_style()` is the documented way to get a stylesheet threaded
+// into the iframed block-editor canvas (Gutenberg's own settings.styles
+// mechanism) — unlike a plain enqueue_block_editor_assets wp_enqueue_style(),
+// which just drops a <link> in wp-admin's head and relies on unreliable
+// stylesheet-mirroring to reach the iframe at all. Requires the
+// 'editor-styles' theme support, which a plugin can declare same as a theme.
+add_action( 'after_setup_theme', function () {
+	add_theme_support( 'editor-styles' );
+	add_editor_style( [
+		TBC_PLUGIN_URL . '/assets/css/frontend.css',
+		'https://fonts.googleapis.com/css2?family=Train+One&family=Montserrat:wght@400;700;800;900&display=swap',
+	] );
+} );
+
+// Kept in addition to add_editor_style() above: harmless if redundant, and
+// covers any editor chrome (outside the iframed canvas) that only the plain
+// enqueue path reaches.
 add_action( 'enqueue_block_editor_assets', function () {
 	wp_enqueue_style(
 		'tbc-google-fonts-editor',

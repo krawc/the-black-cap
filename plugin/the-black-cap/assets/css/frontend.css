@@ -9,6 +9,19 @@
   text-rendering: geometricPrecision;
 }
 
+/*
+ * WordPress's core block-editor styles give .editor-styles-wrapper (the
+ * block content container inside the editor iframe) an explicit white
+ * background by default, to make text blocks look like a page. That rule
+ * carries the same specificity as our :root background above, so depending
+ * on stylesheet load order it can silently win and blank out our theme
+ * inside wp-admin only. Target it directly so ours always wins there.
+ */
+.editor-styles-wrapper {
+  background: #000;
+  color: #fff;
+}
+
 * {
   box-sizing: border-box;
 }
