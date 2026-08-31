@@ -808,6 +808,15 @@ h2 {
   margin-bottom: 0.5rem;
 }
 
+/* Mobile agenda list is rendered alongside the grid but stays hidden
+   until the grid-breakpoint media query below switches the two over —
+   a 7-column grid reads fine on a tablet, but on a phone it collapses
+   into a wall of near-empty cells with unreadable event text, so a
+   chronological per-day list takes over instead. */
+.tbcCalendar__agenda {
+  display: none;
+}
+
 .tbcCalendar__weekday {
   font-family: var(--font-body);
   font-size: 0.68rem;
@@ -907,10 +916,104 @@ h2 {
   border-color: rgba(255, 255, 255, 0.35);
 }
 
+/* ── Agenda list (mobile) ──────────────────────────────────────────
+   Same glass panel, same bordered/translucent chip language as the
+   grid, but laid out as a scannable vertical list: one date heading
+   per day that has something on, each event a full-width row so the
+   title has room to read and the tap target is comfortably large. */
+
+.tbcCalendar__agendaDay + .tbcCalendar__agendaDay {
+  margin-top: 1.1rem;
+}
+
+.tbcCalendar__agendaDate {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.tbcCalendar__agendaDay--today .tbcCalendar__agendaDate {
+  color: #64F4FF;
+}
+
+.tbcCalendar__agendaToday {
+  padding: 0.05rem 0.5rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(100, 244, 255, 0.5);
+  border-radius: 999px;
+  color: #64F4FF;
+}
+
+.tbcCalendar__agendaEvents {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tbcCalendar__agendaEmpty {
+  margin: 0;
+  padding: 1.5rem 0;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Row variant of the event chip — full-width, time + title side by
+   side, generous tap target. Same bordered/semi-transparent language
+   as the grid chip, just laid out for a list instead of a small cell. */
+.eventCard.eventChip.eventChip--row {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.7rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.82rem;
+  white-space: normal;
+}
+
+.eventChip__time {
+  flex: 0 0 auto;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: #64F4FF;
+  text-transform: uppercase;
+}
+
+.eventCard.eventChip.eventChip--row:hover .eventChip__time,
+.eventCard.eventChip.eventChip--row:focus-visible .eventChip__time {
+  color: #000;
+}
+
+.eventChip__title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Non-row chips (grid + undated strip) don't wrap their inner spans
+   into a layout of their own — keep title/time inline with the chip. */
+.eventCard.eventChip:not(.eventChip--row) .eventChip__time {
+  margin-right: 0.35rem;
+}
+
 @media (max-width: 700px) {
-  .tbcCalendar__day {
-    min-height: clamp(3.4rem, 16vw, 5rem);
-    padding: 0.3rem;
+  .tbcCalendar__weekdays,
+  .tbcCalendar__grid {
+    display: none;
+  }
+
+  .tbcCalendar__agenda {
+    display: block;
   }
 
   .eventCard.eventChip {
@@ -926,10 +1029,6 @@ h2 {
 @media (max-width: 380px) {
   .tbcCalendar {
     padding: 0.85rem;
-  }
-
-  .tbcCalendar__day {
-    min-height: clamp(2.8rem, 18vw, 4rem);
   }
 }
 
