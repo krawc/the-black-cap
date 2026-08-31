@@ -11,6 +11,30 @@ if ( ! function_exists( 'tbc_format_event_date' ) ) {
 	}
 }
 
+// Shared chip markup — used by both the desktop grid and the mobile
+// agenda list so an event's click/keyboard/modal wiring lives in one
+// place. $extra_class lets the agenda view add its row layout on top.
+if ( ! function_exists( 'tbc_render_event_chip' ) ) {
+	function tbc_render_event_chip( array $it, string $extra_class = '', string $label = '' ): void {
+		$classes = trim( 'eventCard eventChip ' . $extra_class . ( $it['is_past'] ? ' eventCard--past' : '' ) );
+		?>
+		<button
+			type="button"
+			class="<?php echo esc_attr( $classes ); ?>"
+			data-title="<?php echo esc_attr( $it['title'] ); ?>"
+			data-desc="<?php echo esc_attr( $it['desc'] ); ?>"
+			data-url="<?php echo esc_attr( $it['url'] ); ?>"
+			data-img="<?php echo esc_attr( $it['img'] ); ?>"
+			data-date="<?php echo esc_attr( $it['date'] ); ?>"
+			data-past="<?php echo $it['is_past'] ? '1' : ''; ?>"
+			data-recurring="<?php echo $it['is_recurring'] ? '1' : ''; ?>"
+			data-dates="<?php echo $it['is_recurring'] ? esc_attr( $it['dates_json'] ) : ''; ?>"
+			aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'the-black-cap' ), $it['title'] ) ); ?>"
+		><?php if ( $label ) : ?><span class="eventChip__time"><?php echo esc_html( $label ); ?></span><?php endif; ?><span class="eventChip__title"><?php echo esc_html( $it['title'] ); ?></span></button>
+		<?php
+	}
+}
+
 $events = [];
 
 $token  = get_option( 'tbc_eventbrite_token' );
@@ -200,6 +224,7 @@ foreach ( $events as $ev ) {
 			'url'         => $url,
 			'img'         => $img,
 			'date'        => tbc_format_event_date( $local ),
+			'time'        => date_i18n( 'g:ia', $ts ),
 			'is_past'     => $is_past,
 			'is_recurring' => $is_recurring,
 			'dates_json'  => $is_recurring ? wp_json_encode( $all_dates_fmt ) : '',
@@ -254,6 +279,8 @@ $weekdays  = [ __( 'Mon', 'the-black-cap' ), __( 'Tue', 'the-black-cap' ), __( '
 				$lead_blanks   = ( (int) date( 'N', $first_ts ) ) - 1; // 0 = Monday
 			?>
 			<div class="tbcCalendar__panel<?php echo 0 === $i ? ' is-active' : ''; ?>" data-tbc-cal-panel data-month-index="<?php echo (int) $i; ?>">
+
+				<?php /* Desktop/tablet: full month grid. Hidden on narrow screens. */ ?>
 				<div class="tbcCalendar__weekdays">
 					<?php foreach ( $weekdays as $wd ) : ?>
 					<span class="tbcCalendar__weekday"><?php echo esc_html( $wd ); ?></span>
@@ -273,25 +300,39 @@ $weekdays  = [ __( 'Mon', 'the-black-cap' ), __( 'Tue', 'the-black-cap' ), __( '
 						<span class="tbcCalendar__dayNum"><?php echo (int) $d; ?></span>
 						<?php if ( $items ) : ?>
 						<div class="tbcCalendar__events">
-							<?php foreach ( $items as $it ) : ?>
-							<button
-								type="button"
-								class="eventCard eventChip<?php echo $it['is_past'] ? ' eventCard--past' : ''; ?>"
-								data-title="<?php echo esc_attr( $it['title'] ); ?>"
-								data-desc="<?php echo esc_attr( $it['desc'] ); ?>"
-								data-url="<?php echo esc_attr( $it['url'] ); ?>"
-								data-img="<?php echo esc_attr( $it['img'] ); ?>"
-								data-date="<?php echo esc_attr( $it['date'] ); ?>"
-								data-past="<?php echo $it['is_past'] ? '1' : ''; ?>"
-								data-recurring="<?php echo $it['is_recurring'] ? '1' : ''; ?>"
-								data-dates="<?php echo $it['is_recurring'] ? esc_attr( $it['dates_json'] ) : ''; ?>"
-								aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'the-black-cap' ), $it['title'] ) ); ?>"
-							><?php echo esc_html( $it['title'] ); ?></button>
-							<?php endforeach; ?>
+							<?php foreach ( $items as $it ) : tbc_render_event_chip( $it ); endforeach; ?>
 						</div>
 						<?php endif; ?>
 					</div>
 					<?php endfor; ?>
+				</div>
+
+				<?php /* Mobile: chronological per-day agenda. Hidden above the grid breakpoint. */
+				$month_has_events = false;
+				?>
+				<div class="tbcCalendar__agenda">
+					<?php
+					for ( $d = 1; $d <= $days_in_month; $d++ ) :
+						$day_key = sprintf( '%s-%02d', $m['key'], $d );
+						$items   = $by_day[ $day_key ] ?? [];
+						if ( ! $items ) continue;
+						$month_has_events = true;
+						$is_today = $day_key === $today_key;
+						$day_ts   = mktime( 0, 0, 0, $m['month'], $d, $m['year'] );
+					?>
+					<div class="tbcCalendar__agendaDay<?php echo $is_today ? ' tbcCalendar__agendaDay--today' : ''; ?>">
+						<div class="tbcCalendar__agendaDate">
+							<?php echo esc_html( date_i18n( 'D j M', $day_ts ) ); ?>
+							<?php if ( $is_today ) : ?><span class="tbcCalendar__agendaToday"><?php esc_html_e( 'Today', 'the-black-cap' ); ?></span><?php endif; ?>
+						</div>
+						<div class="tbcCalendar__agendaEvents">
+							<?php foreach ( $items as $it ) : tbc_render_event_chip( $it, 'eventChip--row', $it['time'] ); endforeach; ?>
+						</div>
+					</div>
+					<?php endfor; ?>
+					<?php if ( ! $month_has_events ) : ?>
+					<p class="tbcCalendar__agendaEmpty"><?php esc_html_e( 'No events this month.', 'the-black-cap' ); ?></p>
+					<?php endif; ?>
 				</div>
 			</div>
 			<?php endforeach; ?>
@@ -302,21 +343,7 @@ $weekdays  = [ __( 'Mon', 'the-black-cap' ), __( 'Tue', 'the-black-cap' ), __( '
 	<div class="tbcCalendar tbcCalendar--undated">
 		<p class="tbcCalendar__undatedLabel"><?php esc_html_e( 'Date to be confirmed', 'the-black-cap' ); ?></p>
 		<div class="tbcCalendar__events tbcCalendar__events--undated">
-			<?php foreach ( $undated as $it ) : ?>
-			<button
-				type="button"
-				class="eventCard eventChip<?php echo $it['is_past'] ? ' eventCard--past' : ''; ?>"
-				data-title="<?php echo esc_attr( $it['title'] ); ?>"
-				data-desc="<?php echo esc_attr( $it['desc'] ); ?>"
-				data-url="<?php echo esc_attr( $it['url'] ); ?>"
-				data-img="<?php echo esc_attr( $it['img'] ); ?>"
-				data-date=""
-				data-past="<?php echo $it['is_past'] ? '1' : ''; ?>"
-				data-recurring=""
-				data-dates=""
-				aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'the-black-cap' ), $it['title'] ) ); ?>"
-			><?php echo esc_html( $it['title'] ); ?></button>
-			<?php endforeach; ?>
+			<?php foreach ( $undated as $it ) : tbc_render_event_chip( $it ); endforeach; ?>
 		</div>
 	</div>
 	<?php endif; ?>
