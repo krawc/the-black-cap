@@ -511,6 +511,69 @@
   }
 })();
 
+/* ── What's On calendar — month switcher ──────────────────────────── */
+(function () {
+  'use strict';
+
+  function initCalendar(cal) {
+    var btns    = Array.prototype.slice.call(cal.querySelectorAll('[data-tbc-cal-btn]'));
+    var panels  = Array.prototype.slice.call(cal.querySelectorAll('[data-tbc-cal-panel]'));
+    var prevBtn = cal.querySelector('[data-tbc-cal-prev]');
+    var nextBtn = cal.querySelector('[data-tbc-cal-next]');
+    var monthsWrap = cal.querySelector('[data-tbc-cal-months]');
+    if (!btns.length || !panels.length) return;
+
+    var active = btns.findIndex(function (b) { return b.classList.contains('is-active'); });
+    if (active < 0) active = 0;
+
+    function show(index, focusBtn) {
+      index = Math.max(0, Math.min(btns.length - 1, index));
+      if (index === active && btns[index].classList.contains('is-active')) {
+        // still make sure state is consistent on first run
+      }
+      active = index;
+
+      btns.forEach(function (b, i) {
+        var isActive = i === active;
+        b.classList.toggle('is-active', isActive);
+        b.setAttribute('aria-current', isActive ? 'true' : 'false');
+      });
+      panels.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === active);
+      });
+
+      var activeBtn = btns[active];
+      if (activeBtn && monthsWrap) {
+        var left = activeBtn.offsetLeft - (monthsWrap.clientWidth - activeBtn.clientWidth) / 2;
+        monthsWrap.scrollTo({ left: left, behavior: 'smooth' });
+      }
+      if (focusBtn && activeBtn) activeBtn.focus();
+
+      if (prevBtn) prevBtn.disabled = active === 0;
+      if (nextBtn) nextBtn.disabled = active === btns.length - 1;
+    }
+
+    btns.forEach(function (b, i) {
+      b.addEventListener('click', function () { show(i); });
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { show(active - 1, true); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { show(active + 1, true); });
+
+    show(active);
+  }
+
+  function init() {
+    document.querySelectorAll('[data-tbc-calendar]').forEach(initCalendar);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
 /* ── Venue Hire ─────────────────────────────────────────────────── */
 (function () {
   'use strict';

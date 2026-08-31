@@ -11,7 +11,6 @@ if ( ! function_exists( 'tbc_format_event_date' ) ) {
 	}
 }
 
-$limit  = max( 1, (int) ( $attributes['limit'] ?? 10 ) );
 $events = [];
 
 $token  = get_option( 'tbc_eventbrite_token' );
@@ -135,97 +134,190 @@ usort( $collapsed, static function ( $a, $b ) {
 	return $ta <=> $tb;
 } );
 
-$events = array_slice( $collapsed, 0, $limit );
+// Show every upcoming event — no cap. The $limit attribute is no longer
+// used to truncate the list now that events are laid out on a calendar
+// rather than a horizontally-scrolling slider.
+$events = $collapsed;
+
+/* ── Build a day → occurrences map for the calendar ─────────────── */
+// A recurring event contributes one chip per future occurrence date so
+// the calendar shows it on every day it actually runs.
+
+$by_day  = [];
+$undated = []; // events with no resolvable start date (manual fallback IDs only)
+
+foreach ( $events as $ev ) {
+	$title        = $ev['name']['text'] ?? '';
+	$full_desc    = $ev['description']['text'] ?? $ev['summary'] ?? '';
+	$excerpt      = wp_trim_words( $ev['summary'] ?? $full_desc, 18 );
+	$url          = $ev['url'] ?? '#';
+	$img          = $ev['logo']['original']['url'] ?? $ev['logo']['url'] ?? '';
+	$short_desc   = substr( $full_desc, 0, 600 );
+	$is_recurring = ! empty( $ev['_recurring'] );
+	$end_utc      = $ev['end']['utc'] ?? '';
+	$is_past      = $end_utc && ( strtotime( $end_utc ) < $now );
+
+	$locals = [ $ev['start']['local'] ?? '' ];
+	if ( $is_recurring ) {
+		foreach ( $ev['_future_starts'] ?? [] as $fl ) {
+			$locals[] = $fl;
+		}
+	}
+	$locals = array_values( array_unique( array_filter( $locals ) ) );
+
+	// Full formatted date list, used in the popup for recurring events.
+	$all_dates_fmt = [];
+	foreach ( $locals as $local ) {
+		$fmt = tbc_format_event_date( $local );
+		if ( $fmt ) $all_dates_fmt[] = $fmt;
+	}
+
+	if ( ! $locals ) {
+		// No resolvable date (manual fallback event IDs with no known start
+		// time) — can't be placed on the calendar grid, so list separately.
+		$undated[] = [
+			'title'       => $title,
+			'excerpt'     => $excerpt,
+			'desc'        => $short_desc,
+			'url'         => $url,
+			'img'         => $img,
+			'date'        => '',
+			'is_past'     => $is_past,
+			'is_recurring' => false,
+			'dates_json'  => '',
+		];
+		continue;
+	}
+
+	foreach ( $locals as $local ) {
+		$ts = strtotime( $local );
+		if ( ! $ts ) continue;
+
+		$by_day[ date( 'Y-m-d', $ts ) ][] = [
+			'title'       => $title,
+			'excerpt'     => $excerpt,
+			'desc'        => $short_desc,
+			'url'         => $url,
+			'img'         => $img,
+			'date'        => tbc_format_event_date( $local ),
+			'is_past'     => $is_past,
+			'is_recurring' => $is_recurring,
+			'dates_json'  => $is_recurring ? wp_json_encode( $all_dates_fmt ) : '',
+			'sort'        => $ts,
+		];
+	}
+}
+
+foreach ( $by_day as $key => $items ) {
+	usort( $items, static function ( $a, $b ) { return $a['sort'] <=> $b['sort']; } );
+	$by_day[ $key ] = $items;
+}
+
+/* ── 12 months forward, starting with the current month ──────────── */
+
+$months     = [];
+$month_base = strtotime( date( 'Y-m-01', $now ) );
+
+for ( $i = 0; $i < 12; $i++ ) {
+	$mts       = strtotime( "+{$i} month", $month_base );
+	$months[]  = [
+		'key'   => date( 'Y-m', $mts ),
+		'label' => date_i18n( 'F Y', $mts ),
+		'year'  => (int) date( 'Y', $mts ),
+		'month' => (int) date( 'n', $mts ),
+	];
+}
+
+$today_key = date( 'Y-m-d', $now );
+$weekdays  = [ __( 'Mon', 'the-black-cap' ), __( 'Tue', 'the-black-cap' ), __( 'Wed', 'the-black-cap' ), __( 'Thu', 'the-black-cap' ), __( 'Fri', 'the-black-cap' ), __( 'Sat', 'the-black-cap' ), __( 'Sun', 'the-black-cap' ) ];
 ?>
 <section class="whatsOn" id="whats-on">
 	<div class="whatsOnInner">
 		<h2 class="whatsOnTitle"><?php echo esc_html( $attributes['heading'] ?? "What's On" ); ?></h2>
 	</div>
-	<div class="posterSlider">
-		<div class="posterTrack">
-			<?php if ( $events ) :
-				foreach ( $events as $ev ) :
-					$title        = $ev['name']['text'] ?? '';
-					$full_desc    = $ev['description']['text'] ?? $ev['summary'] ?? '';
-					$excerpt      = wp_trim_words( $ev['summary'] ?? $full_desc, 18 );
-					$url          = $ev['url'] ?? '#';
-					$img          = $ev['logo']['original']['url'] ?? $ev['logo']['url'] ?? '';
-					$date         = tbc_format_event_date( $ev['start']['local'] ?? '' );
-					$short_desc   = substr( $full_desc, 0, 600 );
-					$is_recurring = ! empty( $ev['_recurring'] );
 
-					// Other future dates for the popup.
-					$future_dates = [];
-					if ( $is_recurring ) {
-						foreach ( $ev['_future_starts'] ?? [] as $local ) {
-							$fmt = tbc_format_event_date( $local );
-							if ( $fmt ) $future_dates[] = $fmt;
-						}
-					}
+	<div class="tbcCalendar" data-tbc-calendar>
+		<div class="tbcCalendar__nav">
+			<button type="button" class="tbcCalendar__arrow tbcCalendar__arrow--prev" data-tbc-cal-prev aria-label="<?php esc_attr_e( 'Previous month', 'the-black-cap' ); ?>">&#10094;</button>
+			<div class="tbcCalendar__months" data-tbc-cal-months>
+				<?php foreach ( $months as $i => $m ) : ?>
+				<button type="button" class="tbcCalendar__monthBtn<?php echo 0 === $i ? ' is-active' : ''; ?>" data-tbc-cal-btn data-month-index="<?php echo (int) $i; ?>"><?php echo esc_html( $m['label'] ); ?></button>
+				<?php endforeach; ?>
+			</div>
+			<button type="button" class="tbcCalendar__arrow tbcCalendar__arrow--next" data-tbc-cal-next aria-label="<?php esc_attr_e( 'Next month', 'the-black-cap' ); ?>">&#10095;</button>
+		</div>
 
-					$end_utc = $ev['end']['utc'] ?? '';
-					$is_past = $end_utc && ( strtotime( $end_utc ) < $now );
-
-					$btn_label = $is_past
-						? esc_html__( 'View Event', 'the-black-cap' )
-						: esc_html__( 'Get Tickets', 'the-black-cap' );
+		<div class="tbcCalendar__panels">
+			<?php foreach ( $months as $i => $m ) :
+				$first_ts      = mktime( 0, 0, 0, $m['month'], 1, $m['year'] );
+				$days_in_month = (int) date( 't', $first_ts );
+				$lead_blanks   = ( (int) date( 'N', $first_ts ) ) - 1; // 0 = Monday
 			?>
-			<article class="eventCard<?php echo $is_past ? ' eventCard--past' : ''; ?>"
-				data-title="<?php echo esc_attr( $title ); ?>"
-				data-desc="<?php echo esc_attr( $short_desc ); ?>"
-				data-url="<?php echo esc_attr( $url ); ?>"
-				data-img="<?php echo esc_attr( $img ); ?>"
-				data-date="<?php echo esc_attr( $date ); ?>"
-				data-past="<?php echo $is_past ? '1' : ''; ?>"
-				data-recurring="<?php echo $is_recurring ? '1' : ''; ?>"
-				data-dates="<?php echo $is_recurring ? esc_attr( wp_json_encode( array_values( array_merge( array_filter( [ $date ] ), $future_dates ) ) ) ) : ''; ?>"
-				tabindex="0"
-				role="button"
-				aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'the-black-cap' ), $title ) ); ?>"
-			>
-				<div class="eventCard__img<?php echo $img ? '' : ' eventCard__img--empty'; ?>">
-					<?php if ( $img ) : ?>
-					<img src="<?php echo esc_url( $img ); ?>" alt="<?php echo esc_attr( $title ); ?>" loading="lazy">
-					<?php endif; ?>
+			<div class="tbcCalendar__panel<?php echo 0 === $i ? ' is-active' : ''; ?>" data-tbc-cal-panel data-month-index="<?php echo (int) $i; ?>">
+				<div class="tbcCalendar__weekdays">
+					<?php foreach ( $weekdays as $wd ) : ?>
+					<span class="tbcCalendar__weekday"><?php echo esc_html( $wd ); ?></span>
+					<?php endforeach; ?>
 				</div>
-				<div class="eventCard__body">
+				<div class="tbcCalendar__grid">
+					<?php for ( $b = 0; $b < $lead_blanks; $b++ ) : ?>
+					<div class="tbcCalendar__day tbcCalendar__day--empty"></div>
+					<?php endfor;
 
-					<?php if ( $is_recurring ) : ?>
-					<div class="eventCard__dates">
-						<span class="eventCard__dates-item"><?php echo esc_html( $date ); ?></span>
-						<?php if ( $future_dates ) : ?>
-						<button class="eventCard__dates-more" type="button" aria-expanded="false">+<?php echo count( $future_dates ); ?> more</button>
-						<div class="eventCard__dates-bubble">
-							<?php foreach ( $future_dates as $fd ) : ?>
-							<span><?php echo esc_html( $fd ); ?></span>
+					for ( $d = 1; $d <= $days_in_month; $d++ ) :
+						$day_key = sprintf( '%s-%02d', $m['key'], $d );
+						$items   = $by_day[ $day_key ] ?? [];
+						$is_today = $day_key === $today_key;
+					?>
+					<div class="tbcCalendar__day<?php echo $is_today ? ' tbcCalendar__day--today' : ''; ?><?php echo $items ? ' tbcCalendar__day--has-events' : ''; ?>">
+						<span class="tbcCalendar__dayNum"><?php echo (int) $d; ?></span>
+						<?php if ( $items ) : ?>
+						<div class="tbcCalendar__events">
+							<?php foreach ( $items as $it ) : ?>
+							<button
+								type="button"
+								class="eventCard eventChip<?php echo $it['is_past'] ? ' eventCard--past' : ''; ?>"
+								data-title="<?php echo esc_attr( $it['title'] ); ?>"
+								data-desc="<?php echo esc_attr( $it['desc'] ); ?>"
+								data-url="<?php echo esc_attr( $it['url'] ); ?>"
+								data-img="<?php echo esc_attr( $it['img'] ); ?>"
+								data-date="<?php echo esc_attr( $it['date'] ); ?>"
+								data-past="<?php echo $it['is_past'] ? '1' : ''; ?>"
+								data-recurring="<?php echo $it['is_recurring'] ? '1' : ''; ?>"
+								data-dates="<?php echo $it['is_recurring'] ? esc_attr( $it['dates_json'] ) : ''; ?>"
+								aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'the-black-cap' ), $it['title'] ) ); ?>"
+							><?php echo esc_html( $it['title'] ); ?></button>
 							<?php endforeach; ?>
 						</div>
 						<?php endif; ?>
 					</div>
-					<?php elseif ( $date ) : ?>
-					<time class="eventCard__date"><?php echo esc_html( $date ); ?></time>
-					<?php endif; ?>
-
-					<h3 class="eventCard__title"><?php echo esc_html( $title ); ?></h3>
-
-					<?php if ( $excerpt ) : ?>
-					<p class="eventCard__excerpt"><?php echo esc_html( $excerpt ); ?></p>
-					<?php endif; ?>
-
-					<a class="eventCard__tickets<?php echo $is_past ? ' eventCard__tickets--past' : ''; ?>"
-						href="<?php echo esc_url( $url ); ?>"
-						target="_blank"
-						rel="noopener noreferrer"
-						onclick="event.stopPropagation()"
-					><?php echo $btn_label; ?></a>
+					<?php endfor; ?>
 				</div>
-			</article>
-			<?php endforeach;
-			else :
-				for ( $i = 0; $i < 4; $i++ ) : ?>
-				<div class="posterCard"></div>
-			<?php endfor;
-			endif; ?>
+			</div>
+			<?php endforeach; ?>
 		</div>
 	</div>
+
+	<?php if ( $undated ) : ?>
+	<div class="tbcCalendar tbcCalendar--undated">
+		<p class="tbcCalendar__undatedLabel"><?php esc_html_e( 'Date to be confirmed', 'the-black-cap' ); ?></p>
+		<div class="tbcCalendar__events tbcCalendar__events--undated">
+			<?php foreach ( $undated as $it ) : ?>
+			<button
+				type="button"
+				class="eventCard eventChip<?php echo $it['is_past'] ? ' eventCard--past' : ''; ?>"
+				data-title="<?php echo esc_attr( $it['title'] ); ?>"
+				data-desc="<?php echo esc_attr( $it['desc'] ); ?>"
+				data-url="<?php echo esc_attr( $it['url'] ); ?>"
+				data-img="<?php echo esc_attr( $it['img'] ); ?>"
+				data-date=""
+				data-past="<?php echo $it['is_past'] ? '1' : ''; ?>"
+				data-recurring=""
+				data-dates=""
+				aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'the-black-cap' ), $it['title'] ) ); ?>"
+			><?php echo esc_html( $it['title'] ); ?></button>
+			<?php endforeach; ?>
+		</div>
+	</div>
+	<?php endif; ?>
 </section>

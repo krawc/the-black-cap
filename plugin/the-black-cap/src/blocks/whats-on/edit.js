@@ -1,10 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextareaControl, RangeControl, TextControl, Notice } from '@wordpress/components';
+import { PanelBody, TextareaControl, TextControl, Notice } from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { heading, eventIds, limit } = attributes;
+	const { heading, eventIds } = attributes;
 	const blockProps = useBlockProps();
 
 	return (
@@ -19,15 +19,8 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 				<PanelBody title={ __( 'Eventbrite Settings', 'the-black-cap' ) } initialOpen={ false }>
 					<Notice status="info" isDismissible={ false }>
-						{ __( 'Your Eventbrite API token and Organisation ID are configured in Settings → Black Cap. When set, upcoming events are fetched automatically. The fallback IDs below are only used when the API is unavailable.', 'the-black-cap' ) }
+						{ __( 'Your Eventbrite API token and Organisation ID are configured in Settings → Black Cap. All upcoming events for the next 12 months are shown on the calendar automatically. The fallback IDs below are only used when the API is unavailable.', 'the-black-cap' ) }
 					</Notice>
-					<RangeControl
-						label={ __( 'Max events to show', 'the-black-cap' ) }
-						value={ limit }
-						min={ 1 }
-						max={ 20 }
-						onChange={ ( v ) => setAttributes( { limit: v } ) }
-					/>
 					<TextareaControl
 						label={ __( 'Fallback Eventbrite event IDs', 'the-black-cap' ) }
 						help={ __( 'Comma-separated numeric Eventbrite event IDs (the number at the end of the event URL). Used only when no API token is configured or the API call fails.', 'the-black-cap' ) }
