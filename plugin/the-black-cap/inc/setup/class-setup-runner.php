@@ -463,6 +463,7 @@ class TBC_Setup_Runner {
 					'phone'    => '020 7428 2721',
 					'email'    => 'Sassy@blackcapcamden.co.uk',
 				] ),
+				$b( 'festive', [] ),
 				$b( 'whats-on', [ 'eventIds' => '', 'limit' => 8 ] ),
 				$b( 'story', [
 					'title' => 'Legendary',
