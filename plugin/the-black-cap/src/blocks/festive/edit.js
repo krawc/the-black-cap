@@ -1,10 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, TextareaControl } from '@wordpress/components';
+import { PanelBody, TextControl, TextareaControl, ToggleControl, Notice } from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { heading, subtitle, intro, closeHeadline, email } = attributes;
+	const { heading, subtitle, intro, closeHeadline, email, showShimmer } = attributes;
 	const blockProps = useBlockProps();
 
 	return (
@@ -39,9 +39,22 @@ export default function Edit( { attributes, setAttributes } ) {
 						onChange={ ( v ) => setAttributes( { email: v } ) }
 					/>
 				</PanelBody>
+				<PanelBody title={ __( 'Background', 'the-black-cap' ) }>
+					<ToggleControl
+						label={ __( 'Shimmering sparkle background', 'the-black-cap' ) }
+						help={ __( 'Animated canvas behind all three festive sections. Turn off for a plain black background.', 'the-black-cap' ) }
+						checked={ !! showShimmer }
+						onChange={ ( v ) => setAttributes( { showShimmer: v } ) }
+					/>
+				</PanelBody>
 			</InspectorControls>
 
 			<div { ...blockProps }>
+				{ showShimmer && (
+					<Notice status="info" isDismissible={ false } className="tbc-editor-notice">
+						{ __( 'The shimmering background is a frontend-only canvas animation and won\'t run here — sections show on their plain black background instead.', 'the-black-cap' ) }
+					</Notice>
+				) }
 				<ServerSideRender
 					block="the-black-cap/festive"
 					attributes={ attributes }

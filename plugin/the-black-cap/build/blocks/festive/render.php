@@ -13,6 +13,7 @@ $subtitle       = $attributes['subtitle']      ?? 'Celebration at The Black Cap'
 $intro          = $attributes['intro']         ?? '';
 $close_headline = $attributes['closeHeadline'] ?? '';
 $email          = $attributes['email']         ?? 'Sassy@blackcapcamden.co.uk';
+$show_shimmer   = $attributes['showShimmer']   ?? true;
 
 $svg_base = TBC_PLUGIN_URL . '/assets/svg/xmas';
 
@@ -38,6 +39,11 @@ $festive_tree_strokes = [
 
 $intro_paragraphs = array_filter( array_map( 'trim', preg_split( "/\n\s*\n/", $intro ) ) );
 ?>
+<div class="festiveWrapper">
+<?php if ( $show_shimmer ) : ?>
+<canvas id="sparkle-canvas" class="festiveSparkleCanvas" aria-hidden="true"></canvas>
+<?php endif; ?>
+
 <section class="festive" id="festive">
 	<div class="festiveScene">
 		<div class="festiveTreeBlock">
@@ -108,7 +114,11 @@ $intro_paragraphs = array_filter( array_map( 'trim', preg_split( "/\n\s*\n/", $i
 </section>
 
 <section class="festiveClose" id="festive-contact">
-	<img src="<?php echo esc_url( "{$svg_base}/santa.svg" ); ?>" class="festiveSanta" alt="" />
+	<div class="festiveSantaRow">
+		<img src="<?php echo esc_url( "{$svg_base}/santa.svg" ); ?>" class="festiveSanta" alt="" />
+		<img src="<?php echo esc_url( "{$svg_base}/santa.svg" ); ?>" class="festiveSanta" alt="" />
+		<img src="<?php echo esc_url( "{$svg_base}/santa.svg" ); ?>" class="festiveSanta" alt="" />
+	</div>
 	<p class="festiveCloseHeadline">
 		<?php
 		// Line break after every "Make it X." sentence.
@@ -121,3 +131,5 @@ $intro_paragraphs = array_filter( array_map( 'trim', preg_split( "/\n\s*\n/", $i
 		<a href="<?php echo esc_url( 'mailto:' . $email ); ?>" class="festiveCloseEmail"><?php echo esc_html( $email ); ?></a>
 	</p>
 </section>
+
+</div><!-- .festiveWrapper -->

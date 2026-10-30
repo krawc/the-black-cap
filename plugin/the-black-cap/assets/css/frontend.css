@@ -348,11 +348,39 @@ margin-top: -0.6rem;
   padding-top: clamp(1.5rem, 3vw, 3rem);
 }
 
-.festive {
+/* Shared shimmer canvas behind all three festive sections. The canvas
+   paints its own solid-black wash every frame, so the sections' own
+   background:#000 below is just a no-JS/pre-paint fallback. */
+.festiveWrapper {
   position: relative;
+  overflow: hidden;
+}
+
+.festiveSparkleCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.festive,
+.festiveColumns,
+.festiveClose {
+  position: relative;
+  z-index: 1;
+}
+
+.festive {
   padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
   padding-bottom: clamp(3rem, 6vw, 6rem);
-  background: #000;
+  /* Transparent, not #000: this sits at z-index:1, directly over the
+     shimmer canvas (z-index:0) — an opaque background here would hide it
+     completely. :root's global background:#000 shows through as the
+     no-JS/pre-paint fallback instead. */
+  background: transparent;
 }
 
 .festiveScene {
@@ -459,7 +487,7 @@ margin-top: -0.6rem;
 .festiveColumns {
   padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
   padding-bottom: clamp(4rem, 8vw, 8rem);
-  background: #000;
+  background: transparent;
 }
 
 .festiveColumnsGrid {
@@ -516,11 +544,37 @@ margin-top: -0.6rem;
 
 .festiveList {
   margin: 0;
-  padding-left: 1.2rem;
+  padding-left: 0;
+  list-style: none;
   color: rgba(255, 255, 255, 0.68);
   font-size: clamp(0.88rem, 1.3vw, 0.98rem);
   line-height: 1.8;
 }
+
+.festiveList li {
+  position: relative;
+  padding-left: 1.4rem;
+}
+
+/* Colored dot bullets — same five neon tones as the tree's light strings
+   (see $festive_tree_strokes in render.php), cycled per item. */
+.festiveList li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--bullet-color, #fff);
+  box-shadow: 0 0 0.4rem var(--bullet-color, #fff);
+}
+
+.festiveList li:nth-child(5n+1) { --bullet-color: #EF00C7; }
+.festiveList li:nth-child(5n+2) { --bullet-color: #0F9BFF; }
+.festiveList li:nth-child(5n+3) { --bullet-color: #00EFEF; }
+.festiveList li:nth-child(5n+4) { --bullet-color: #FF9532; }
+.festiveList li:nth-child(5n+5) { --bullet-color: #FF1317; }
 
 .festiveShoutList {
   margin: 0;
@@ -529,17 +583,27 @@ margin-top: -0.6rem;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  color: #fff;
   font-size: clamp(0.95rem, 1.5vw, 1.1rem);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
 
+/* Same neon palette (minus blue, to stay distinct from the bullet list
+   above), one color per line, question + answer sharing the same hue. */
+.festiveShoutList li:nth-child(4n+1) { color: #EF00C7; }
+.festiveShoutList li:nth-child(4n+2) { color: #00EFEF; }
+.festiveShoutList li:nth-child(4n+3) { color: #FF9532; }
+.festiveShoutList li:nth-child(4n+4) { color: #FF1317; }
+
+.festiveShoutList li {
+  text-shadow: 0 0 0.35rem currentColor;
+}
+
 .festiveShoutList span {
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 600;
+  font-weight: 700;
   margin-right: 0.35rem;
+  opacity: 0.82;
 }
 
 .festiveClose {
@@ -549,13 +613,28 @@ margin-top: -0.6rem;
   gap: 1rem;
   padding: clamp(2rem, 6vw, 4rem) clamp(1.15rem, 4vw, 4rem);
   padding-bottom: clamp(4rem, 8vw, 8rem);
-  background: #000;
+  background: transparent;
   text-align: center;
 }
 
+.festiveSantaRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(0.5rem, 2vw, 1.25rem);
+}
+
 .festiveSanta {
-  width: clamp(6rem, 14vw, 9rem);
+  width: clamp(4.6rem, 11vw, 7.5rem);
   height: auto;
+}
+
+.festiveSantaRow .festiveSanta:nth-child(odd) {
+  transform: rotate(-6deg);
+}
+
+.festiveSantaRow .festiveSanta:nth-child(even) {
+  transform: rotate(6deg);
 }
 
 .festiveCloseHeadline {
@@ -595,8 +674,8 @@ margin-top: -0.6rem;
   }
 
   .festiveTreeBlock {
-    width: clamp(7rem, 30vw, 10rem);
-    margin: 0 auto;
+    width: clamp(8rem, 34vw, 11.5rem);
+    margin: 0;
     padding-top: 0;
   }
 

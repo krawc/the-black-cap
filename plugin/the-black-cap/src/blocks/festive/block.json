@@ -18,7 +18,8 @@
       "type": "string",
       "default": "Make this Christmas extra. Make it fabulous. Make it Black Cap."
     },
-    "email": { "type": "string", "default": "Sassy@blackcapcamden.co.uk" }
+    "email": { "type": "string", "default": "Sassy@blackcapcamden.co.uk" },
+    "showShimmer": { "type": "boolean", "default": true }
   },
   "editorScript": "file:./index.js",
   "render": "file:./render.php"

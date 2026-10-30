@@ -75,6 +75,18 @@ add_action( 'wp_enqueue_scripts', function () {
 		TBC_PLUGIN_VERSION,
 		true
 	);
+
+	// Sparkle canvas is only relevant to the Festive block, so it's kept out
+	// of the main frontend bundle and loaded just on pages that have it.
+	if ( strpos( $post->post_content, '<!-- wp:the-black-cap/festive' ) !== false ) {
+		wp_enqueue_script(
+			'tbc-festive-sparkle',
+			TBC_PLUGIN_URL . '/assets/js/festive-sparkle.js',
+			[],
+			filemtime( TBC_PLUGIN_DIR . 'assets/js/festive-sparkle.js' ),
+			true
+		);
+	}
 } );
 
 // Google Fonts loaded non-blocking (media="print" swap trick) to avoid
