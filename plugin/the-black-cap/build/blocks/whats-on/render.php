@@ -158,6 +158,35 @@ usort( $collapsed, static function ( $a, $b ) {
 	return $ta <=> $tb;
 } );
 
+/* ── "This week" slider ───────────────────────────────────────────── */
+// The most upcoming events — preferring the coming 7 days, backfilled
+// with the next soonest events beyond that window when the week itself
+// is quiet, so the strip isn't empty just because nothing happens to
+// land in those exact 7 days. $collapsed is already sorted soonest
+// first, so both passes preserve chronological order.
+
+$week_cutoff = $now + 7 * DAY_IN_SECONDS;
+$week_events = [];
+$week_ids    = [];
+
+foreach ( $collapsed as $ev ) {
+	$ts = strtotime( $ev['start']['local'] ?? '' ) ?: 0;
+	if ( $ts && $ts <= $week_cutoff ) {
+		$week_events[] = $ev;
+		$week_ids[]    = $ev['id'] ?? '';
+	}
+}
+
+if ( count( $week_events ) < 3 ) {
+	foreach ( $collapsed as $ev ) {
+		if ( count( $week_events ) >= 6 ) break;
+		if ( in_array( $ev['id'] ?? '', $week_ids, true ) ) continue;
+		$week_events[] = $ev;
+	}
+}
+
+$week_events = array_slice( $week_events, 0, 10 );
+
 // Show every upcoming event — no cap. The $limit attribute is no longer
 // used to truncate the list now that events are laid out on a calendar
 // rather than a horizontally-scrolling slider.
@@ -260,6 +289,91 @@ $weekdays  = [ __( 'Mon', 'the-black-cap' ), __( 'Tue', 'the-black-cap' ), __( '
 	<div class="whatsOnInner">
 		<h2 class="whatsOnTitle"><?php echo esc_html( $attributes['heading'] ?? "What's On" ); ?></h2>
 	</div>
+
+	<?php if ( $week_events ) : ?>
+	<p class="whatsOnWeekLabel"><?php esc_html_e( 'Coming Up', 'the-black-cap' ); ?></p>
+	<div class="posterSlider">
+		<div class="posterTrack">
+			<?php foreach ( $week_events as $ev ) :
+				$title        = $ev['name']['text'] ?? '';
+				$full_desc    = $ev['description']['text'] ?? $ev['summary'] ?? '';
+				$excerpt      = wp_trim_words( $ev['summary'] ?? $full_desc, 18 );
+				$url          = $ev['url'] ?? '#';
+				$img          = $ev['logo']['original']['url'] ?? $ev['logo']['url'] ?? '';
+				$date         = tbc_format_event_date( $ev['start']['local'] ?? '' );
+				$short_desc   = substr( $full_desc, 0, 600 );
+				$is_recurring = ! empty( $ev['_recurring'] );
+
+				// Other future dates for the popup.
+				$future_dates = [];
+				if ( $is_recurring ) {
+					foreach ( $ev['_future_starts'] ?? [] as $local ) {
+						$fmt = tbc_format_event_date( $local );
+						if ( $fmt ) $future_dates[] = $fmt;
+					}
+				}
+
+				$end_utc = $ev['end']['utc'] ?? '';
+				$is_past = $end_utc && ( strtotime( $end_utc ) < $now );
+
+				$btn_label = $is_past
+					? esc_html__( 'View Event', 'the-black-cap' )
+					: esc_html__( 'Get Tickets', 'the-black-cap' );
+			?>
+			<article class="eventCard<?php echo $is_past ? ' eventCard--past' : ''; ?>"
+				data-title="<?php echo esc_attr( $title ); ?>"
+				data-desc="<?php echo esc_attr( $short_desc ); ?>"
+				data-url="<?php echo esc_attr( $url ); ?>"
+				data-img="<?php echo esc_attr( $img ); ?>"
+				data-date="<?php echo esc_attr( $date ); ?>"
+				data-past="<?php echo $is_past ? '1' : ''; ?>"
+				data-recurring="<?php echo $is_recurring ? '1' : ''; ?>"
+				data-dates="<?php echo $is_recurring ? esc_attr( wp_json_encode( array_values( array_merge( array_filter( [ $date ] ), $future_dates ) ) ) ) : ''; ?>"
+				tabindex="0"
+				role="button"
+				aria-label="<?php echo esc_attr( sprintf( __( 'View details for %s', 'the-black-cap' ), $title ) ); ?>"
+			>
+				<div class="eventCard__img<?php echo $img ? '' : ' eventCard__img--empty'; ?>">
+					<?php if ( $img ) : ?>
+					<img src="<?php echo esc_url( $img ); ?>" alt="<?php echo esc_attr( $title ); ?>" loading="lazy">
+					<?php endif; ?>
+				</div>
+				<div class="eventCard__body">
+
+					<?php if ( $is_recurring ) : ?>
+					<div class="eventCard__dates">
+						<span class="eventCard__dates-item"><?php echo esc_html( $date ); ?></span>
+						<?php if ( $future_dates ) : ?>
+						<button class="eventCard__dates-more" type="button" aria-expanded="false">+<?php echo count( $future_dates ); ?> more</button>
+						<div class="eventCard__dates-bubble">
+							<?php foreach ( $future_dates as $fd ) : ?>
+							<span><?php echo esc_html( $fd ); ?></span>
+							<?php endforeach; ?>
+						</div>
+						<?php endif; ?>
+					</div>
+					<?php elseif ( $date ) : ?>
+					<time class="eventCard__date"><?php echo esc_html( $date ); ?></time>
+					<?php endif; ?>
+
+					<h3 class="eventCard__title"><?php echo esc_html( $title ); ?></h3>
+
+					<?php if ( $excerpt ) : ?>
+					<p class="eventCard__excerpt"><?php echo esc_html( $excerpt ); ?></p>
+					<?php endif; ?>
+
+					<a class="eventCard__tickets<?php echo $is_past ? ' eventCard__tickets--past' : ''; ?>"
+						href="<?php echo esc_url( $url ); ?>"
+						target="_blank"
+						rel="noopener noreferrer"
+						onclick="event.stopPropagation()"
+					><?php echo $btn_label; ?></a>
+				</div>
+			</article>
+			<?php endforeach; ?>
+		</div>
+	</div>
+	<?php endif; ?>
 
 	<div class="tbcCalendar" data-tbc-calendar>
 		<div class="tbcCalendar__nav">

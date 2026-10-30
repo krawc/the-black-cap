@@ -463,7 +463,7 @@ class TBC_Setup_Runner {
 					'phone'    => '020 7428 2721',
 					'email'    => 'Sassy@blackcapcamden.co.uk',
 				] ),
-				$b( 'whats-on', [ 'eventIds' => '', 'limit' => 8 ] ),
+				$b( 'whats-on', [ 'eventIds' => '' ] ),
 				$b( 'story', [
 					'title' => 'Legendary',
 					'copy'  => "The Black Cap isn't just a venue with a famous name - it's a building, a stage, and a community landmark. From its historic façade on Camden High Street to the performance room that helped shape London cabaret, The Black Cap has long been a place where talent breaks through, audiences gather and queer culture is celebrated.",

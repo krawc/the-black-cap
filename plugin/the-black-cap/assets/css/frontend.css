@@ -453,6 +453,17 @@ h2 {
     0 0 2.2rem rgba(100, 244, 255, 0.28);
 }
 
+.whatsOnWeekLabel {
+  margin: 0 0 0.6rem;
+  padding: 0 clamp(1.15rem, 4vw, 4rem);
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #64F4FF;
+}
+
 .posterSlider {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -461,6 +472,14 @@ h2 {
   /* No padding here — cards align via the track's padding-left.
      scroll-padding-left ensures every snap lands at the same indent. */
   scroll-padding-left: clamp(1.15rem, 4vw, 4rem);
+}
+
+/* In What's On the slider now sits above the calendar rather than
+   being the section's only content, so it needs its own breathing
+   room below it. Scoped so it doesn't affect Our Rooms' reused
+   .posterSlider. */
+.whatsOn .posterSlider {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
 }
 
 .posterSlider::-webkit-scrollbar {
@@ -3085,24 +3104,25 @@ h2 {
 
 /* ── Subscribe button & modal ──────────────────────────────────────────── */
 .heroSubscribe {
-  font-size: 0.68rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.75);
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.18);
+  border: 1.5px solid rgba(255,255,255,0.3);
   border-radius: 999px;
-  padding: 0.4rem 1.4rem;
+  padding: 0.75rem 2.4rem;
   cursor: pointer;
-  margin-top: 0.8rem;
-  transition: color 0.15s, border-color 0.15s;
+  margin-top: 1.2rem;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 
 .heroSubscribe:hover,
 .heroSubscribe:focus-visible {
-  color: #fff;
-  border-color: rgba(255,255,255,0.5);
+  color: #000;
+  background: #fff;
+  border-color: #fff;
   outline: none;
 }
 
