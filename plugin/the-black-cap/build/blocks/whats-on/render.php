@@ -291,7 +291,6 @@ $weekdays  = [ __( 'Mon', 'the-black-cap' ), __( 'Tue', 'the-black-cap' ), __( '
 	</div>
 
 	<?php if ( $week_events ) : ?>
-	<p class="whatsOnWeekLabel"><?php esc_html_e( 'Coming Up', 'the-black-cap' ); ?></p>
 	<div class="posterSlider">
 		<div class="posterTrack">
 			<?php foreach ( $week_events as $ev ) :
