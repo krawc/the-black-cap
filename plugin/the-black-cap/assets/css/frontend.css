@@ -348,6 +348,343 @@ margin-top: -0.6rem;
   padding-top: clamp(1.5rem, 3vw, 3rem);
 }
 
+/* Shared shimmer canvas behind all three festive sections. The canvas
+   paints its own solid-black wash every frame, so the sections' own
+   background:#000 below is just a no-JS/pre-paint fallback. */
+.festiveWrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.festiveSparkleCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.festive,
+.festiveColumns,
+.festiveClose {
+  position: relative;
+  z-index: 1;
+}
+
+.festive {
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(3rem, 6vw, 6rem);
+  /* Transparent, not #000: this sits at z-index:1, directly over the
+     shimmer canvas (z-index:0) — an opaque background here would hide it
+     completely. :root's global background:#000 shows through as the
+     no-JS/pre-paint fallback instead. */
+  background: transparent;
+}
+
+.festiveScene {
+  display: flex;
+  align-items: flex-start;
+  gap: 0 clamp(2rem, 4vw, 3.5rem);
+}
+
+.festiveTreeBlock {
+  flex-shrink: 0;
+  width: clamp(9rem, 18vw, 15rem);
+  padding-top: clamp(1rem, 3vw, 2rem);
+}
+
+.festiveTree {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.festiveTreeStroke {
+  animation: festiveFlicker ease-in-out infinite;
+  opacity: 0.3;
+}
+
+/* The tree outline itself — always on, no fade, so its overlapping
+   strokes never cross-fade into each other. */
+.festiveTreeStroke--static {
+  animation: none;
+  opacity: 1;
+  filter: drop-shadow(0 0 0.06rem var(--glow));
+}
+
+@keyframes festiveFlicker {
+  0% {
+    opacity: 0.3;
+    filter: drop-shadow(0 0 0 var(--glow));
+  }
+  5% {
+    opacity: 1;
+    filter: drop-shadow(0 0 0.1rem var(--glow));
+  }
+  55% {
+    opacity: 1;
+    filter: drop-shadow(0 0 0.1rem var(--glow));
+  }
+  60% {
+    opacity: 0.3;
+    filter: drop-shadow(0 0 0 var(--glow));
+  }
+  100% {
+    opacity: 0.3;
+    filter: drop-shadow(0 0 0 var(--glow));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .festiveTreeStroke {
+    animation: none;
+    opacity: 0.9;
+    filter: drop-shadow(0 0 0.15rem var(--glow));
+  }
+}
+
+.festiveRight {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding-top: clamp(1rem, 3vw, 2rem);
+  flex: 1;
+}
+
+.festiveTitle {
+  margin-bottom: 0;
+  font-family: 'Train One', sans-serif;
+  font-size: clamp(2.8rem, 7vw, 5.6rem);
+  line-height: 0.85;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow:
+    0 0 1rem rgba(121, 255, 90, 0.6),
+    0 0 2.2rem rgba(255, 19, 23, 0.32);
+}
+
+.festiveSubtitle {
+  margin-bottom: 0.4rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.festiveCopy {
+  max-width: 38rem;
+  margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  line-height: 1.75;
+}
+
+.festiveColumns {
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: transparent;
+}
+
+.festiveColumnsGrid {
+  display: grid;
+  width: min(100%, 78rem);
+  margin: 0 auto;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(2rem, 4vw, 3.5rem);
+}
+
+.festiveColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.festiveCane {
+  width: clamp(5.2rem, 10vw, 7.2rem);
+  height: auto;
+  transform: rotate(var(--cane-rotate, 0deg));
+  margin-bottom: 0.6rem;
+}
+
+.festiveColumnTitle {
+  margin: 0;
+  font-family:
+    Montserrat, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+  line-height: 1.15;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.festiveColumnCopy {
+  margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: clamp(0.88rem, 1.3vw, 0.98rem);
+  line-height: 1.7;
+}
+
+.festiveColumnCopyStrong {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.festiveBarName {
+  color: #fff;
+  font-weight: 800;
+}
+
+.festiveList {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: clamp(0.88rem, 1.3vw, 0.98rem);
+  line-height: 1.8;
+}
+
+.festiveList li {
+  position: relative;
+  padding-left: 1.4rem;
+}
+
+/* Colored dot bullets — same five neon tones as the tree's light strings
+   (see $festive_tree_strokes in render.php), cycled per item. */
+.festiveList li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--bullet-color, #fff);
+  box-shadow: 0 0 0.4rem var(--bullet-color, #fff);
+}
+
+.festiveList li:nth-child(5n+1) { --bullet-color: #EF00C7; }
+.festiveList li:nth-child(5n+2) { --bullet-color: #0F9BFF; }
+.festiveList li:nth-child(5n+3) { --bullet-color: #00EFEF; }
+.festiveList li:nth-child(5n+4) { --bullet-color: #FF9532; }
+.festiveList li:nth-child(5n+5) { --bullet-color: #FF1317; }
+
+.festiveShoutList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Same neon palette (minus blue, to stay distinct from the bullet list
+   above), one color per line, question + answer sharing the same hue. */
+.festiveShoutList li:nth-child(4n+1) { color: #EF00C7; }
+.festiveShoutList li:nth-child(4n+2) { color: #00EFEF; }
+.festiveShoutList li:nth-child(4n+3) { color: #FF9532; }
+.festiveShoutList li:nth-child(4n+4) { color: #FF1317; }
+
+.festiveShoutList li {
+  text-shadow: 0 0 0.35rem currentColor;
+}
+
+.festiveShoutList span {
+  font-weight: 700;
+  margin-right: 0.35rem;
+  opacity: 0.82;
+}
+
+.festiveClose {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.15rem, 4vw, 4rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  background: transparent;
+  text-align: center;
+}
+
+.festiveSantaRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(0.5rem, 2vw, 1.25rem);
+}
+
+.festiveSanta {
+  width: clamp(4.6rem, 11vw, 7.5rem);
+  height: auto;
+}
+
+.festiveSantaRow .festiveSanta:nth-child(odd) {
+  transform: rotate(-6deg);
+}
+
+.festiveSantaRow .festiveSanta:nth-child(even) {
+  transform: rotate(6deg);
+}
+
+.festiveCloseHeadline {
+  max-width: 48rem;
+  margin-bottom: 0;
+  font-family:
+    Montserrat, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.4rem, 3.4vw, 2.6rem);
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow:
+    0 0 1rem rgba(214, 92, 255, 0.55),
+    0 0 2.2rem rgba(100, 244, 255, 0.28);
+}
+
+.festiveCloseCopy {
+  margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  line-height: 1.6;
+}
+
+.festiveCloseEmail {
+  color: #64f4ff;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+@media (max-width: 700px) {
+  .festiveScene {
+    flex-direction: column;
+  }
+
+  .festiveTreeBlock {
+    width: clamp(8rem, 34vw, 11.5rem);
+    margin: 0;
+    padding-top: 0;
+  }
+
+  .festiveColumnsGrid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}
+
 .photoPlaceholder {
   --photo-h: clamp(16rem, 38vh, 26rem);
   flex: 0 0 auto;

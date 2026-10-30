@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "the-black-cap/festive",
+  "title": "Festive (Christmas)",
+  "description": "Christmas campaign section: neon animated tree intro, three-column info block, and a closing Santa/contact strip.",
+  "category": "theme",
+  "icon": "star-filled",
+  "supports": { "html": false },
+  "attributes": {
+    "heading": { "type": "string", "default": "Festive" },
+    "subtitle": { "type": "string", "default": "Celebration at The Black Cap" },
+    "intro": {
+      "type": "string",
+      "default": "This Christmas, we’re turning up the glitter, glamour and festive fabulousness at The Black Cap, Camden!\n\nGet ready for a Christmas celebration that’s bigger, campier and merrier than ever, with festive sparkle, Christmas cheer and enough tinsel to make Santa jealous.\n\nWhether you’re planning a Christmas party, festive get-together, Christmas drinks or the ultimate Christmas night out, this is where your Christmas celebrations come to life."
+    },
+    "closeHeadline": {
+      "type": "string",
+      "default": "Make this Christmas extra. Make it fabulous. Make it Black Cap."
+    },
+    "email": { "type": "string", "default": "Sassy@blackcapcamden.co.uk" },
+    "showShimmer": { "type": "boolean", "default": true }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}
